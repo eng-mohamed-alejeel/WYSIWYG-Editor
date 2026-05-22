@@ -1,0 +1,20 @@
+{
+  "name": "@wysiwyg/exporters",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Export adapters for WYSIWYG Component Builder",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@wysiwyg/core": "*",
+    "@wysiwyg/renderer": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

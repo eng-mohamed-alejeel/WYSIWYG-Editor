@@ -1,0 +1,19 @@
+{
+  "name": "@wysiwyg/storage",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Storage adapters for WYSIWYG Component Builder",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@wysiwyg/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

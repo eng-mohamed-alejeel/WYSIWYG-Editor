@@ -1,0 +1,366 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Editor styles */
+.editor-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: #f5f5f5;
+}
+
+.editor-viewport {
+  position: relative;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease;
+}
+
+/* Component selection */
+.component-selected {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.component-hovered {
+  outline: 1px dashed #3b82f6;
+  outline-offset: -1px;
+}
+
+/* Drag and drop */
+.drag-over {
+  outline: 2px dashed #10b981;
+  outline-offset: -2px;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.drag-over-before {
+  border-top: 3px solid #10b981;
+}
+
+.drag-over-after {
+  border-bottom: 3px solid #10b981;
+}
+
+.drag-over-inside {
+  background-color: rgba(16, 185, 129, 0.15);
+  outline: 2px dashed #10b981;
+  outline-offset: -2px;
+}
+
+/* Resizable handles */
+.resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #3b82f6;
+  border: 1px solid white;
+  border-radius: 2px;
+}
+
+.resize-handle-nw {
+  top: -5px;
+  left: -5px;
+  cursor: nw-resize;
+}
+
+.resize-handle-ne {
+  top: -5px;
+  right: -5px;
+  cursor: ne-resize;
+}
+
+.resize-handle-sw {
+  bottom: -5px;
+  left: -5px;
+  cursor: sw-resize;
+}
+
+.resize-handle-se {
+  bottom: -5px;
+  right: -5px;
+  cursor: se-resize;
+}
+
+/* Panel styles */
+.panel {
+  position: fixed;
+  background-color: white;
+  border-left: 1px solid #e5e7eb;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.panel-left {
+  left: 0;
+  border-left: none;
+  border-right: 1px solid #e5e7eb;
+}
+
+.panel-right {
+  right: 0;
+}
+
+.panel-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.panel-body {
+  padding: 1rem;
+  overflow-y: auto;
+  height: calc(100% - 120px);
+}
+
+.panel-footer {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Toolbar styles */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-right: 0.5rem;
+  margin-right: 0.5rem;
+  border-right: 1px solid #e5e7eb;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+/* Component library styles */
+.component-library {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.component-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  cursor: grab;
+  transition: all 0.2s;
+}
+
+.component-item:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.component-item:active {
+  cursor: grabbing;
+}
+
+.component-item-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.component-item-label {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* Property inspector styles */
+.property-group {
+  margin-bottom: 1rem;
+}
+
+.property-group-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.property-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.property-item-label {
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.property-item-input {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.property-item-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Breakpoint switcher styles */
+.breakpoint-switcher {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+}
+
+.breakpoint-button {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background-color: transparent;
+  border-radius: 0.125rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.breakpoint-button:hover {
+  background-color: #e5e7eb;
+}
+
+.breakpoint-button.active {
+  background-color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Zoom controls */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.zoom-button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.zoom-button:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.zoom-display {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  min-width: 3rem;
+  text-align: center;
+}
+
+/* History controls */
+.history-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.history-button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.history-button:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.history-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

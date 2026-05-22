@@ -1,0 +1,30 @@
+{
+  "name": "wysiwyg-editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Enterprise-grade Visual Component Builder Platform",
+  "scripts": {
+    "dev": "turbo run dev --concurrency=11",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "turbo": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "packageManager": "npm@10.2.4",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}

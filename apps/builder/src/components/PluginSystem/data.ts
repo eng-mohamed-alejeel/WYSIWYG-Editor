@@ -1,0 +1,90 @@
+import { Plugin } from './types';
+
+export const plugins: Plugin[] = [
+  {
+    id: 'analytics',
+    name: 'Analytics',
+    description: 'Track user behavior and gather insights about your project performance',
+    version: '1.0.0',
+    author: 'WYSIWYG Team',
+    icon: 'chart',
+    category: 'integrations',
+    isInstalled: true,
+    isEnabled: true
+  },
+  {
+    id: 'seo',
+    name: 'SEO Tools',
+    description: 'Optimize your project for search engines with built-in SEO tools',
+    version: '1.2.0',
+    author: 'WYSIWYG Team',
+    icon: 'search',
+    category: 'tools',
+    isInstalled: true,
+    isEnabled: true
+  },
+  {
+    id: 'ecommerce',
+    name: 'E-commerce',
+    description: 'Add shopping cart and payment processing to your projects',
+    version: '2.0.0',
+    author: 'WYSIWYG Team',
+    icon: 'shopping-bag',
+    category: 'components',
+    isInstalled: false,
+    isEnabled: false,
+    isPremium: true
+  },
+  {
+    id: 'forms',
+    name: 'Advanced Forms',
+    description: 'Create complex forms with validation and custom fields',
+    version: '1.5.0',
+    author: 'WYSIWYG Team',
+    icon: 'file-text',
+    category: 'components',
+    isInstalled: true,
+    isEnabled: false
+  },
+  {
+    id: 'animations',
+    name: 'Animations',
+    description: 'Add beautiful animations and transitions to your components',
+    version: '1.3.0',
+    author: 'WYSIWYG Team',
+    icon: 'zap',
+    category: 'components',
+    isInstalled: false,
+    isEnabled: false
+  },
+  {
+    id: 'social',
+    name: 'Social Media',
+    description: 'Integrate social media feeds and sharing buttons',
+    version: '1.1.0',
+    author: 'WYSIWYG Team',
+    icon: 'share',
+    category: 'integrations',
+    isInstalled: false,
+    isEnabled: false
+  },
+  {
+    id: 'dark-theme',
+    name: 'Dark Theme',
+    description: 'Beautiful dark theme with multiple color schemes',
+    version: '1.0.0',
+    author: 'WYSIWYG Team',
+    icon: 'moon',
+    category: 'themes',
+    isInstalled: true,
+    isEnabled: false
+  }
+];
+
+export const categories = [
+  { id: 'all', label: 'All Plugins' },
+  { id: 'components', label: 'Components' },
+  { id: 'tools', label: 'Tools' },
+  { id: 'integrations', label: 'Integrations' },
+  { id: 'themes', label: 'Themes' }
+];
