@@ -28,7 +28,8 @@
       "@/*": ["./src/*"],
       "@wysiwyg/core": ["../../packages/core/src"],
       "@wysiwyg/editor": ["../../packages/editor/src"],
-      "@wysiwyg/ui": ["../../packages/ui/src"]
+      "@wysiwyg/ui": ["../../packages/ui/src"],
+      "@wysiwyg/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

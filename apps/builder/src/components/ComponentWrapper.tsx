@@ -42,7 +42,7 @@ export const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { setSelectedIds, setHoveredId } = useBuilderStore();
-  const { isDragging, dropTargetId, dropPosition, startDrag, endDrag, setDropTarget, handleDrop } = useDragDrop();
+  const { isDragging, dropTargetId, dropPosition, startDrag, setDropTarget, handleDrop } = useDragDrop();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {

@@ -16,12 +16,13 @@ import { DragDropProvider } from './DragDropProvider';
 import { ComponentNode } from '@wysiwyg/core';
 
 export const EditorLayout: React.FC = () => {
-  const { 
-    project, 
-    currentPageId, 
-    selectedIds, 
+  const {
+    project,
+    currentPageId,
+    selectedIds,
     isPreviewMode,
-    addComponent 
+    addComponent,
+    setSelectedIds
   } = useBuilderStore();
 
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
@@ -70,6 +71,8 @@ export const EditorLayout: React.FC = () => {
       addComponent(newComponent);
     }
 
+    // Select the newly added component
+    setSelectedIds([newComponent.id]);
     setDraggedComponentType(null);
   };
 
@@ -189,5 +192,3 @@ export const EditorLayout: React.FC = () => {
     </DragDropProvider>
   );
 };
-
-export default EditorLayout;

@@ -8,42 +8,7 @@ export const createInitialProject = () => {
       {
         id: pageId,
         name: 'Page 1',
-        components: [
-          {
-            id: 'hero_section',
-            type: 'section',
-            props: {},
-            styles: {
-              padding: '4rem 2rem',
-              backgroundColor: '#f9fafb'
-            },
-            children: [
-              {
-                id: 'hero_heading',
-                type: 'heading',
-                props: {
-                  level: 1,
-                  text: 'Welcome to WYSIWYG Builder'
-                },
-                styles: {
-                  marginBottom: '1rem'
-                },
-                children: []
-              },
-              {
-                id: 'hero_paragraph',
-                type: 'paragraph',
-                props: {
-                  text: 'Start building your components by dragging and dropping items from the left sidebar.'
-                },
-                styles: {
-                  color: '#6b7280'
-                },
-                children: []
-              }
-            ]
-          }
-        ]
+        components: []
       }
     ]
   };

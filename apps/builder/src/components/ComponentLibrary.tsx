@@ -195,6 +195,20 @@ const COMPONENTS: ComponentLibraryItem[] = [
     label: 'Table',
     icon: 'table',
     category: 'advanced'
+  },
+  {
+    id: 'search',
+    type: 'search',
+    label: 'Search',
+    icon: 'search',
+    category: 'advanced'
+  },
+  {
+    id: 'filter',
+    type: 'filter',
+    label: 'Filter',
+    icon: 'filter',
+    category: 'advanced'
   }
 ];
 

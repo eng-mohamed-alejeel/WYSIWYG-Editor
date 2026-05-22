@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { Editor } from '@wysiwyg/editor';
 import { ComponentNode } from '@wysiwyg/core';
-import { Button } from '@wysiwyg/ui';
-import { Icon } from '@wysiwyg/ui';
-import { Panel } from '@wysiwyg/ui';
-import { Tabs } from '@wysiwyg/ui';
 import { useBuilderStore } from '../store/store';
-
 import { createInitialProject } from '../utils/ProjectInitializer';
+import { BuilderToolbar } from '../components/BuilderToolbar';
+import { ComponentsContainer } from '../components/ComponentsContainer';
+import { PropertiesPanel } from '../components/PropertiesPanel';
+import { ComponentLibraryPanel } from '../components/ComponentLibraryPanel';
+import { DragDropProvider } from '../components/DragDropProvider';
 
 export default function BuilderPage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -66,237 +66,35 @@ export default function BuilderPage() {
   }
 
   return (
-    <div className="flex h-screen">
-      {/* Left Sidebar - Component Library */}
-      <Panel
-        isOpen={true}
-        position="left"
-        size="small"
-        title="Components"
-        className="h-full"
-      >
-        <Tabs
-          items={[
-            {
-              id: 'basic',
-              label: 'Basic',
-              content: (
-                <div className="component-library">
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'container')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="layout" size="medium" />
-                    </div>
-                    <span className="component-item-label">Container</span>
-                  </div>
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'grid')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="grid" size="medium" />
-                    </div>
-                    <span className="component-item-label">Grid</span>
-                  </div>
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'text')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="text" size="medium" />
-                    </div>
-                    <span className="component-item-label">Text</span>
-                  </div>
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'image')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="image" size="medium" />
-                    </div>
-                    <span className="component-item-label">Image</span>
-                  </div>
-                </div>
-              )
-            },
-            {
-              id: 'advanced',
-              label: 'Advanced',
-              content: (
-                <div className="component-library">
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'menu')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="menu" size="medium" />
-                    </div>
-                    <span className="component-item-label">Menu</span>
-                  </div>
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'search')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="search" size="medium" />
-                    </div>
-                    <span className="component-item-label">Search</span>
-                  </div>
-                  <div 
-                    className="component-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'filter')}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="component-item-icon">
-                      <Icon name="filter" size="medium" />
-                    </div>
-                    <span className="component-item-label">Filter</span>
-                  </div>
-                </div>
-              )
-            }
-          ]}
-        />
-      </Panel>
+    <DragDropProvider>
+      <div className="flex h-screen">
+        {/* الشريط الجانبي الأيسر */}
+        <div className="w-64 border-r border-gray-300 flex-shrink-0">
+          <ComponentLibraryPanel handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />
+        </div>
 
-      {/* Main Editor Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Toolbar */}
-        <div className="toolbar">
-          <div className="toolbar-group">
-            <Button variant="ghost" size="small">
-              <Icon name="arrow-left" size="small" />
-            </Button>
-            <Button variant="ghost" size="small">
-              <Icon name="arrow-right" size="small" />
-            </Button>
+        {/* المنطقة الوسطى */}
+        <div className="flex-1 flex flex-col">
+          {/* الشريط العلوي */}
+          <div className="h-16 border-b border-gray-300 flex-shrink-0">
+            <BuilderToolbar />
           </div>
 
-          <div className="toolbar-group">
-            <Button variant="ghost" size="small">
-              <Icon name="undo" size="small" />
-            </Button>
-            <Button variant="ghost" size="small">
-              <Icon name="refresh" size="small" />
-            </Button>
-          </div>
-
-          <div className="toolbar-group">
-            <div className="breakpoint-switcher">
-              <button className="breakpoint-button active">
-                <Icon name="layout" size="small" />
-              </button>
-              <button className="breakpoint-button">
-                <Icon name="grid" size="small" />
-              </button>
-              <button className="breakpoint-button">
-                <Icon name="menu" size="small" />
-              </button>
+          {/* منطقة المحرر */}
+          <div className="flex-1 overflow-auto" onDragOver={handleDragOver} onDrop={handleDrop}>
+            <div className="editor-viewport">
+              <Editor>
+                <ComponentsContainer components={project?.pages[0]?.components || []} />
+              </Editor>
             </div>
-          </div>
-
-          <div className="toolbar-group">
-            <div className="zoom-controls">
-              <Button variant="ghost" size="small">
-                <Icon name="minus" size="small" />
-              </Button>
-              <span className="zoom-display">100%</span>
-              <Button variant="ghost" size="small">
-                <Icon name="plus" size="small" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="toolbar-group ml-auto">
-            <Button variant="primary" size="small">
-              Preview
-            </Button>
-            <Button variant="primary" size="small">
-              Export
-            </Button>
           </div>
         </div>
 
-        {/* Editor Canvas */}
-        <div 
-          className="editor-canvas flex-1"
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          <div className="editor-viewport" style={{ width: '100%', maxWidth: '1200px', margin: '2rem auto' }}>
-            <Editor>
-              <div className="p-8">
-                <h1 className="text-3xl font-bold mb-4">Welcome to WYSIWYG Builder</h1>
-                <p className="text-gray-600 mb-4">
-                  Start building your components by dragging and dropping items from the left sidebar.
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-2">Feature 1</h2>
-                    <p className="text-gray-600">Description of feature 1</p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-2">Feature 2</h2>
-                    <p className="text-gray-600">Description of feature 2</p>
-                  </div>
-                </div>
-              </div>
-            </Editor>
-          </div>
+        {/* الشريط الجانبي الأيمن */}
+        <div className="w-80 border-l border-gray-300 flex-shrink-0">
+          <PropertiesPanel selectedComponent={selectedComponent} />
         </div>
       </div>
-
-      {/* Right Sidebar - Properties */}
-      <Panel
-        isOpen={true}
-        position="right"
-        size="medium"
-        title="Properties"
-        className="h-full"
-      >
-        {selectedComponent ? (
-          <div className="property-group">
-            <h3 className="property-group-title">Component Properties</h3>
-            <div className="property-item">
-              <label className="property-item-label">ID</label>
-              <input
-                type="text"
-                className="property-item-input"
-                value={selectedComponent.id}
-                readOnly
-              />
-            </div>
-            <div className="property-item">
-              <label className="property-item-label">Type</label>
-              <input
-                type="text"
-                className="property-item-input"
-                value={selectedComponent.type}
-                readOnly
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="text-center text-gray-500 py-8">
-            Select a component to view its properties
-          </div>
-        )}
-      </Panel>
-    </div>
+    </DragDropProvider>
   );
 }
