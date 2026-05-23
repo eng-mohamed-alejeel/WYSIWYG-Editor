@@ -103,18 +103,19 @@ export class ExportOptimizer {
       return html;
     }
 
-    return html
-      // Remove comments
-      .replace(/<!--[\s\S]*?-->/g, '')
-      // Remove whitespace between tags
-      .replace(/>\s+</g, '><')
-      // Remove leading/trailing whitespace
-      .trim()
-      // Remove multiple spaces
-      .replace(/\s{2,}/g, ' ')
-      // Remove newlines
-      .replace(/
-/g, '');
+    return (
+      html
+        // Remove comments
+        .replace(/<!--[\s\S]*?-->/g, '')
+        // Remove whitespace between tags
+        .replace(/>\s+</g, '><')
+        // Remove leading/trailing whitespace
+        .trim()
+        // Remove multiple spaces
+        .replace(/\s{2,}/g, ' ')
+        // Remove newlines
+        .replace(/\n/g, '')
+    );
   }
 
   /**
@@ -125,17 +126,19 @@ export class ExportOptimizer {
       return css;
     }
 
-    return css
-      // Remove comments
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      // Remove whitespace
-      .replace(/\s+/g, ' ')
-      // Remove spaces around special characters
-      .replace(/\s*([{}:;,])\s*/g, '$1')
-      // Remove trailing semicolons
-      .replace(/;}/g, '}')
-      // Remove leading/trailing whitespace
-      .trim();
+    return (
+      css
+        // Remove comments
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        // Remove whitespace
+        .replace(/\s+/g, ' ')
+        // Remove spaces around special characters
+        .replace(/\s*([{}:;,])\s*/g, '$1')
+        // Remove trailing semicolons
+        .replace(/;}/g, '}')
+        // Remove leading/trailing whitespace
+        .trim()
+    );
   }
 
   /**
@@ -146,17 +149,19 @@ export class ExportOptimizer {
       return js;
     }
 
-    return js
-      // Remove single-line comments
-      .replace(/\/\/.*$/gm, '')
-      // Remove multi-line comments
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      // Remove whitespace around operators
-      .replace(/\s*([=+\-*/%&|^!<>?:,;{}()[\]])\s*/g, '$1')
-      // Remove multiple spaces
-      .replace(/\s{2,}/g, ' ')
-      // Remove leading/trailing whitespace
-      .trim();
+    return (
+      js
+        // Remove single-line comments
+        .replace(/\/\/.*$/gm, '')
+        // Remove multi-line comments
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        // Remove whitespace around operators
+        .replace(/\s*([=+\-*/%&|^!<>?:,;{}()[\]])\s*/g, '$1')
+        // Remove multiple spaces
+        .replace(/\s{2,}/g, ' ')
+        // Remove leading/trailing whitespace
+        .trim()
+    );
   }
 
   /**
@@ -193,7 +198,7 @@ export class ExportOptimizer {
    * Optimize styles
    */
   optimizeStyles(styles: ExportedStyle[], format: ExportFormat): ExportedStyle[] {
-    return styles.map(style => ({
+    return styles.map((style) => ({
       ...style,
       content: this.optimizeStyleContent(style.content, style.type, format),
     }));
@@ -297,7 +302,10 @@ export class ExportOptimizer {
   /**
    * Get optimization statistics
    */
-  getStatistics(original: string, optimized: string): {
+  getStatistics(
+    original: string,
+    optimized: string
+  ): {
     originalSize: number;
     optimizedSize: number;
     reduction: number;

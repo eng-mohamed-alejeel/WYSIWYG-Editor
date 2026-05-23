@@ -109,7 +109,8 @@ ${project.description || 'Custom website module'}
 }`;
   }
 
-  private generateTemplates(project: Project, context: ExportContext): string<?xml version="1.0" encoding="utf-8"?>
+  private generateTemplates(project: Project, context: ExportContext): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <!-- Main Template -->
@@ -118,7 +119,7 @@ ${project.description || 'Custom website module'}
         </template>
 
         <!-- Page Templates -->
-        ${project.pages.map(page => this.generatePageTemplate(page, context)).join('\n        ')}
+        ${project.pages.map((page) => this.generatePageTemplate(page, context)).join('\n        ')}
 
         <!-- Component Templates -->
         ${this.generateComponentTemplates(project, context)}
@@ -128,7 +129,10 @@ ${project.description || 'Custom website module'}
 
   private generateMainTemplate(project: Project, context: ExportContext): string {
     const pages = project.pages
-      .map(page => `        <li><a href="/${page.slug === 'home' ? '' : page.slug}">${page.name}</a></li>`)
+      .map(
+        (page) =>
+          `        <li><a href="/${page.slug === 'home' ? '' : page.slug}">${page.name}</a></li>`
+      )
       .join('\n');
 
     return `<t t-call="website.layout">
@@ -162,7 +166,7 @@ ${pages}
 
   private generatePageTemplate(page: Page, context: ExportContext): string {
     const components = page.components
-      .map(comp => this.generateComponentQWeb(comp))
+      .map((comp) => this.generateComponentQWeb(comp))
       .join('\n            ');
 
     return `<template id="${this.camelToKebab(page.name)}" name="${page.name}">
@@ -173,15 +177,13 @@ ${pages}
   }
 
   private generateComponentTemplates(project: Project, context: ExportContext): string {
-    const allComponents = project.pages.flatMap(page => page.components);
-    return allComponents
-      .map(comp => this.generateComponentTemplate(comp))
-      .join('\n        ');
+    const allComponents = project.pages.flatMap((page) => page.components);
+    return allComponents.map((comp) => this.generateComponentTemplate(comp)).join('\n        ');
   }
 
   private generateComponentTemplate(component: ComponentNode): string {
     const children = component.children
-      .map(child => this.generateComponentQWeb(child))
+      .map((child) => this.generateComponentQWeb(child))
       .join('\n            ');
 
     return `<template id="${this.camelToKebab(component.type)}" inherit_id="website.${this.camelToKebab(component.type)}" name="${component.type}">
@@ -194,7 +196,7 @@ ${pages}
   private generateComponentQWeb(component: ComponentNode): string {
     const styles = this.generateInlineStyles(component.styles);
     const children = component.children
-      .map(child => this.generateComponentQWeb(child))
+      .map((child) => this.generateComponentQWeb(child))
       .join('\n            ');
 
     return `<div class="component component-${component.type}" t-att-id="'${component.id}'" t-att-style="'${styles}'">
@@ -264,11 +266,16 @@ class ${this.toPascalCase(project.name)}Controller(http.Controller):
     def index(self, **kwargs):
         return request.render('${this.camelToKebab(project.name)}_main')
 
-    ${project.pages.filter(p => p.slug !== 'home').map(page => `
+    ${project.pages
+      .filter((p) => p.slug !== 'home')
+      .map(
+        (page) => `
     @http.route('/${page.slug}', type='http', auth='public', website=True)
     def ${this.camelToKebab(page.name)}(self, **kwargs):
         return request.render('${this.camelToKebab(page.name)}')
-    `).join('')}`;
+    `
+      )
+      .join('')}`;
   }
 
   private generateControllerInit(): string {
