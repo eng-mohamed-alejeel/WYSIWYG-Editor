@@ -1,19 +1,14 @@
 /**
  * Component Renderer
- * 
+ *
  * This module provides the main rendering functionality for components.
  */
 
-import React, { memo, useMemo, useCallback } from 'react';
+import React, { memo, useMemo } from 'react';
 import { ComponentNode, Breakpoint, StyleObject } from '@wysiwyg/core';
-import {
-  RendererContext,
-  RenderOptions,
-  ComponentRenderer,
-  RendererConfig
-} from './types';
+import { RendererContext, RenderOptions, ComponentRenderer, RendererConfig } from './types';
 import { DefaultComponentRegistry, getGlobalRegistry } from './registry';
-import { DefaultStyleGenerator, getGlobalStyleGenerator } from './styles';
+import { getGlobalStyleGenerator } from './styles';
 
 /**
  * Default renderer configuration
@@ -22,7 +17,7 @@ const DEFAULT_CONFIG: Required<RendererConfig> = {
   enableMemoization: true,
   enableVirtualization: false,
   maxComponentDepth: 100,
-  styleGenerator: getGlobalStyleGenerator()
+  styleGenerator: getGlobalStyleGenerator(),
 };
 
 /**
@@ -37,68 +32,66 @@ interface ComponentRendererProps {
 /**
  * Render a single component node
  */
-const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(({
-  node,
-  context,
-  depth = 0
-}) => {
-  const {
-    componentRegistry,
-    breakpoint,
-    isPreview,
-    isEditable
-  } = context;
+const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
+  ({ node, context, depth = 0 }) => {
+    const { componentRegistry, breakpoint } = context;
 
-  // Check max depth
-  if (depth > DEFAULT_CONFIG.maxComponentDepth) {
-    console.warn(`Maximum component depth (${DEFAULT_CONFIG.maxComponentDepth}) exceeded for node ${node.id}`);
-    return null;
-  }
+    // Check max depth
+    if (depth > DEFAULT_CONFIG.maxComponentDepth) {
+      console.warn(
+        `Maximum component depth (${DEFAULT_CONFIG.maxComponentDepth}) exceeded for node ${node.id}`
+      );
+      return null;
+    }
 
-  // Get the component renderer
-  const renderer = componentRegistry.get(node.type);
-  if (!renderer) {
-    console.warn(`No renderer found for component type: ${node.type}`);
-    return null;
-  }
+    // Get the component renderer
+    const renderer = componentRegistry.get(node.type);
+    if (!renderer) {
+      console.warn(`No renderer found for component type: ${node.type}`);
+      return null;
+    }
 
-  // Generate styles
-  const style = useMemo(() => {
-    const styleGenerator = getGlobalStyleGenerator();
-    return styleGenerator.generate(
-      node.styles,
-      node.responsiveStyles as Record<Breakpoint, StyleObject> | undefined,
-      breakpoint
+    // Generate styles
+    const style = useMemo(() => {
+      const styleGenerator = getGlobalStyleGenerator();
+      return styleGenerator.generate(
+        node.styles,
+        node.responsiveStyles as Record<Breakpoint, StyleObject> | undefined,
+        breakpoint
+      );
+    }, [node.styles, node.responsiveStyles, breakpoint]);
+
+    // Create child context
+    const childContext = useMemo(
+      () => ({
+        ...context,
+        parentId: node.id,
+      }),
+      [context, node.id]
     );
-  }, [node.styles, node.responsiveStyles, breakpoint]);
 
-  // Create child context
-  const childContext = useMemo(() => ({
-    ...context,
-    parentId: node.id
-  }), [context, node.id]);
+    // Render children
+    const children = useMemo(() => {
+      return node.children.map((childNode) => (
+        <ComponentRendererComponent
+          key={childNode.id}
+          node={childNode}
+          context={childContext}
+          depth={depth + 1}
+        />
+      ));
+    }, [node.children, childContext, depth]);
 
-  // Render children
-  const children = useMemo(() => {
-    return node.children.map((childNode, index) => (
-      <ComponentRendererComponent
-        key={childNode.id}
-        node={childNode}
-        context={childContext}
-        depth={depth + 1}
-      />
-    ));
-  }, [node.children, childContext, depth]);
+    // Render the component
+    const renderedComponent = renderer(node, {
+      ...context,
+      children,
+      style,
+    });
 
-  // Render the component
-  const renderedComponent = renderer(node, {
-    ...context,
-    children,
-    style
-  });
-
-  return renderedComponent;
-});
+    return renderedComponent;
+  }
+);
 
 ComponentRendererComponent.displayName = 'ComponentRendererComponent';
 
@@ -113,27 +106,23 @@ interface PageRendererProps {
 /**
  * Render a page with multiple component nodes
  */
-export const PageRenderer: React.FC<PageRendererProps> = memo(({
-  nodes,
-  options = {}
-}) => {
+export const PageRenderer: React.FC<PageRendererProps> = memo(({ nodes, options = {} }) => {
   // Create renderer context
-  const context = useMemo<RendererContext>(() => ({
-    breakpoint: options.breakpoint || 'desktop',
-    isPreview: options.isPreview ?? false,
-    isEditable: options.isEditable ?? false,
-    componentRegistry: getGlobalRegistry().getAll(),
-    theme: options.theme
-  }), [options]);
+  const context = useMemo<RendererContext>(
+    () => ({
+      breakpoint: options.breakpoint || 'desktop',
+      isPreview: options.isPreview ?? false,
+      isEditable: options.isEditable ?? false,
+      componentRegistry: getGlobalRegistry().getAll(),
+      theme: options.theme,
+    }),
+    [options]
+  );
 
   // Render all nodes
   const renderedNodes = useMemo(() => {
-    return nodes.map(node => (
-      <ComponentRendererComponent
-        key={node.id}
-        node={node}
-        context={context}
-      />
+    return nodes.map((node) => (
+      <ComponentRendererComponent key={node.id} node={node} context={context} />
     ));
   }, [nodes, context]);
 
@@ -144,17 +133,14 @@ PageRenderer.displayName = 'PageRenderer';
 
 /**
  * Renderer Class
- * 
+ *
  * Main renderer class that manages component rendering
  */
 export class Renderer {
   private registry: DefaultComponentRegistry;
   private config: Required<RendererConfig>;
 
-  constructor(
-    registry?: DefaultComponentRegistry,
-    config?: RendererConfig
-  ) {
+  constructor(registry?: DefaultComponentRegistry, config?: RendererConfig) {
     this.registry = registry || getGlobalRegistry();
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
@@ -168,28 +154,17 @@ export class Renderer {
       isPreview: options.isPreview ?? false,
       isEditable: options.isEditable ?? false,
       componentRegistry: this.registry.getAll(),
-      theme: options.theme
+      theme: options.theme,
     };
 
-    return (
-      <ComponentRendererComponent
-        key={node.id}
-        node={node}
-        context={context}
-      />
-    );
+    return <ComponentRendererComponent key={node.id} node={node} context={context} />;
   }
 
   /**
    * Render multiple component nodes
    */
   renderNodes(nodes: ComponentNode[], options: RenderOptions = {}): React.ReactNode {
-    return (
-      <PageRenderer
-        nodes={nodes}
-        options={options}
-      />
-    );
+    return <PageRenderer nodes={nodes} options={options} />;
   }
 
   /**

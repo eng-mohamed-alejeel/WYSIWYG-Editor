@@ -48,7 +48,7 @@ export default function BuilderPage() {
         type,
         children: [],
         props: {},
-        styles: {}
+        styles: {},
       };
       addComponent(newComponent);
     }

@@ -21,7 +21,7 @@ export const InputComponentProps: React.FC<PropsTabProps> = ({ component, onProp
           { label: 'Password', value: 'password' },
           { label: 'Number', value: 'number' },
           { label: 'Telephone', value: 'tel' },
-          { label: 'URL', value: 'url' }
+          { label: 'URL', value: 'url' },
         ]}
       />
     </div>
@@ -86,11 +86,14 @@ export const SelectComponentProps: React.FC<PropsTabProps> = ({ component, onPro
     <div className="property-item">
       <label className="property-item-label">Options</label>
       <textarea
-        value={component.props?.options?.map((opt: any) => `${opt.label}:${opt.value}`).join('\n') || ''}
+        value={
+          component.props?.options?.map((opt: any) => `${opt.label}:${opt.value}`).join('\n') || ''
+        }
         onChange={(e) => {
-          const options = e.target.value.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
+          const options = e.target.value
+            .split('\n')
+            .filter((line) => line.trim())
+            .map((line) => {
               const [label, value] = line.split(':');
               return { label: label?.trim() || line, value: value?.trim() || line };
             });

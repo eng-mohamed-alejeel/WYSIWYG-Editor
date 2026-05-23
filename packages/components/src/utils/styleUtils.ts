@@ -16,7 +16,7 @@ export function parseInlineStyles(style?: string): React.CSSProperties {
   const declarations = style.split(';').filter(Boolean);
 
   for (const declaration of declarations) {
-    const [property, value] = declaration.split(':').map(s => s.trim());
+    const [property, value] = declaration.split(':').map((s) => s.trim());
     if (property && value) {
       styles[property] = value;
     }
@@ -28,7 +28,9 @@ export function parseInlineStyles(style?: string): React.CSSProperties {
 /**
  * Merge multiple style objects safely
  */
-export function mergeStyles(...styleObjects: Array<Record<string, any> | undefined>): React.CSSProperties {
+export function mergeStyles(
+  ...styleObjects: Array<Record<string, any> | undefined>
+): React.CSSProperties {
   const merged: Record<string, any> = {};
 
   for (const styleObj of styleObjects) {

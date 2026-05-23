@@ -1,10 +1,10 @@
 /**
  * Style Generator
- * 
+ *
  * This module handles the generation of CSS styles from style objects.
  */
 
-import { StyleObject, StyleProperty, Breakpoint } from '@wysiwyg/core';
+import { StyleObject, Breakpoint } from '@wysiwyg/core';
 import { DEFAULT_BREAKPOINTS } from '@wysiwyg/shared';
 import { StyleGenerator } from './types';
 

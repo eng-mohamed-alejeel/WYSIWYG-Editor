@@ -56,7 +56,7 @@ export const Divider: React.FC<DividerProps> = ({
   className = '',
   thickness = 1,
   fullWidth = true,
-  spacing = 'medium'
+  spacing = 'medium',
 }) => {
   const orientationClasses = `divider-${orientation}`;
   const variantClasses = `divider-${variant}`;
@@ -68,21 +68,19 @@ export const Divider: React.FC<DividerProps> = ({
     variantClasses,
     spacingClasses,
     fullWidthClasses,
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const style: React.CSSProperties = {
     ...(color && { borderColor: color }),
-    ...(thickness && { borderWidth: `${thickness}px` })
+    ...(thickness && { borderWidth: `${thickness}px` }),
   };
 
   return (
     <div className={classes} style={style}>
-      {text && (
-        <span className="divider-text">
-          {text}
-        </span>
-      )}
+      {text && <span className="divider-text">{text}</span>}
     </div>
   );
 };

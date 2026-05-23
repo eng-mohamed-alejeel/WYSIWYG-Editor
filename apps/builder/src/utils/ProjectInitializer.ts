@@ -8,13 +8,16 @@ export const createInitialProject = () => {
       {
         id: pageId,
         name: 'Page 1',
-        components: []
-      }
-    ]
+        components: [],
+      },
+    ],
   };
 };
 
-export const initializeBuilderStore = (setProject: (project: any) => void, setCurrentPageId: (id: string) => void) => {
+export const initializeBuilderStore = (
+  setProject: (project: any) => void,
+  setCurrentPageId: (id: string) => void
+) => {
   const project = createInitialProject();
   setProject(project);
   setCurrentPageId(project.pages[0].id);

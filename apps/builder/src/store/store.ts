@@ -22,5 +22,5 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // Spread all action modules
   ...basicActions(set, get),
   ...undoRedoActions(set, get),
-  ...componentActions(set, get)
+  ...componentActions(set, get),
 }));

@@ -6,7 +6,10 @@ interface SearchComponentProps {
   convertStylesToCSS: (styles?: Record<string, string | number>) => React.CSSProperties;
 }
 
-export const SearchComponent: React.FC<SearchComponentProps> = ({ component, convertStylesToCSS }) => {
+export const SearchComponent: React.FC<SearchComponentProps> = ({
+  component,
+  convertStylesToCSS,
+}) => {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   return (
@@ -26,10 +29,10 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({ component, con
           borderRadius: '4px',
           fontSize: '0.875rem',
           transition: 'border-color 0.2s',
-          outline: 'none'
+          outline: 'none',
         }}
-        onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+        onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+        onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
       />
     </div>
   );

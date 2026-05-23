@@ -22,7 +22,7 @@ interface ComponentRendererProps {
 
 export const ComponentRenderer: React.FC<ComponentRendererProps> = ({
   component,
-  isPreview = false
+  isPreview = false,
 }) => {
   const { selectedIds, hoveredId } = useBuilderStore();
   const isSelected = selectedIds.includes(component.id);
@@ -48,19 +48,54 @@ export const ComponentRenderer: React.FC<ComponentRendererProps> = ({
     // Try advanced components
     switch (component.type) {
       case 'menu':
-        return <MenuComponent component={component} isPreview={isPreview} convertStylesToCSS={convertStylesToCSS} renderChild={renderChild} />;
+        return (
+          <MenuComponent
+            component={component}
+            isPreview={isPreview}
+            convertStylesToCSS={convertStylesToCSS}
+            renderChild={renderChild}
+          />
+        );
 
       case 'tabs':
-        return <TabsComponent component={component} isPreview={isPreview} convertStylesToCSS={convertStylesToCSS} renderChild={renderChild} />;
+        return (
+          <TabsComponent
+            component={component}
+            isPreview={isPreview}
+            convertStylesToCSS={convertStylesToCSS}
+            renderChild={renderChild}
+          />
+        );
 
       case 'accordion':
-        return <AccordionComponent component={component} isPreview={isPreview} convertStylesToCSS={convertStylesToCSS} renderChild={renderChild} />;
+        return (
+          <AccordionComponent
+            component={component}
+            isPreview={isPreview}
+            convertStylesToCSS={convertStylesToCSS}
+            renderChild={renderChild}
+          />
+        );
 
       case 'modal':
-        return <ModalComponent component={component} isPreview={isPreview} convertStylesToCSS={convertStylesToCSS} renderChild={renderChild} />;
+        return (
+          <ModalComponent
+            component={component}
+            isPreview={isPreview}
+            convertStylesToCSS={convertStylesToCSS}
+            renderChild={renderChild}
+          />
+        );
 
       case 'carousel':
-        return <CarouselComponent component={component} isPreview={isPreview} convertStylesToCSS={convertStylesToCSS} renderChild={renderChild} />;
+        return (
+          <CarouselComponent
+            component={component}
+            isPreview={isPreview}
+            convertStylesToCSS={convertStylesToCSS}
+            renderChild={renderChild}
+          />
+        );
 
       case 'table':
         return <TableComponent component={component} convertStylesToCSS={convertStylesToCSS} />;

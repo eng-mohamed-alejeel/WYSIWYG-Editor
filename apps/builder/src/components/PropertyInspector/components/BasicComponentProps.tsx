@@ -44,7 +44,7 @@ export const HeadingComponentProps: React.FC<PropsTabProps> = ({ component, onPr
           { label: 'H3', value: '3' },
           { label: 'H4', value: '4' },
           { label: 'H5', value: '5' },
-          { label: 'H6', value: '6' }
+          { label: 'H6', value: '6' },
         ]}
       />
     </div>
@@ -94,7 +94,7 @@ export const LinkComponentProps: React.FC<PropsTabProps> = ({ component, onPropC
         className="w-full"
         options={[
           { label: 'Same Tab', value: '_self' },
-          { label: 'New Tab', value: '_blank' }
+          { label: 'New Tab', value: '_blank' },
         ]}
       />
     </div>
@@ -121,7 +121,7 @@ export const ButtonComponentProps: React.FC<PropsTabProps> = ({ component, onPro
         options={[
           { label: 'Button', value: 'button' },
           { label: 'Submit', value: 'submit' },
-          { label: 'Reset', value: 'reset' }
+          { label: 'Reset', value: 'reset' },
         ]}
       />
     </div>

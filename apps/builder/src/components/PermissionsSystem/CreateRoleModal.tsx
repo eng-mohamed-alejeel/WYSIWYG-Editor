@@ -20,7 +20,7 @@ export const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
   onRoleNameChange,
   roleDescription,
   onRoleDescriptionChange,
-  onCreateRole
+  onCreateRole,
 }) => (
   <Modal isOpen={isOpen} onClose={onClose} title="Create New Role" size="small">
     <div className="space-y-4">
@@ -43,7 +43,9 @@ export const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
         />
       </div>
       <div className="flex justify-end gap-3">
-        <Button variant="ghost" onClick={onClose}>Cancel</Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
         <Button variant="primary" onClick={onCreateRole} disabled={!roleName.trim()}>
           Create Role
         </Button>

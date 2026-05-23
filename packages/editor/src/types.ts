@@ -2,15 +2,18 @@
  * Editor Types
  *
  * This module defines the types used by the visual editor.
+ * Updated to support the new Zustand-based state management system.
  */
 
-import { ComponentNode, ComponentId, Breakpoint, Command } from '@wysiwyg/core';
+import { ComponentNode, ComponentId, Breakpoint, Command, Project } from '@wysiwyg/core';
 
 /**
  * Editor state
+ * Legacy interface for backward compatibility
+ * New implementations should use individual stores
  */
 export interface EditorState {
-  project: any;
+  project: Project | null;
   currentPageId: ComponentId | null;
   selection: SelectionState;
   history: HistoryState;

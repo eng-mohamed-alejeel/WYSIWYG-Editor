@@ -8,10 +8,17 @@
     "allowJs": true,
     "strict": true,
     "noEmit": true,
-    "noImplicitAny": false,
-    "strictFunctionTypes": false,
-    "strictBindCallApply": false,
-    "strictNullChecks": false,
+    "noImplicitAny": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -31,9 +38,6 @@
       "@wysiwyg/shared/*": ["./packages/shared/src/*"]
     }
   },
-  "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/shared" }
-  ],
+  "references": [{ "path": "./packages/core" }, { "path": "./packages/shared" }],
   "exclude": ["node_modules", "dist", ".next", "build"]
 }

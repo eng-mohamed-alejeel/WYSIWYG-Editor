@@ -43,5 +43,9 @@ export interface BuilderState {
   updateComponent: (id: ComponentId, updates: Partial<ComponentNode>) => void;
   deleteComponent: (id: ComponentId) => void;
   duplicateComponent: (id: ComponentId) => void;
-  moveComponent: (id: ComponentId, targetId: ComponentId, position: 'before' | 'after' | 'inside') => void;
+  moveComponent: (
+    id: ComponentId,
+    targetId: ComponentId,
+    position: 'before' | 'after' | 'inside'
+  ) => void;
 }

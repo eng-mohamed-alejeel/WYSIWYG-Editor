@@ -12,7 +12,9 @@ interface AccordionItem {
   content: React.ReactNode;
 }
 
-export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = ({ componentId }) => {
+export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = ({
+  componentId,
+}) => {
   const { project, currentPageId, updateComponent } = useBuilderStore();
   const [component, setComponent] = useState<ComponentNode | null>(null);
   const [openAccordion, setOpenAccordion] = useState<string | null>('props');
@@ -44,15 +46,21 @@ export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = 
     setComponent(found);
   }, [componentId, project, currentPageId]);
 
-  const handlePropChange = useCallback((key: string, value: any) => {
-    if (!componentId) return;
-    updateComponent(componentId, { props: { ...component.props, [key]: value } });
-  }, [componentId, component?.props, updateComponent]);
+  const handlePropChange = useCallback(
+    (key: string, value: any) => {
+      if (!componentId) return;
+      updateComponent(componentId, { props: { ...component.props, [key]: value } });
+    },
+    [componentId, component?.props, updateComponent]
+  );
 
-  const handleStyleChange = useCallback((key: string, value: StyleValue) => {
-    if (!componentId) return;
-    updateComponent(componentId, { styles: { ...component.styles, [key]: value } });
-  }, [componentId, component?.styles, updateComponent]);
+  const handleStyleChange = useCallback(
+    (key: string, value: StyleValue) => {
+      if (!componentId) return;
+      updateComponent(componentId, { styles: { ...component.styles, [key]: value } });
+    },
+    [componentId, component?.styles, updateComponent]
+  );
 
   const toggleAccordion = (id: string) => {
     setOpenAccordion(openAccordion === id ? null : id);
@@ -62,22 +70,32 @@ export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = 
     {
       id: 'props',
       label: 'Properties',
-      content: <PropsTab component={component} onPropChange={handlePropChange} />
+      content: <PropsTab component={component} onPropChange={handlePropChange} />,
     },
     {
       id: 'styles',
       label: 'Styles',
-      content: <StylesTab component={component} onStyleChange={handleStyleChange} />
+      content: <StylesTab component={component} onStyleChange={handleStyleChange} />,
     },
     {
       id: 'advanced',
       label: 'Advanced',
-      content: <AdvancedTab component={component} onPropChange={handlePropChange} onStyleChange={handleStyleChange} />
-    }
+      content: (
+        <AdvancedTab
+          component={component}
+          onPropChange={handlePropChange}
+          onStyleChange={handleStyleChange}
+        />
+      ),
+    },
   ];
 
   if (!component) {
-    return <div className="text-center text-gray-500 py-8">Select a component to view its properties</div>;
+    return (
+      <div className="text-center text-gray-500 py-8">
+        Select a component to view its properties
+      </div>
+    );
   }
 
   return (
@@ -86,22 +104,20 @@ export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = 
         <h2 className="text-lg font-semibold">Properties</h2>
       </div>
       <div className="flex-1 overflow-auto">
-        {accordionItems.map(item => (
+        {accordionItems.map((item) => (
           <div key={item.id} className="border-b border-gray-200">
             <button
               onClick={() => toggleAccordion(item.id)}
               className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <span className="font-semibold text-gray-700">{item.label}</span>
-              <span className={`transform transition-transform ${openAccordion === item.id ? 'rotate-180' : ''}`}>
+              <span
+                className={`transform transition-transform ${openAccordion === item.id ? 'rotate-180' : ''}`}
+              >
                 ▼
               </span>
             </button>
-            {openAccordion === item.id && (
-              <div className="p-4 bg-white">
-                {item.content}
-              </div>
-            )}
+            {openAccordion === item.id && <div className="p-4 bg-white">{item.content}</div>}
           </div>
         ))}
       </div>

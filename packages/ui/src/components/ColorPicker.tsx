@@ -92,14 +92,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
     '#FFA500',
     '#800080',
     '#008080',
-    '#FFC0CB'
+    '#FFC0CB',
   ],
   size = 'medium',
   className = '',
   label,
-  showAlpha = false,
-  format = 'hex',
-  position = 'bottom-right'
+  position = 'bottom-right',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentColor, setCurrentColor] = useState(value);
@@ -112,10 +110,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        pickerRef.current &&
-        !pickerRef.current.contains(event.target as Node)
-      ) {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -153,32 +148,36 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   const sizeClasses = `color-picker-${size}`;
   const disabledClasses = disabled ? 'color-picker-disabled' : '';
   const positionClasses = `color-picker-${position}`;
-  const classes = [
-    'color-picker',
-    sizeClasses,
-    disabledClasses,
-    className
-  ].filter(Boolean).join(' ');
+  const classes = ['color-picker', sizeClasses, disabledClasses, className]
+    .filter(Boolean)
+    .join(' ');
 
   const popupClasses = [
     'color-picker-popup',
     positionClasses,
-    isOpen ? 'color-picker-popup-open' : ''
-  ].filter(Boolean).join(' ');
+    isOpen ? 'color-picker-popup-open' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={classes} ref={pickerRef}>
-      {label && (
-        <label className="color-picker-label">
-          {label}
-        </label>
-      )}
+      {label != null && label !== '' && <label className="color-picker-label">{label}</label>}
       <div className="color-picker-wrapper">
         {showPreview && (
           <div
             className="color-picker-preview"
             style={{ backgroundColor: currentColor }}
             onClick={handleToggle}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleToggle();
+              }
+            }}
+            role="button"
+            tabIndex={disabled ? -1 : 0}
+            aria-label={label ?? 'Color picker'}
           />
         )}
         {showInput && (
@@ -191,11 +190,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             className="color-picker-input"
           />
         )}
-        <button
-          className="color-picker-button"
-          onClick={handleToggle}
-          disabled={disabled}
-        >
+        <button className="color-picker-button" onClick={handleToggle} disabled={disabled}>
           <svg
             width="16"
             height="16"
@@ -203,12 +198,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M8 8L8 14"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
+            <path d="M8 8L8 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             <path
               d="M8 2C8 2 10 4 10 6C10 8 8 8 8 8C8 8 6 8 6 6C6 4 8 2 8 2Z"
               fill="currentColor"

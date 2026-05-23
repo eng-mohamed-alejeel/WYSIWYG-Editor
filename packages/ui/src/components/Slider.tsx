@@ -4,7 +4,7 @@
  * A reusable slider component for selecting values from a range.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 export interface SliderProps {
   /**
@@ -92,7 +92,7 @@ export const Slider: React.FC<SliderProps> = ({
   size = 'medium',
   label,
   showMarks = false,
-  marksCount = 5
+  marksCount = 5,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [showTooltipValue, setShowTooltipValue] = useState(false);
@@ -101,33 +101,39 @@ export const Slider: React.FC<SliderProps> = ({
 
   const percentage = ((value - min) / (max - min)) * 100;
 
+  const updateValue = useCallback(
+    (e: MouseEvent | React.MouseEvent) => {
+      if (!sliderRef.current) return;
+
+      const rect = sliderRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const width = rect.width;
+      const rawValue = (x / width) * (max - min) + min;
+      const steppedValue = Math.round(rawValue / step) * step;
+      const clampedValue = Math.max(min, Math.min(max, steppedValue));
+
+      onChange(clampedValue);
+    },
+    [min, max, step, onChange]
+  );
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (disabled) return;
     setIsDragging(true);
     updateValue(e);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging || disabled) return;
-    updateValue(e);
-  };
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || disabled) return;
+      updateValue(e);
+    },
+    [isDragging, disabled, updateValue]
+  );
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
-
-  const updateValue = (e: MouseEvent | React.MouseEvent) => {
-    if (!sliderRef.current) return;
-
-    const rect = sliderRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const width = rect.width;
-    const rawValue = (x / width) * (max - min) + min;
-    const steppedValue = Math.round(rawValue / step) * step;
-    const clampedValue = Math.max(min, Math.min(max, steppedValue));
-
-    onChange(clampedValue);
-  };
+  }, []);
 
   useEffect(() => {
     if (isDragging) {
@@ -138,50 +144,54 @@ export const Slider: React.FC<SliderProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging]);
+    return undefined;
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const sizeClasses = `slider-${size}`;
   const colorClasses = `slider-${color}`;
   const disabledClasses = disabled ? 'slider-disabled' : '';
-  const classes = [
-    'slider',
-    sizeClasses,
-    colorClasses,
-    disabledClasses,
-    className
-  ].filter(Boolean).join(' ');
+  const classes = ['slider', sizeClasses, colorClasses, disabledClasses, className]
+    .filter(Boolean)
+    .join(' ');
 
-  const marks = showMarks ? Array.from({ length: marksCount }, (_, i) => {
-    const markValue = min + ((max - min) * i) / (marksCount - 1);
-    return {
-      value: markValue,
-      percentage: ((markValue - min) / (max - min)) * 100
-    };
-  }) : [];
+  const marks = showMarks
+    ? Array.from({ length: marksCount }, (_, i) => {
+        const markValue = min + ((max - min) * i) / (marksCount - 1);
+        return {
+          value: markValue,
+          percentage: ((markValue - min) / (max - min)) * 100,
+        };
+      })
+    : [];
 
   return (
     <div className="slider-wrapper">
-      {label && (
-        <label className="slider-label">
-          {label}
-        </label>
+      {label !== undefined && label !== null && label !== '' && (
+        <label className="slider-label">{label}</label>
       )}
       <div className={classes}>
         <div
           ref={sliderRef}
           className="slider-track"
+          role="slider"
+          tabIndex={disabled ? -1 : 0}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={value}
+          aria-disabled={disabled}
           onMouseDown={handleMouseDown}
+          onKeyDown={(e) => {
+            if (disabled) return;
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+              onChange(Math.max(min, value - step));
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+              onChange(Math.min(max, value + step));
+            }
+          }}
         >
-          <div
-            className="slider-fill"
-            style={{ width: `${percentage}%` }}
-          />
+          <div className="slider-fill" style={{ width: `${percentage}%` }} />
           {marks.map((mark, index) => (
-            <div
-              key={index}
-              className="slider-mark"
-              style={{ left: `${mark.percentage}%` }}
-            />
+            <div key={index} className="slider-mark" style={{ left: `${mark.percentage}%` }} />
           ))}
           <div
             ref={thumbRef}
@@ -191,18 +201,12 @@ export const Slider: React.FC<SliderProps> = ({
             onMouseLeave={() => setShowTooltipValue(false)}
           >
             {showTooltip && (showTooltipValue || isDragging) && (
-              <div className="slider-tooltip">
-                {value}
-              </div>
+              <div className="slider-tooltip">{value}</div>
             )}
           </div>
         </div>
       </div>
-      {showValue && (
-        <div className="slider-value">
-          {value}
-        </div>
-      )}
+      {showValue && <div className="slider-value">{value}</div>}
     </div>
   );
 };

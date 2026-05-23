@@ -9,12 +9,20 @@ interface AdvancedTabProps {
   onStyleChange: (key: string, value: StyleValue) => void;
 }
 
-const getStyleValue = (styles: ComponentStyles | undefined, key: keyof ComponentStyles, defaultValue: string): string => {
+const getStyleValue = (
+  styles: ComponentStyles | undefined,
+  key: keyof ComponentStyles,
+  defaultValue: string
+): string => {
   const value = styles?.[key];
   return value !== undefined ? String(value) : defaultValue;
 };
 
-export const AdvancedTab: React.FC<AdvancedTabProps> = ({ component, onPropChange, onStyleChange }) => {
+export const AdvancedTab: React.FC<AdvancedTabProps> = ({
+  component,
+  onPropChange,
+  onStyleChange,
+}) => {
   const styles = component.styles as ComponentStyles | undefined;
 
   return (
@@ -75,7 +83,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ component, onPropChang
               { value: 'inline-block', label: 'Inline Block' },
               { value: 'flex', label: 'Flex' },
               { value: 'grid', label: 'Grid' },
-              { value: 'none', label: 'None' }
+              { value: 'none', label: 'None' },
             ]}
             className="w-full"
           />
@@ -91,7 +99,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ component, onPropChang
               { value: 'relative', label: 'Relative' },
               { value: 'absolute', label: 'Absolute' },
               { value: 'fixed', label: 'Fixed' },
-              { value: 'sticky', label: 'Sticky' }
+              { value: 'sticky', label: 'Sticky' },
             ]}
             className="w-full"
           />

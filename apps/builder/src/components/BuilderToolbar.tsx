@@ -16,7 +16,7 @@ export const BuilderToolbar: React.FC = () => {
     setIsPreviewMode,
     setIsDirty,
     undo,
-    redo
+    redo,
   } = useBuilderStore();
 
   // Navigation functions
@@ -61,9 +61,12 @@ export const BuilderToolbar: React.FC = () => {
   }, [setZoom]);
 
   // Breakpoint functions
-  const handleBreakpointChange = useCallback((breakpoint: 'desktop' | 'tablet' | 'mobile') => {
-    setCurrentBreakpoint(breakpoint);
-  }, [setCurrentBreakpoint]);
+  const handleBreakpointChange = useCallback(
+    (breakpoint: 'desktop' | 'tablet' | 'mobile') => {
+      setCurrentBreakpoint(breakpoint);
+    },
+    [setCurrentBreakpoint]
+  );
 
   // Preview mode
   const handlePreviewToggle = useCallback(() => {
@@ -158,7 +161,16 @@ export const BuilderToolbar: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleUndo, handleRedo, handleSave, handleExport, handlePreviewToggle, handleZoomIn, handleZoomOut, handleZoomReset]);
+  }, [
+    handleUndo,
+    handleRedo,
+    handleSave,
+    handleExport,
+    handlePreviewToggle,
+    handleZoomIn,
+    handleZoomOut,
+    handleZoomReset,
+  ]);
 
   return (
     <div className="h-full flex items-center justify-between px-4 bg-white border-b border-gray-300">
@@ -166,7 +178,12 @@ export const BuilderToolbar: React.FC = () => {
         <Button variant="ghost" size="small" onClick={handleGoBack} title="Go Back (Alt+Left)">
           <Icon name="arrow-left" size="small" />
         </Button>
-        <Button variant="ghost" size="small" onClick={handleGoForward} title="Go Forward (Alt+Right)">
+        <Button
+          variant="ghost"
+          size="small"
+          onClick={handleGoForward}
+          title="Go Forward (Alt+Right)"
+        >
           <Icon name="arrow-right" size="small" />
         </Button>
         <div className="w-px h-6 bg-gray-300 mx-2"></div>
@@ -175,15 +192,16 @@ export const BuilderToolbar: React.FC = () => {
         <div className="flex items-center gap-2">
           {/* Undo Button - Half Circle Left */}
           <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="small" 
-              onClick={handleUndo} 
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={handleUndo}
               disabled={!canUndo}
               className={`
-                ${!canUndo 
-                  ? 'opacity-40 cursor-not-allowed bg-gray-100' 
-                  : 'hover:bg-blue-500 hover:text-white hover:shadow-lg active:scale-95'
+                ${
+                  !canUndo
+                    ? 'opacity-40 cursor-not-allowed bg-gray-100'
+                    : 'hover:bg-blue-500 hover:text-white hover:shadow-lg active:scale-95'
                 }
                 transition-all duration-300
                 rounded-l-full rounded-r-md
@@ -196,7 +214,12 @@ export const BuilderToolbar: React.FC = () => {
               title="Undo"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                />
               </svg>
             </Button>
             <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
@@ -209,15 +232,16 @@ export const BuilderToolbar: React.FC = () => {
 
           {/* Redo Button - Half Circle Right */}
           <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="small" 
-              onClick={handleRedo} 
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={handleRedo}
               disabled={!canRedo}
               className={`
-                ${!canRedo 
-                  ? 'opacity-40 cursor-not-allowed bg-gray-100' 
-                  : 'hover:bg-green-500 hover:text-white hover:shadow-lg active:scale-95'
+                ${
+                  !canRedo
+                    ? 'opacity-40 cursor-not-allowed bg-gray-100'
+                    : 'hover:bg-green-500 hover:text-white hover:shadow-lg active:scale-95'
                 }
                 transition-all duration-300
                 rounded-r-full rounded-l-md
@@ -230,7 +254,12 @@ export const BuilderToolbar: React.FC = () => {
               title="Redo"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"
+                />
               </svg>
             </Button>
             <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
@@ -272,7 +301,7 @@ export const BuilderToolbar: React.FC = () => {
           <Button variant="ghost" size="small" onClick={handleZoomOut} title="Zoom Out (Ctrl+-)">
             <Icon name="minus" size="small" />
           </Button>
-          <span 
+          <span
             className="text-sm font-medium w-12 text-center cursor-pointer hover:text-blue-600 transition-colors"
             onClick={handleZoomReset}
             title="Click to reset zoom (Ctrl+0)"
@@ -286,10 +315,20 @@ export const BuilderToolbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="primary" size="small" onClick={handlePreviewToggle} title="Toggle Preview (Ctrl+P)">
+        <Button
+          variant="primary"
+          size="small"
+          onClick={handlePreviewToggle}
+          title="Toggle Preview (Ctrl+P)"
+        >
           {isPreviewMode ? 'Edit' : 'Preview'}
         </Button>
-        <Button variant="primary" size="small" onClick={handleExport} title="Export Project (Ctrl+E)">
+        <Button
+          variant="primary"
+          size="small"
+          onClick={handleExport}
+          title="Export Project (Ctrl+E)"
+        >
           Export
         </Button>
       </div>

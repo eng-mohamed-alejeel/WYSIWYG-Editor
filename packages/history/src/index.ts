@@ -1,6 +1,6 @@
 /**
  * WYSIWYG Editor History Package
- * 
+ *
  * This package implements an undo/redo system using the Command Pattern.
  * It provides a robust history management system for tracking and reverting changes.
  */
@@ -10,21 +10,21 @@ import { DEFAULT_HISTORY_SETTINGS } from '@wysiwyg/shared';
 
 /**
  * History Manager Class
- * 
+ *
  * Manages the undo/redo stack and executes commands.
  * Uses the Command Pattern for encapsulating operations.
  */
 export class HistoryManager {
   private state: HistoryState;
   private listeners: Set<(state: HistoryState) => void> = new Set();
-  private debounceTimer: NodeJS.Timeout | null = null;
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(maxSize: number = DEFAULT_HISTORY_SETTINGS.maxSize) {
     this.state = {
       past: [],
       present: null,
       future: [],
-      maxSize
+      maxSize,
     };
   }
 
@@ -161,7 +161,7 @@ export class HistoryManager {
       past: [],
       present: null,
       future: [],
-      maxSize: this.state.maxSize
+      maxSize: this.state.maxSize,
     };
     this.notifyListeners();
   }
@@ -189,7 +189,7 @@ export class HistoryManager {
    * Notify all listeners of state changes
    */
   private notifyListeners(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       listener(this.getState());
     });
   }
@@ -198,7 +198,11 @@ export class HistoryManager {
    * Get command history as array
    */
   getHistory(): Command[] {
-    return [...this.state.past, ...(this.state.present ? [this.state.present] : []), ...this.state.future];
+    return [
+      ...this.state.past,
+      ...(this.state.present ? [this.state.present] : []),
+      ...this.state.future,
+    ];
   }
 
   /**
@@ -210,7 +214,6 @@ export class HistoryManager {
       return false;
     }
 
-    const targetCommand = history[index];
     const currentIndex = this.state.past.length;
 
     if (index < currentIndex) {
@@ -235,13 +238,13 @@ export class HistoryManager {
     const groupCommand: Command = {
       type: 'group',
       execute: () => {
-        commands.forEach(cmd => cmd.execute());
+        commands.forEach((cmd) => cmd.execute());
       },
       undo: () => {
-        [...commands].reverse().forEach(cmd => cmd.undo());
+        [...commands].reverse().forEach((cmd) => cmd.undo());
       },
       description: groupDescription,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     return groupCommand;
@@ -273,7 +276,7 @@ export class HistoryManager {
           const batchCommand = this.groupCommands(commands, description);
           this.execute(batchCommand);
         }
-      }
+      },
     };
   }
 
@@ -281,9 +284,7 @@ export class HistoryManager {
    * Get the number of commands in history
    */
   getHistorySize(): number {
-    return this.state.past.length + 
-           (this.state.present ? 1 : 0) + 
-           this.state.future.length;
+    return this.state.past.length + (this.state.present ? 1 : 0) + this.state.future.length;
   }
 
   /**
@@ -297,7 +298,8 @@ export class HistoryManager {
    * Export history state
    */
   exportState(): HistoryState {
-    return JSON.parse(JSON.stringify(this.state));
+    const state = JSON.parse(JSON.stringify(this.state)) as HistoryState;
+    return state;
   }
 
   /**
@@ -306,9 +308,9 @@ export class HistoryManager {
   importState(state: HistoryState): void {
     this.state = {
       ...state,
-      past: JSON.parse(JSON.stringify(state.past)),
-      future: JSON.parse(JSON.stringify(state.future)),
-      present: state.present ? JSON.parse(JSON.stringify(state.present)) : null
+      past: JSON.parse(JSON.stringify(state.past)) as Command[],
+      future: JSON.parse(JSON.stringify(state.future)) as Command[],
+      present: state.present ? (JSON.parse(JSON.stringify(state.present)) as Command) : null,
     };
     this.notifyListeners();
   }
@@ -322,12 +324,12 @@ export class CommandFactory {
    * Create a command that updates a value
    */
   static createUpdateCommand<T>(
-    target: any,
+    target: Record<string, unknown>,
     path: string,
     newValue: T,
     description?: string
   ): Command {
-    const oldValue = this.getPathValue(target, path);
+    const oldValue = this.getPathValue(target, path) as T;
 
     return {
       type: 'update',
@@ -337,20 +339,15 @@ export class CommandFactory {
       undo: () => {
         this.setPathValue(target, path, oldValue);
       },
-      description: description || `Update ${path}`,
-      timestamp: Date.now()
+      description: description ?? `Update ${path}`,
+      timestamp: Date.now(),
     };
   }
 
   /**
    * Create a command that adds an item to an array
    */
-  static createAddCommand<T>(
-    target: T[],
-    item: T,
-    index?: number,
-    description?: string
-  ): Command {
+  static createAddCommand<T>(target: T[], item: T, index?: number, description?: string): Command {
     const addIndex = index ?? target.length;
 
     return {
@@ -361,19 +358,15 @@ export class CommandFactory {
       undo: () => {
         target.splice(addIndex, 1);
       },
-      description: description || 'Add item',
-      timestamp: Date.now()
+      description: description ?? 'Add item',
+      timestamp: Date.now(),
     };
   }
 
   /**
    * Create a command that removes an item from an array
    */
-  static createRemoveCommand<T>(
-    target: T[],
-    index: number,
-    description?: string
-  ): Command {
+  static createRemoveCommand<T>(target: T[], index: number, description?: string): Command {
     const removedItem = target[index];
 
     return {
@@ -384,8 +377,8 @@ export class CommandFactory {
       undo: () => {
         target.splice(index, 0, removedItem);
       },
-      description: description || 'Remove item',
-      timestamp: Date.now()
+      description: description ?? 'Remove item',
+      timestamp: Date.now(),
     };
   }
 
@@ -408,8 +401,8 @@ export class CommandFactory {
         const [item] = target.splice(toIndex, 1);
         target.splice(fromIndex, 0, item);
       },
-      description: description || 'Move item',
-      timestamp: Date.now()
+      description: description ?? 'Move item',
+      timestamp: Date.now(),
     };
   }
 
@@ -432,21 +425,29 @@ export class CommandFactory {
       undo: () => {
         target[index] = oldItem;
       },
-      description: description || 'Replace item',
-      timestamp: Date.now()
+      description: description ?? 'Replace item',
+      timestamp: Date.now(),
     };
   }
 
-  private static getPathValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+  private static getPathValue(obj: Record<string, unknown>, path: string): unknown {
+    return path
+      .split('.')
+      .reduce(
+        (current: Record<string, unknown> | undefined, key) =>
+          current?.[key] as Record<string, unknown> | undefined,
+        obj
+      );
   }
 
-  private static setPathValue(obj: any, path: string, value: any): void {
+  private static setPathValue(obj: Record<string, unknown>, path: string, value: unknown): void {
     const keys = path.split('.');
     const lastKey = keys.pop()!;
-    const target = keys.reduce((current, key) => {
-      if (!current[key]) current[key] = {};
-      return current[key];
+    const target = keys.reduce((current: Record<string, unknown>, key: string) => {
+      if (current[key] === undefined || current[key] === null) {
+        current[key] = {};
+      }
+      return current[key] as Record<string, unknown>;
     }, obj);
     target[lastKey] = value;
   }

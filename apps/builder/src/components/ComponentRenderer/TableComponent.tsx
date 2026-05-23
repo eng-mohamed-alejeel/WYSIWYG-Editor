@@ -6,12 +6,23 @@ interface TableComponentProps {
   convertStylesToCSS: (styles?: Record<string, string | number>) => React.CSSProperties;
 }
 
-export const TableComponent: React.FC<TableComponentProps> = ({ component, convertStylesToCSS }) => (
+export const TableComponent: React.FC<TableComponentProps> = ({
+  component,
+  convertStylesToCSS,
+}) => (
   <table style={convertStylesToCSS(component.styles)}>
     <thead>
       <tr>
         {component.props?.headers?.map((header: string, index: number) => (
-          <th key={index} style={{ padding: '0.75rem', border: '1px solid #e5e7eb', background: '#f9fafb', fontWeight: '600' }}>
+          <th
+            key={index}
+            style={{
+              padding: '0.75rem',
+              border: '1px solid #e5e7eb',
+              background: '#f9fafb',
+              fontWeight: '600',
+            }}
+          >
             {header}
           </th>
         ))}

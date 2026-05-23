@@ -8,14 +8,16 @@ interface AccordionComponentProps {
   renderChild: (child: ComponentNode) => React.ReactNode;
 }
 
-export const AccordionComponent: React.FC<AccordionComponentProps> = ({ component, renderChild, convertStylesToCSS }) => {
+export const AccordionComponent: React.FC<AccordionComponentProps> = ({
+  component,
+  renderChild,
+  convertStylesToCSS,
+}) => {
   const [openItems, setOpenItems] = React.useState<number[]>([]);
 
   const toggleItem = (index: number) => {
-    setOpenItems(prev => 
-      prev.includes(index) 
-        ? prev.filter(i => i !== index)
-        : [...prev, index]
+    setOpenItems((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
   };
 
@@ -34,7 +36,7 @@ export const AccordionComponent: React.FC<AccordionComponentProps> = ({ componen
               cursor: 'pointer',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             <span>{child.props?.label || `Item ${index + 1}`}</span>

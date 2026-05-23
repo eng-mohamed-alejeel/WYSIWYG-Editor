@@ -1,6 +1,6 @@
 /**
  * Spacer Component
- * 
+ *
  * A spacer component for creating consistent spacing between elements.
  * Supports horizontal and vertical spacing with customizable sizes.
  */
@@ -9,19 +9,14 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-export const Spacer: React.FC<BaseComponentProps> = ({
-  node,
-  context,
-  style,
-  className = ''
-}) => {
+export const Spacer: React.FC<BaseComponentProps> = ({ node, context, style, className = '' }) => {
   const { isEditable, isPreview } = context;
   const direction = node.props.direction || 'vertical';
   const size = node.props.size || 'medium';
   const baseClassName = `wysiwyg-spacer wysiwyg-spacer-${direction} ${className}`.trim();
 
   const spacerStyle: React.CSSProperties = {
-    flexShrink: 0
+    flexShrink: 0,
   };
 
   if (direction === 'vertical') {
@@ -37,7 +32,7 @@ export const Spacer: React.FC<BaseComponentProps> = ({
       style={mergeStyles({
         ...spacerStyle,
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
@@ -55,7 +50,7 @@ function getSpacerSize(size: string): string {
     lg: '1.5rem',
     xl: '2rem',
     '2xl': '3rem',
-    '3xl': '4rem'
+    '3xl': '4rem',
   };
   return sizes[size] || sizes.md;
 }

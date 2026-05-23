@@ -18,7 +18,7 @@ const LayerItem: React.FC<LayerItemProps> = ({
   isSelected,
   isHovered,
   onSelect,
-  onHover
+  onHover,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const hasChildren = component.children && component.children.length > 0;
@@ -42,10 +42,7 @@ const LayerItem: React.FC<LayerItemProps> = ({
               setIsExpanded(!isExpanded);
             }}
           >
-            <Icon
-              name={isExpanded ? 'chevron-down' : 'chevron-right'}
-              size="small"
-            />
+            <Icon name={isExpanded ? 'chevron-down' : 'chevron-right'} size="small" />
           </button>
         )}
 
@@ -53,18 +50,14 @@ const LayerItem: React.FC<LayerItemProps> = ({
           <Icon name="layout" size="small" />
         </span>
 
-        <span className="layer-item-label">
-          {component.type}
-        </span>
+        <span className="layer-item-label">{component.type}</span>
 
-        <span className="layer-item-id">
-          {component.id}
-        </span>
+        <span className="layer-item-id">{component.id}</span>
       </div>
 
       {hasChildren && isExpanded && (
         <div className="layer-item-children">
-          {component.children.map(child => (
+          {component.children.map((child) => (
             <LayerItem
               key={child.id}
               component={child}
@@ -104,11 +97,9 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ components }) => {
 
       <div className="layer-panel-content">
         {components.length === 0 ? (
-          <div className="text-center text-gray-500 py-4">
-            No components yet
-          </div>
+          <div className="text-center text-gray-500 py-4">No components yet</div>
         ) : (
-          components.map(component => (
+          components.map((component) => (
             <LayerItem
               key={component.id}
               component={component}

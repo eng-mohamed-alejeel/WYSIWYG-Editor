@@ -42,10 +42,7 @@ interface AnalyticsSystemProps {
   onClose: () => void;
 }
 
-export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
-  isOpen,
-  onClose
-}) => {
+export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [timeRange, setTimeRange] = useState('7d');
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +58,7 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
     setIsLoading(true);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const mockData: AnalyticsData = {
       pageViews: Math.floor(Math.random() * 10000) + 5000,
@@ -69,22 +66,65 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
       bounceRate: Math.random() * 50 + 20,
       avgSessionDuration: Math.random() * 300 + 60,
       topPages: [
-        { path: '/', views: Math.floor(Math.random() * 2000) + 1000, avgTime: Math.random() * 120 + 30, bounceRate: Math.random() * 30 + 20 },
-        { path: '/about', views: Math.floor(Math.random() * 1000) + 500, avgTime: Math.random() * 90 + 20, bounceRate: Math.random() * 40 + 25 },
-        { path: '/contact', views: Math.floor(Math.random() * 500) + 200, avgTime: Math.random() * 60 + 15, bounceRate: Math.random() * 50 + 30 }
+        {
+          path: '/',
+          views: Math.floor(Math.random() * 2000) + 1000,
+          avgTime: Math.random() * 120 + 30,
+          bounceRate: Math.random() * 30 + 20,
+        },
+        {
+          path: '/about',
+          views: Math.floor(Math.random() * 1000) + 500,
+          avgTime: Math.random() * 90 + 20,
+          bounceRate: Math.random() * 40 + 25,
+        },
+        {
+          path: '/contact',
+          views: Math.floor(Math.random() * 500) + 200,
+          avgTime: Math.random() * 60 + 15,
+          bounceRate: Math.random() * 50 + 30,
+        },
       ],
       trafficSources: [
-        { source: 'Organic', visitors: Math.floor(Math.random() * 2000) + 1000, percentage: Math.random() * 40 + 30 },
-        { source: 'Direct', visitors: Math.floor(Math.random() * 1000) + 500, percentage: Math.random() * 30 + 20 },
-        { source: 'Referral', visitors: Math.floor(Math.random() * 500) + 200, percentage: Math.random() * 20 + 10 },
-        { source: 'Social', visitors: Math.floor(Math.random() * 300) + 100, percentage: Math.random() * 10 + 5 }
+        {
+          source: 'Organic',
+          visitors: Math.floor(Math.random() * 2000) + 1000,
+          percentage: Math.random() * 40 + 30,
+        },
+        {
+          source: 'Direct',
+          visitors: Math.floor(Math.random() * 1000) + 500,
+          percentage: Math.random() * 30 + 20,
+        },
+        {
+          source: 'Referral',
+          visitors: Math.floor(Math.random() * 500) + 200,
+          percentage: Math.random() * 20 + 10,
+        },
+        {
+          source: 'Social',
+          visitors: Math.floor(Math.random() * 300) + 100,
+          percentage: Math.random() * 10 + 5,
+        },
       ],
       deviceBreakdown: [
-        { device: 'Desktop', visitors: Math.floor(Math.random() * 3000) + 1500, percentage: Math.random() * 50 + 40 },
-        { device: 'Mobile', visitors: Math.floor(Math.random() * 2000) + 1000, percentage: Math.random() * 40 + 30 },
-        { device: 'Tablet', visitors: Math.floor(Math.random() * 500) + 200, percentage: Math.random() * 15 + 5 }
+        {
+          device: 'Desktop',
+          visitors: Math.floor(Math.random() * 3000) + 1500,
+          percentage: Math.random() * 50 + 40,
+        },
+        {
+          device: 'Mobile',
+          visitors: Math.floor(Math.random() * 2000) + 1000,
+          percentage: Math.random() * 40 + 30,
+        },
+        {
+          device: 'Tablet',
+          visitors: Math.floor(Math.random() * 500) + 200,
+          percentage: Math.random() * 15 + 5,
+        },
       ],
-      conversionRate: Math.random() * 5 + 1
+      conversionRate: Math.random() * 5 + 1,
     };
 
     setAnalyticsData(mockData);
@@ -104,15 +144,11 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
               { value: '24h', label: 'Last 24 hours' },
               { value: '7d', label: 'Last 7 days' },
               { value: '30d', label: 'Last 30 days' },
-              { value: '90d', label: 'Last 90 days' }
+              { value: '90d', label: 'Last 90 days' },
             ]}
             className="w-40"
           />
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={fetchAnalyticsData}
-          >
+          <Button variant="ghost" size="small" onClick={fetchAnalyticsData}>
             <Icon name="refresh" size="small" />
           </Button>
         </div>
@@ -138,7 +174,9 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
                   <span className="text-sm text-gray-600">Unique Visitors</span>
                   <Icon name="users" size="small" />
                 </div>
-                <div className="text-2xl font-bold">{analyticsData.uniqueVisitors.toLocaleString()}</div>
+                <div className="text-2xl font-bold">
+                  {analyticsData.uniqueVisitors.toLocaleString()}
+                </div>
               </div>
 
               <div className="p-4 border rounded-lg">
@@ -155,7 +193,8 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
                   <Icon name="clock" size="small" />
                 </div>
                 <div className="text-2xl font-bold">
-                  {Math.floor(analyticsData.avgSessionDuration / 60)}:{(analyticsData.avgSessionDuration % 60).toFixed(0).padStart(2, '0')}
+                  {Math.floor(analyticsData.avgSessionDuration / 60)}:
+                  {(analyticsData.avgSessionDuration % 60).toFixed(0).padStart(2, '0')}
                 </div>
               </div>
             </div>
@@ -176,7 +215,7 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
           />
         )}
       </div>
-    )
+    ),
   };
 
   const pagesTab: TabItem = {
@@ -197,25 +236,25 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
                   <div>
                     <div className="font-medium">{page.path}</div>
                     <div className="text-sm text-gray-600">
-                      Avg. Time: {Math.floor(page.avgTime / 60)}:{(page.avgTime % 60).toFixed(0).padStart(2, '0')}
+                      Avg. Time: {Math.floor(page.avgTime / 60)}:
+                      {(page.avgTime % 60).toFixed(0).padStart(2, '0')}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-medium">{page.views.toLocaleString()} views</div>
-                    <div className="text-sm text-gray-600">{page.bounceRate.toFixed(1)}% bounce</div>
+                    <div className="text-sm text-gray-600">
+                      {page.bounceRate.toFixed(1)}% bounce
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <EmptyState
-            icon="file"
-            title="No page data available"
-          />
+          <EmptyState icon="file" title="No page data available" />
         )}
       </div>
-    )
+    ),
   };
 
   const trafficTab: TabItem = {
@@ -272,13 +311,10 @@ export const AnalyticsSystem: React.FC<AnalyticsSystemProps> = ({
             </div>
           </>
         ) : (
-          <EmptyState
-            icon="globe"
-            title="No traffic data available"
-          />
+          <EmptyState icon="globe" title="No traffic data available" />
         )}
       </div>
-    )
+    ),
   };
 
   return (

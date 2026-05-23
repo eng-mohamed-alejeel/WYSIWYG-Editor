@@ -56,7 +56,7 @@ export const Loading: React.FC<LoadingProps> = ({
   fullscreen = false,
   variant = 'spinner',
   overlay = false,
-  overlayColor
+  overlayColor,
 }) => {
   const sizeClasses = `loading-${size}`;
   const variantClasses = `loading-${variant}`;
@@ -66,12 +66,14 @@ export const Loading: React.FC<LoadingProps> = ({
     variantClasses,
     fullscreen ? 'loading-fullscreen' : '',
     overlay ? 'loading-overlay' : '',
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const style: React.CSSProperties = {
-    ...(color && { '--loading-color': color } as React.CSSProperties),
-    ...(overlayColor && { '--loading-overlay-color': overlayColor } as React.CSSProperties)
+    ...(color && ({ '--loading-color': color } as React.CSSProperties)),
+    ...(overlayColor && ({ '--loading-overlay-color': overlayColor } as React.CSSProperties)),
   };
 
   const renderSpinner = () => (

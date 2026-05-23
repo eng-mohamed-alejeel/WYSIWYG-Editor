@@ -18,13 +18,16 @@ export const UsersTab: React.FC<UsersTabProps> = ({
   users,
   onInviteClick,
   onUpdateRole,
-  onRemoveUser
+  onRemoveUser,
 }) => {
   const getStatusColor = (status: User['status']) => {
     switch (status) {
-      case 'online': return 'bg-green-500';
-      case 'away': return 'bg-yellow-500';
-      case 'offline': return 'bg-gray-500';
+      case 'online':
+        return 'bg-green-500';
+      case 'away':
+        return 'bg-yellow-500';
+      case 'offline':
+        return 'bg-gray-500';
     }
   };
 
@@ -39,7 +42,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({
       </div>
 
       <div className="space-y-2">
-        {users.map(user => (
+        {users.map((user) => (
           <div key={user.id} className="flex items-center justify-between p-2 border rounded-lg">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -50,7 +53,9 @@ export const UsersTab: React.FC<UsersTabProps> = ({
                   height={32}
                   className="w-8 h-8 rounded-full"
                 />
-                <div className={`absolute bottom-0 right-0 w-2 h-2 rounded-full ${getStatusColor(user.status)}`} />
+                <div
+                  className={`absolute bottom-0 right-0 w-2 h-2 rounded-full ${getStatusColor(user.status)}`}
+                />
               </div>
               <div>
                 <div className="font-medium">{user.name}</div>
@@ -66,9 +71,22 @@ export const UsersTab: React.FC<UsersTabProps> = ({
               {user.role !== 'owner' && (
                 <Dropdown
                   items={[
-                    { id: 'editor', label: 'Editor', onClick: () => onUpdateRole(user.id, 'editor') },
-                    { id: 'viewer', label: 'Viewer', onClick: () => onUpdateRole(user.id, 'viewer') },
-                    { id: 'remove', label: 'Remove', icon: 'delete', onClick: () => onRemoveUser(user.id) }
+                    {
+                      id: 'editor',
+                      label: 'Editor',
+                      onClick: () => onUpdateRole(user.id, 'editor'),
+                    },
+                    {
+                      id: 'viewer',
+                      label: 'Viewer',
+                      onClick: () => onUpdateRole(user.id, 'viewer'),
+                    },
+                    {
+                      id: 'remove',
+                      label: 'Remove',
+                      icon: 'delete',
+                      onClick: () => onRemoveUser(user.id),
+                    },
                   ]}
                   trigger={
                     <Button variant="ghost" size="small">
@@ -87,9 +105,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({
         <div className="property-item">
           <label className="property-item-label">Allow Public Access</label>
           <Switch checked={false} onChange={() => {}} />
-          <p className="text-sm text-gray-600 mt-1">
-            Anyone with the link can view this project
-          </p>
+          <p className="text-sm text-gray-600 mt-1">Anyone with the link can view this project</p>
         </div>
       </div>
     </div>

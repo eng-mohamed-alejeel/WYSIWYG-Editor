@@ -5,14 +5,14 @@ import { Icon } from '@wysiwyg/ui';
 import { Breadcrumb, BreadcrumbItem } from '@wysiwyg/ui';
 
 export const Toolbar: React.FC = () => {
-  const { 
-    currentBreakpoint, 
-    zoom, 
-    setCurrentBreakpoint, 
+  const {
+    currentBreakpoint,
+    zoom,
+    setCurrentBreakpoint,
     setZoom,
     isPreviewMode,
     setIsPreviewMode,
-    isDirty
+    isDirty,
   } = useBuilderStore();
 
   const handleZoomIn = () => {
@@ -30,7 +30,7 @@ export const Toolbar: React.FC = () => {
   const breadcrumbItems: BreadcrumbItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'pages', label: 'Pages' },
-    { id: 'current', label: 'Page 1', active: true }
+    { id: 'current', label: 'Page 1', active: true },
   ];
 
   return (

@@ -1,6 +1,6 @@
 /**
  * AIAssistant Component
- * 
+ *
  * An AI assistant component for providing AI-powered suggestions
  * and assistance within the editor.
  */
@@ -20,7 +20,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
   node,
   context,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const [isOpen, setIsOpen] = useState(node.props.defaultOpen || false);
@@ -41,25 +41,25 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
       id: Date.now().toString(),
       role: 'user',
       content: inputValue,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
 
     try {
       // Simulate AI response - in real implementation, this would call an AI API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: `I received your message: "${userMessage.content}". This is a simulated response. In a real implementation, this would connect to an AI service like OpenAI's GPT or similar.`,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -86,7 +86,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
         right: node.props.right || '2rem',
         zIndex: 1000,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
@@ -104,7 +104,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            marginBottom: '0.5rem'
+            marginBottom: '0.5rem',
           } as React.CSSProperties)}
         >
           <div
@@ -115,10 +115,16 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              backgroundColor: node.props.headerBackgroundColor || '#f9fafb'
+              backgroundColor: node.props.headerBackgroundColor || '#f9fafb',
             } as React.CSSProperties)}
           >
-            <h3 style={mergeStyles({ margin: 0, fontSize: '1rem', fontWeight: '600' } as React.CSSProperties)}>
+            <h3
+              style={mergeStyles({
+                margin: 0,
+                fontSize: '1rem',
+                fontWeight: '600',
+              } as React.CSSProperties)}
+            >
               {node.props.title || 'AI Assistant'}
             </h3>
             <button
@@ -130,7 +136,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
                 cursor: 'pointer',
                 padding: '0.25rem 0.5rem',
                 lineHeight: 1,
-                color: '#6b7280'
+                color: '#6b7280',
               } as React.CSSProperties)}
             >
               ×
@@ -145,16 +151,22 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
               padding: '1rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.75rem'
+              gap: '0.75rem',
             } as React.CSSProperties)}
           >
             {messages.length === 0 && (
-              <div style={mergeStyles({ textAlign: 'center', color: '#6b7280', marginTop: '2rem' } as React.CSSProperties)}>
+              <div
+                style={mergeStyles({
+                  textAlign: 'center',
+                  color: '#6b7280',
+                  marginTop: '2rem',
+                } as React.CSSProperties)}
+              >
                 {node.props.welcomeMessage || 'How can I help you today?'}
               </div>
             )}
 
-            {messages.map(message => (
+            {messages.map((message) => (
               <div
                 key={message.id}
                 className={`wysiwyg-ai-assistant-message wysiwyg-ai-assistant-message-${message.role}`}
@@ -164,7 +176,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
                   borderRadius: '0.5rem',
                   alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
                   backgroundColor: message.role === 'user' ? '#3b82f6' : '#f3f4f6',
-                  color: message.role === 'user' ? '#ffffff' : '#111827'
+                  color: message.role === 'user' ? '#ffffff' : '#111827',
                 } as React.CSSProperties)}
               >
                 {message.content}
@@ -180,13 +192,31 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
                   borderRadius: '0.5rem',
                   alignSelf: 'flex-start',
                   backgroundColor: '#f3f4f6',
-                  color: '#111827'
+                  color: '#111827',
                 } as React.CSSProperties)}
               >
-                <div style={mergeStyles({ display: 'flex', gap: '0.25rem' } as React.CSSProperties)}>
-                  <span style={mergeStyles({ animation: 'pulse 1.5s infinite' } as React.CSSProperties)}>●</span>
-                  <span style={mergeStyles({ animation: 'pulse 1.5s infinite 0.2s' } as React.CSSProperties)}>●</span>
-                  <span style={mergeStyles({ animation: 'pulse 1.5s infinite 0.4s' } as React.CSSProperties)}>●</span>
+                <div
+                  style={mergeStyles({ display: 'flex', gap: '0.25rem' } as React.CSSProperties)}
+                >
+                  <span
+                    style={mergeStyles({ animation: 'pulse 1.5s infinite' } as React.CSSProperties)}
+                  >
+                    ●
+                  </span>
+                  <span
+                    style={mergeStyles({
+                      animation: 'pulse 1.5s infinite 0.2s',
+                    } as React.CSSProperties)}
+                  >
+                    ●
+                  </span>
+                  <span
+                    style={mergeStyles({
+                      animation: 'pulse 1.5s infinite 0.4s',
+                    } as React.CSSProperties)}
+                  >
+                    ●
+                  </span>
                 </div>
               </div>
             )}
@@ -200,7 +230,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
               padding: '1rem',
               borderTop: '1px solid #e5e7eb',
               display: 'flex',
-              gap: '0.5rem'
+              gap: '0.5rem',
             } as React.CSSProperties)}
           >
             <input
@@ -215,7 +245,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
                 padding: '0.5rem 0.75rem',
                 borderRadius: '0.375rem',
                 border: '1px solid #e5e7eb',
-                fontSize: '0.875rem'
+                fontSize: '0.875rem',
               } as React.CSSProperties)}
             />
             <button
@@ -230,7 +260,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
                 cursor: isLoading || !inputValue.trim() ? 'not-allowed' : 'pointer',
                 opacity: isLoading || !inputValue.trim() ? 0.6 : 1,
                 fontSize: '0.875rem',
-                fontWeight: '600'
+                fontWeight: '600',
               } as React.CSSProperties)}
             >
               Send
@@ -255,7 +285,7 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
           justifyContent: 'center',
           fontSize: '1.5rem',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          transition: 'transform 0.2s'
+          transition: 'transform 0.2s',
         } as React.CSSProperties)}
       >
         {isOpen ? '×' : '🤖'}
@@ -270,5 +300,3 @@ export const AIAssistant: React.FC<BaseComponentProps> = ({
     </div>
   );
 };
-
-

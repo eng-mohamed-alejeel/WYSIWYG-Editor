@@ -1,6 +1,6 @@
 /**
  * Image Component
- * 
+ *
  * An image component for displaying images with various
  * customization options like size, alignment, and styling.
  */
@@ -9,12 +9,7 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-export const Image: React.FC<BaseComponentProps> = ({
-  node,
-  context,
-  style,
-  className = ''
-}) => {
+export const Image: React.FC<BaseComponentProps> = ({ node, context, style, className = '' }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-image ${className}`.trim();
 
@@ -31,7 +26,7 @@ export const Image: React.FC<BaseComponentProps> = ({
         objectFit: node.props.objectFit || 'cover',
         borderRadius: node.props.borderRadius || '0',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

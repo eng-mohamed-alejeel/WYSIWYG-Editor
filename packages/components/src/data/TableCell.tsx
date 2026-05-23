@@ -1,6 +1,6 @@
 /**
  * TableCell Component
- * 
+ *
  * A table cell component for use within the TableRow component.
  * Supports various styling options and cell spanning.
  */
@@ -9,18 +9,18 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-
 export const TableCell: React.FC<BaseComponentProps> = ({
   node,
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const isHeader = node.props.isHeader || false;
   const Tag = isHeader ? 'th' : 'td';
-  const baseClassName = `wysiwyg-table-cell ${isHeader ? 'wysiwyg-table-cell-header' : ''} ${className}`.trim();
+  const baseClassName =
+    `wysiwyg-table-cell ${isHeader ? 'wysiwyg-table-cell-header' : ''} ${className}`.trim();
 
   return (
     <Tag
@@ -37,7 +37,7 @@ export const TableCell: React.FC<BaseComponentProps> = ({
         borderBottom: node.props.borderBottom || '1px solid #e5e7eb',
         borderRight: node.props.borderRight || 'none',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

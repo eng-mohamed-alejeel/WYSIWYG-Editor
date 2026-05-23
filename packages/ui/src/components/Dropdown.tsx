@@ -139,7 +139,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   closeOnClickOutside = true,
   zIndex = 1000,
   showArrow = false,
-  animation = 'fade'
+  animation = 'fade',
 }) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -195,8 +195,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
     positionClasses,
     animationClasses,
     isOpen ? 'dropdown-open' : '',
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const renderIcon = (icon?: string | React.ReactNode) => {
     if (!icon) return null;
@@ -211,18 +213,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
   const renderBadge = (badge?: string | number) => {
     if (badge === undefined || badge === null) return null;
 
-    return (
-      <span className="dropdown-item-badge">
-        {badge}
-      </span>
-    );
+    return <span className="dropdown-item-badge">{badge}</span>;
   };
 
   return (
     <div className="dropdown-wrapper" ref={dropdownRef}>
-      <div onClick={handleToggle}>
-        {trigger}
-      </div>
+      <div onClick={handleToggle}>{trigger}</div>
       {isOpen && (
         <div
           className={classes}
@@ -247,13 +243,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
                     disabled={item.disabled}
                   >
                     {renderIcon(item.icon)}
-                    <span className="dropdown-item-label">
-                      {item.label}
-                    </span>
+                    <span className="dropdown-item-label">{item.label}</span>
                     {item.shortcut && (
-                      <span className="dropdown-item-shortcut">
-                        {item.shortcut}
-                      </span>
+                      <span className="dropdown-item-shortcut">{item.shortcut}</span>
                     )}
                     {renderBadge(item.badge)}
                   </button>

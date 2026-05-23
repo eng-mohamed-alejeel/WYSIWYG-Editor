@@ -22,7 +22,7 @@ interface GeneratedImage {
 export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
   isOpen,
   onClose,
-  onSelectImage
+  onSelectImage,
 }) => {
   const [activeTab, setActiveTab] = useState('generate');
   const [prompt, setPrompt] = useState('');
@@ -42,10 +42,10 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
       const newImages: GeneratedImage[] = Array.from({ length: 4 }, (_, i) => ({
         id: `img_${Date.now()}_${i}`,
         url: `https://via.placeholder.com/512x512?text=AI+Generated+${i + 1}`,
-        prompt
+        prompt,
       }));
 
-      setGeneratedImages(prev => [...newImages, ...prev]);
+      setGeneratedImages((prev) => [...newImages, ...prev]);
       setIsGenerating(false);
     }, 3000);
   };
@@ -81,7 +81,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 { value: 'artistic', label: 'Artistic' },
                 { value: 'cartoon', label: 'Cartoon' },
                 { value: '3d', label: '3D Render' },
-                { value: 'abstract', label: 'Abstract' }
+                { value: 'abstract', label: 'Abstract' },
               ]}
               className="w-full"
             />
@@ -96,7 +96,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 { value: '1:1', label: 'Square (1:1)' },
                 { value: '16:9', label: 'Landscape (16:9)' },
                 { value: '9:16', label: 'Portrait (9:16)' },
-                { value: '4:3', label: 'Standard (4:3)' }
+                { value: '4:3', label: 'Standard (4:3)' },
               ]}
               className="w-full"
             />
@@ -111,7 +111,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
             options={[
               { value: 'low', label: 'Low (Fast)' },
               { value: 'medium', label: 'Medium' },
-              { value: 'high', label: 'High (Best)' }
+              { value: 'high', label: 'High (Best)' },
             ]}
             className="w-full"
           />
@@ -136,7 +136,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
           )}
         </Button>
       </div>
-    )
+    ),
   };
 
   const galleryTab: TabItem = {
@@ -150,7 +150,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            {generatedImages.map(image => (
+            {generatedImages.map((image) => (
               <div key={image.id} className="relative group">
                 <Image
                   src={image.url}
@@ -175,7 +175,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
           </div>
         )}
       </div>
-    )
+    ),
   };
 
   const templatesTab: TabItem = {
@@ -232,16 +232,11 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
           </Button>
         </div>
       </div>
-    )
+    ),
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="AI Image Generator"
-      size="large"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="AI Image Generator" size="large">
       <Tabs
         items={[generateTab, galleryTab, templatesTab]}
         defaultActiveTab={activeTab}

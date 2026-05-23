@@ -12,7 +12,7 @@ export const LayoutComponents: React.FC<LayoutComponentsProps> = ({ component, r
     case 'container':
       return (
         <div style={convertStylesToCSS(component.styles)}>
-          {component.children.map(child => renderChild(child))}
+          {component.children.map((child) => renderChild(child))}
         </div>
       );
 
@@ -22,10 +22,10 @@ export const LayoutComponents: React.FC<LayoutComponentsProps> = ({ component, r
           style={convertStylesToCSS({
             display: 'flex',
             flexDirection: 'row',
-            ...component.styles
+            ...component.styles,
           })}
         >
-          {component.children.map(child => renderChild(child))}
+          {component.children.map((child) => renderChild(child))}
         </div>
       );
 
@@ -34,10 +34,10 @@ export const LayoutComponents: React.FC<LayoutComponentsProps> = ({ component, r
         <div
           style={convertStylesToCSS({
             flex: component.props?.flex || 1,
-            ...component.styles
+            ...component.styles,
           })}
         >
-          {component.children.map(child => renderChild(child))}
+          {component.children.map((child) => renderChild(child))}
         </div>
       );
 
@@ -48,17 +48,17 @@ export const LayoutComponents: React.FC<LayoutComponentsProps> = ({ component, r
             display: 'grid',
             gridTemplateColumns: component.props?.columns || 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: component.props?.gap || '1rem',
-            ...component.styles
+            ...component.styles,
           })}
         >
-          {component.children.map(child => renderChild(child))}
+          {component.children.map((child) => renderChild(child))}
         </div>
       );
 
     case 'section':
       return (
         <section style={convertStylesToCSS(component.styles)}>
-          {component.children.map(child => renderChild(child))}
+          {component.children.map((child) => renderChild(child))}
         </section>
       );
 

@@ -1,6 +1,6 @@
 /**
  * Shared Constants for WYSIWYG Visual Component Builder
- * 
+ *
  * This module contains all constants used throughout the platform.
  */
 
@@ -11,7 +11,7 @@ export const DEFAULT_BREAKPOINTS = {
   mobile: '640px',
   tablet: '768px',
   desktop: '1024px',
-  wide: '1280px'
+  wide: '1280px',
 } as const;
 
 /**
@@ -26,7 +26,7 @@ export const DEFAULT_THEME_COLORS = {
   success: '#10B981',
   warning: '#F59E0B',
   error: '#EF4444',
-  info: '#3B82F6'
+  info: '#3B82F6',
 } as const;
 
 /**
@@ -36,7 +36,7 @@ export const DEFAULT_THEME_TYPOGRAPHY = {
   fontFamily: {
     heading: 'Inter, system-ui, sans-serif',
     body: 'Inter, system-ui, sans-serif',
-    mono: 'Fira Code, monospace'
+    mono: 'Fira Code, monospace',
   },
   fontSize: {
     xs: '0.75rem',
@@ -46,20 +46,20 @@ export const DEFAULT_THEME_TYPOGRAPHY = {
     xl: '1.25rem',
     '2xl': '1.5rem',
     '3xl': '1.875rem',
-    '4xl': '2.25rem'
+    '4xl': '2.25rem',
   },
   fontWeight: {
     light: 300,
     normal: 400,
     medium: 500,
     semibold: 600,
-    bold: 700
+    bold: 700,
   },
   lineHeight: {
     tight: 1.25,
     normal: 1.5,
-    relaxed: 1.75
-  }
+    relaxed: 1.75,
+  },
 } as const;
 
 /**
@@ -71,7 +71,7 @@ export const DEFAULT_THEME_SPACING = {
   md: '1rem',
   lg: '1.5rem',
   xl: '2rem',
-  '2xl': '3rem'
+  '2xl': '3rem',
 } as const;
 
 /**
@@ -83,7 +83,7 @@ export const DEFAULT_THEME_BORDER_RADIUS = {
   md: '0.375rem',
   lg: '0.5rem',
   xl: '0.75rem',
-  full: '9999px'
+  full: '9999px',
 } as const;
 
 /**
@@ -93,7 +93,7 @@ export const DEFAULT_THEME_SHADOWS = {
   sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
   md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
   lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
 } as const;
 
 /**
@@ -104,7 +104,7 @@ export const DEFAULT_PROJECT_SETTINGS = {
   enableAiFeatures: true,
   enableAnalytics: false,
   customScripts: [],
-  customStyles: ''
+  customStyles: '',
 } as const;
 
 /**
@@ -112,7 +112,7 @@ export const DEFAULT_PROJECT_SETTINGS = {
  */
 export const DEFAULT_HISTORY_SETTINGS = {
   maxSize: 100,
-  debounceTime: 500
+  debounceTime: 500,
 } as const;
 
 /**
@@ -134,7 +134,7 @@ export const KEYBOARD_SHORTCUTS = {
   ZOOM_RESET: ['CmdOrCtrl+0'],
   SELECT_ALL: ['CmdOrCtrl+A'],
   FIND: ['CmdOrCtrl+F'],
-  REPLACE: ['CmdOrCtrl+H']
+  REPLACE: ['CmdOrCtrl+H'],
 } as const;
 
 /**
@@ -144,7 +144,7 @@ export const EXPORT_FORMATS = {
   HTML: 'html',
   REACT: 'react',
   WORDPRESS: 'wordpress',
-  ODOO: 'odoo'
+  ODOO: 'odoo',
 } as const;
 
 /**
@@ -156,7 +156,7 @@ export const ASSET_TYPES = {
   AUDIO: 'audio',
   FONT: 'font',
   FILE: 'file',
-  CODE: 'code'
+  CODE: 'code',
 } as const;
 
 /**
@@ -167,17 +167,13 @@ export const SUPPORTED_IMAGE_FORMATS = [
   'image/png',
   'image/gif',
   'image/webp',
-  'image/svg+xml'
+  'image/svg+xml',
 ] as const;
 
 /**
  * Supported video formats
  */
-export const SUPPORTED_VIDEO_FORMATS = [
-  'video/mp4',
-  'video/webm',
-  'video/ogg'
-] as const;
+export const SUPPORTED_VIDEO_FORMATS = ['video/mp4', 'video/webm', 'video/ogg'] as const;
 
 /**
  * Maximum file sizes (in bytes)
@@ -187,7 +183,7 @@ export const MAX_FILE_SIZES = {
   VIDEO: 100 * 1024 * 1024, // 100MB
   AUDIO: 50 * 1024 * 1024, // 50MB
   FONT: 5 * 1024 * 1024, // 5MB
-  FILE: 25 * 1024 * 1024 // 25MB
+  FILE: 25 * 1024 * 1024, // 25MB
 } as const;
 
 /**
@@ -200,7 +196,7 @@ export const COMPONENT_CATEGORIES = {
   FORMS: 'forms',
   ADVANCED: 'advanced',
   ECOMMERCE: 'ecommerce',
-  AI: 'ai'
+  AI: 'ai',
 } as const;
 
 /**
@@ -212,7 +208,7 @@ export const INSPECTOR_GROUPS = {
   LAYOUT: 'layout',
   RESPONSIVE: 'responsive',
   ADVANCED: 'advanced',
-  AI: 'ai'
+  AI: 'ai',
 } as const;
 
 /**
@@ -229,22 +225,17 @@ export const DEFAULT_CANVAS_SETTINGS = {
   zoom: 1,
   showGrid: true,
   snapToGrid: true,
-  gridSize: 10
+  gridSize: 10,
 } as const;
 
 /**
  * Default sandbox settings
  */
 export const DEFAULT_SANDBOX_SETTINGS = {
-  sandboxAttributes: [
-    'allow-scripts',
-    'allow-same-origin',
-    'allow-forms',
-    'allow-popups'
-  ],
+  sandboxAttributes: ['allow-scripts', 'allow-same-origin', 'allow-forms', 'allow-popups'],
   allowExternalScripts: true,
   allowInlineStyles: true,
-  enableConsole: false
+  enableConsole: false,
 } as const;
 
 /**
@@ -264,7 +255,7 @@ export const ERROR_MESSAGES = {
   SAVE_FAILED: 'Save failed',
   VALIDATION_ERROR: 'Validation error',
   NETWORK_ERROR: 'Network error',
-  PERMISSION_DENIED: 'Permission denied'
+  PERMISSION_DENIED: 'Permission denied',
 } as const;
 
 /**
@@ -278,7 +269,7 @@ export const SUCCESS_MESSAGES = {
   ASSET_UPLOADED: 'Asset uploaded successfully',
   EXPORT_SUCCESSFUL: 'Export successful',
   IMPORT_SUCCESSFUL: 'Import successful',
-  SETTINGS_SAVED: 'Settings saved successfully'
+  SETTINGS_SAVED: 'Settings saved successfully',
 } as const;
 
 /**
@@ -290,7 +281,7 @@ export const WARNING_MESSAGES = {
   LARGE_FILE_SIZE: 'File size is large, upload may take time',
   COMPONENT_LIMIT_REACHED: 'Component limit reached',
   MEMORY_WARNING: 'Memory usage is high',
-  NETWORK_SLOW: 'Network connection is slow'
+  NETWORK_SLOW: 'Network connection is slow',
 } as const;
 
 /**
@@ -301,7 +292,7 @@ export const STORAGE_KEYS = {
   SETTINGS: 'wysiwyg_settings',
   THEME: 'wysiwyg_theme',
   RECENT_PROJECTS: 'wysiwyg_recent_projects',
-  USER_PREFERENCES: 'wysiwyg_user_preferences'
+  USER_PREFERENCES: 'wysiwyg_user_preferences',
 } as const;
 
 /**
@@ -313,7 +304,7 @@ export const API_ENDPOINTS = {
   EXPORT: '/api/export',
   IMPORT: '/api/import',
   AI: '/api/ai',
-  TEMPLATES: '/api/templates'
+  TEMPLATES: '/api/templates',
 } as const;
 
 /**
@@ -332,7 +323,7 @@ export const EVENT_NAMES = {
   IMPORT_START: 'import:start',
   IMPORT_COMPLETE: 'import:complete',
   ERROR: 'error',
-  WARNING: 'warning'
+  WARNING: 'warning',
 } as const;
 
 /**
@@ -391,5 +382,5 @@ export const COMPONENT_ICONS = {
   POPOVER: 'more-horizontal',
   TOAST: 'bell',
   SKELETON: 'loader-2',
-  EMPTY: 'inbox'
+  EMPTY: 'inbox',
 } as const;

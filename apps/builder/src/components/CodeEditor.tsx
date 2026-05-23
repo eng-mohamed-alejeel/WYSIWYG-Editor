@@ -19,7 +19,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   onClose,
   code,
   language,
-  onChange
+  onChange,
 }) => {
   const [editorCode, setEditorCode] = useState(code);
   const [activeTab, setActiveTab] = useState('code');
@@ -78,7 +78,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               { value: 'html', label: 'HTML' },
               { value: 'css', label: 'CSS' },
               { value: 'javascript', label: 'JavaScript' },
-              { value: 'typescript', label: 'TypeScript' }
+              { value: 'typescript', label: 'TypeScript' },
             ]}
             className="w-32"
           />
@@ -112,13 +112,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               fontSize: `${fontSize}px`,
               paddingLeft: lineNumbers ? '3rem' : '0.5rem',
               whiteSpace: wordWrap ? 'pre-wrap' : 'pre',
-              overflow: wordWrap ? 'auto' : 'auto'
+              overflow: wordWrap ? 'auto' : 'auto',
             }}
             spellCheck={false}
           />
         </div>
       </div>
-    )
+    ),
   };
 
   const settingsTab: TabItem = {
@@ -128,26 +128,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       <div className="space-y-4">
         <div className="property-item">
           <label className="property-item-label">Show Line Numbers</label>
-          <Switch
-            checked={lineNumbers}
-            onChange={setLineNumbers}
-          />
+          <Switch checked={lineNumbers} onChange={setLineNumbers} />
         </div>
 
         <div className="property-item">
           <label className="property-item-label">Word Wrap</label>
-          <Switch
-            checked={wordWrap}
-            onChange={setWordWrap}
-          />
+          <Switch checked={wordWrap} onChange={setWordWrap} />
         </div>
 
         <div className="property-item">
           <label className="property-item-label">Auto Indent</label>
-          <Switch
-            checked={autoIndent}
-            onChange={setAutoIndent}
-          />
+          <Switch checked={autoIndent} onChange={setAutoIndent} />
         </div>
 
         <div className="property-item">
@@ -160,7 +151,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               { value: '14', label: '14px' },
               { value: '16', label: '16px' },
               { value: '18', label: '18px' },
-              { value: '20', label: '20px' }
+              { value: '20', label: '20px' },
             ]}
             className="w-full"
           />
@@ -174,13 +165,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             options={[
               { value: 'light', label: 'Light' },
               { value: 'dark', label: 'Dark' },
-              { value: 'monokai', label: 'Monokai' }
+              { value: 'monokai', label: 'Monokai' },
             ]}
             className="w-full"
           />
         </div>
       </div>
-    )
+    ),
   };
 
   const previewTab: TabItem = {
@@ -194,16 +185,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           <pre className="font-mono text-sm whitespace-pre-wrap">{editorCode}</pre>
         )}
       </div>
-    )
+    ),
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Code Editor"
-      size="large"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Code Editor" size="large">
       <div className="h-96">
         <Tabs
           items={[codeTab, settingsTab, previewTab]}

@@ -98,11 +98,10 @@ export const Panel: React.FC<PanelProps> = ({
   width,
   resizable = false,
   minWidth = 200,
-  maxWidth = 800
+  maxWidth = 800,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelWidth, setPanelWidth] = useState<number | undefined>(width);
-  const [isResizing, setIsResizing] = useState(false);
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
 
@@ -138,25 +137,21 @@ export const Panel: React.FC<PanelProps> = ({
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!resizable) return;
 
-    setIsResizing(true);
     startXRef.current = e.clientX;
-    startWidthRef.current = panelRef.current?.offsetWidth || 0;
+    startWidthRef.current = panelRef.current?.offsetWidth ?? 0;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const deltaX = position === 'right' 
-        ? startXRef.current - moveEvent.clientX
-        : moveEvent.clientX - startXRef.current;
+      const deltaX =
+        position === 'right'
+          ? startXRef.current - moveEvent.clientX
+          : moveEvent.clientX - startXRef.current;
 
-      const newWidth = Math.max(
-        minWidth,
-        Math.min(maxWidth, startWidthRef.current + deltaX)
-      );
+      const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidthRef.current + deltaX));
 
       setPanelWidth(newWidth);
     };
 
     const handleMouseUp = () => {
-      setIsResizing(false);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
@@ -173,7 +168,7 @@ export const Panel: React.FC<PanelProps> = ({
 
   const panelStyle: React.CSSProperties = {
     zIndex,
-    ...(panelWidth ? { width: `${panelWidth}px` } : {})
+    ...(panelWidth !== undefined ? { width: `${panelWidth}px` } : {}),
   };
 
   return (
@@ -184,36 +179,44 @@ export const Panel: React.FC<PanelProps> = ({
         style={panelStyle}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? 'panel-title' : undefined}
+        aria-labelledby={title !== undefined && title !== '' ? 'panel-title' : undefined}
       >
-        {title && (
+        {title !== undefined && title !== '' && (
           <div className="panel-header">
             <h2 id="panel-title" className="panel-title">
               {title}
             </h2>
             {onClose && (
-              <button
-                className="panel-close"
-                onClick={onClose}
-                aria-label="Close panel"
-              >
+              <button className="panel-close" onClick={onClose} aria-label="Close panel">
                 ×
               </button>
             )}
           </div>
         )}
-        <div className="panel-body">
-          {children}
-        </div>
-        {footer && (
-          <div className="panel-footer">
-            {footer}
-          </div>
-        )}
-        {resizable && (
+        <div className="panel-body">{children}</div>
+        {footer !== undefined && <div className="panel-footer">{footer}</div>}
+        {resizable === true && (
           <div
+            role="slider"
+            aria-orientation="vertical"
+            aria-label="Resize panel"
+            aria-valuemin={minWidth}
+            aria-valuemax={maxWidth}
+            aria-valuenow={panelWidth ?? panelRef.current?.offsetWidth ?? minWidth}
+            tabIndex={0}
             className={`panel-resize-handle panel-resize-handle-${position}`}
             onMouseDown={handleMouseDown}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const delta = e.key === 'ArrowLeft' ? -10 : 10;
+                const newWidth = Math.max(
+                  minWidth,
+                  Math.min(maxWidth, (panelWidth ?? panelRef.current?.offsetWidth ?? 300) + delta)
+                );
+                setPanelWidth(newWidth);
+              }
+            }}
           />
         )}
       </div>

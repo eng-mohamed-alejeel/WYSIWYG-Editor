@@ -68,7 +68,7 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnEsc = true,
   size = 'medium',
   className = '',
-  zIndex = 1000
+  zIndex = 1000,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -123,24 +123,14 @@ export const Modal: React.FC<ModalProps> = ({
               {title}
             </h2>
             {onClose && (
-              <button
-                className="modal-close"
-                onClick={onClose}
-                aria-label="Close modal"
-              >
+              <button className="modal-close" onClick={onClose} aria-label="Close modal">
                 ×
               </button>
             )}
           </div>
         )}
-        <div className="modal-body">
-          {children}
-        </div>
-        {footer && (
-          <div className="modal-footer">
-            {footer}
-          </div>
-        )}
+        <div className="modal-body">{children}</div>
+        {footer && <div className="modal-footer">{footer}</div>}
       </div>
     </div>
   );

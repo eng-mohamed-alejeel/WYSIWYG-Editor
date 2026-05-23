@@ -8,10 +8,7 @@
     "sourceMap": true,
     "jsx": "react-jsx"
   },
-  "references": [
-    { "path": "../core" },
-    { "path": "../shared" }
-  ],
+  "references": [{ "path": "../core" }, { "path": "../shared" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

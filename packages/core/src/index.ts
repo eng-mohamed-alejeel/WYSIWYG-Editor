@@ -1,6 +1,6 @@
 /**
  * WYSIWYG Editor Core Package
- * 
+ *
  * This is the main entry point for the core package.
  * It exports all types, utilities, and validation schemas.
  */

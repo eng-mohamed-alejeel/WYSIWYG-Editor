@@ -13,9 +13,9 @@ export const InstalledTab: React.FC<InstalledTabProps> = ({
   plugins,
   onToggle,
   onSelectPlugin,
-  onUninstall
+  onUninstall,
 }) => {
-  const installedPlugins = plugins.filter(p => p.isInstalled);
+  const installedPlugins = plugins.filter((p) => p.isInstalled);
 
   return (
     <div className="space-y-4">
@@ -27,7 +27,7 @@ export const InstalledTab: React.FC<InstalledTabProps> = ({
         />
       ) : (
         <div className="space-y-2">
-          {installedPlugins.map(plugin => (
+          {installedPlugins.map((plugin) => (
             <div
               key={plugin.id}
               className="flex items-center justify-between p-3 border rounded-lg"
@@ -41,22 +41,11 @@ export const InstalledTab: React.FC<InstalledTabProps> = ({
               </div>
 
               <div className="flex items-center gap-3">
-                <Switch
-                  checked={plugin.isEnabled}
-                  onChange={() => onToggle(plugin.id)}
-                />
-                <Button
-                  variant="ghost"
-                  size="small"
-                  onClick={() => onSelectPlugin(plugin)}
-                >
+                <Switch checked={plugin.isEnabled} onChange={() => onToggle(plugin.id)} />
+                <Button variant="ghost" size="small" onClick={() => onSelectPlugin(plugin)}>
                   <Icon name="settings" size="small" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="small"
-                  onClick={() => onUninstall(plugin.id)}
-                >
+                <Button variant="ghost" size="small" onClick={() => onUninstall(plugin.id)}>
                   <Icon name="delete" size="small" />
                 </Button>
               </div>

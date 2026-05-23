@@ -8,7 +8,11 @@ interface ModalComponentProps {
   renderChild: (child: ComponentNode) => React.ReactNode;
 }
 
-export const ModalComponent: React.FC<ModalComponentProps> = ({ component, renderChild, convertStylesToCSS }) => {
+export const ModalComponent: React.FC<ModalComponentProps> = ({
+  component,
+  renderChild,
+  convertStylesToCSS,
+}) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   return (
@@ -21,7 +25,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({ component, rende
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
         {component.props?.triggerText || 'Open Modal'}
@@ -38,7 +42,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({ component, rende
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 1000
+            zIndex: 1000,
           }}
         >
           <div
@@ -50,7 +54,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({ component, rende
               width: '90%',
               maxHeight: '80vh',
               overflow: 'auto',
-              position: 'relative'
+              position: 'relative',
             }}
           >
             <button
@@ -63,15 +67,13 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({ component, rende
                 border: 'none',
                 fontSize: '1.5rem',
                 cursor: 'pointer',
-                padding: '0.25rem'
+                padding: '0.25rem',
               }}
             >
               ×
             </button>
-            {component.children.map(child => (
-              <div key={child.id}>
-                {renderChild(child)}
-              </div>
+            {component.children.map((child) => (
+              <div key={child.id}>{renderChild(child)}</div>
             ))}
           </div>
         </div>

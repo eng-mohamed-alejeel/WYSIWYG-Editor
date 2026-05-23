@@ -8,7 +8,7 @@ interface ComponentLibraryPanelProps {
 
 export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
   handleDragStart,
-  handleDragEnd
+  handleDragEnd,
 }) => {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
@@ -24,7 +24,7 @@ export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
     { type: 'button', icon: 'button', label: 'Button' },
     { type: 'divider', icon: 'divider', label: 'Divider' },
     { type: 'spacer', icon: 'spacer', label: 'Spacer' },
-    { type: 'icon', icon: 'icon', label: 'Icon' }
+    { type: 'icon', icon: 'icon', label: 'Icon' },
   ];
 
   const layoutComponents = [
@@ -32,12 +32,12 @@ export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
     { type: 'row', icon: 'grid', label: 'Row' },
     { type: 'column', icon: 'grid', label: 'Column' },
     { type: 'grid', icon: 'grid', label: 'Grid' },
-    { type: 'section', icon: 'layout', label: 'Section' }
+    { type: 'section', icon: 'layout', label: 'Section' },
   ];
 
   const mediaComponents = [
     { type: 'image', icon: 'image', label: 'Image' },
-    { type: 'video', icon: 'video', label: 'Video' }
+    { type: 'video', icon: 'video', label: 'Video' },
   ];
 
   const formComponents = [
@@ -45,7 +45,7 @@ export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
     { type: 'textarea', icon: 'input', label: 'Textarea' },
     { type: 'select', icon: 'input', label: 'Select' },
     { type: 'checkbox', icon: 'checkbox', label: 'Checkbox' },
-    { type: 'radio', icon: 'radio', label: 'Radio' }
+    { type: 'radio', icon: 'radio', label: 'Radio' },
   ];
 
   const advancedComponents = [
@@ -56,11 +56,17 @@ export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
     { type: 'carousel', icon: 'carousel', label: 'Carousel' },
     { type: 'table', icon: 'table', label: 'Table' },
     { type: 'search', icon: 'search', label: 'Search' },
-    { type: 'filter', icon: 'filter', label: 'Filter' }
+    { type: 'filter', icon: 'filter', label: 'Filter' },
   ];
 
   const renderComponentItem = (type: string, icon: string, label: string) => (
-    <div key={type} className="component-item p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200" draggable onDragStart={(e) => handleDragStart(e, type)} onDragEnd={handleDragEnd}>
+    <div
+      key={type}
+      className="component-item p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
+      draggable
+      onDragStart={(e) => handleDragStart(e, type)}
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex items-center gap-3">
         <Icon name={icon} size="medium" />
         <span className="text-sm">{label}</span>
@@ -73,7 +79,7 @@ export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
     { id: 'layout', label: 'Layout', components: layoutComponents },
     { id: 'media', label: 'Media', components: mediaComponents },
     { id: 'forms', label: 'Forms', components: formComponents },
-    { id: 'advanced', label: 'Advanced', components: advancedComponents }
+    { id: 'advanced', label: 'Advanced', components: advancedComponents },
   ];
 
   return (
@@ -82,20 +88,22 @@ export const ComponentLibraryPanel: React.FC<ComponentLibraryPanelProps> = ({
         <h2 className="text-lg font-semibold">Components</h2>
       </div>
       <div className="flex-1 overflow-auto">
-        {categories.map(category => (
+        {categories.map((category) => (
           <div key={category.id} className="border-b border-gray-200">
             <button
               onClick={() => toggleAccordion(category.id)}
               className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <span className="font-semibold text-gray-700">{category.label}</span>
-              <span className={`transform transition-transform ${openAccordion === category.id ? 'rotate-180' : ''}`}>
+              <span
+                className={`transform transition-transform ${openAccordion === category.id ? 'rotate-180' : ''}`}
+              >
                 ▼
               </span>
             </button>
             {openAccordion === category.id && (
               <div className="component-library">
-                {category.components.map(c => renderComponentItem(c.type, c.icon, c.label))}
+                {category.components.map((c) => renderComponentItem(c.type, c.icon, c.label))}
               </div>
             )}
           </div>

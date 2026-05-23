@@ -36,7 +36,7 @@ export const Canvas: React.FC<CanvasProps> = ({ children }) => {
           width: getBreakpointWidth(),
           maxWidth: '1200px',
           minHeight: '100%',
-          transformOrigin: 'top center'
+          transformOrigin: 'top center',
         }}
       >
         {children}

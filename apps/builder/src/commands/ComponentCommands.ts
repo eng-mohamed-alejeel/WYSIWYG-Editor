@@ -123,20 +123,12 @@ export class MoveComponentCommand extends BaseCommand {
 
   execute() {
     const { moveComponent } = useBuilderStore.getState();
-    moveComponent(
-      this.componentId,
-      this.toParentId || this.componentId,
-      'inside'
-    );
+    moveComponent(this.componentId, this.toParentId || this.componentId, 'inside');
   }
 
   undo() {
     const { moveComponent } = useBuilderStore.getState();
-    moveComponent(
-      this.componentId,
-      this.fromParentId || this.componentId,
-      'inside'
-    );
+    moveComponent(this.componentId, this.fromParentId || this.componentId, 'inside');
   }
 }
 
@@ -150,11 +142,11 @@ export class BatchCommand extends BaseCommand {
   }
 
   execute() {
-    this.commands.forEach(command => command.execute());
+    this.commands.forEach((command) => command.execute());
   }
 
   undo() {
-    [...this.commands].reverse().forEach(command => command.undo());
+    [...this.commands].reverse().forEach((command) => command.undo());
   }
 }
 
@@ -174,14 +166,14 @@ export class UpdateStyleCommand extends BaseCommand {
   execute() {
     const { updateComponent } = useBuilderStore.getState();
     updateComponent(this.componentId, {
-      styles: this.styleUpdates
+      styles: this.styleUpdates,
     });
   }
 
   undo() {
     const { updateComponent } = useBuilderStore.getState();
     updateComponent(this.componentId, {
-      styles: this.previousStyles
+      styles: this.previousStyles,
     });
   }
 }
@@ -202,14 +194,14 @@ export class UpdatePropCommand extends BaseCommand {
   execute() {
     const { updateComponent } = useBuilderStore.getState();
     updateComponent(this.componentId, {
-      props: this.propUpdates
+      props: this.propUpdates,
     });
   }
 
   undo() {
     const { updateComponent } = useBuilderStore.getState();
     updateComponent(this.componentId, {
-      props: this.previousProps
+      props: this.previousProps,
     });
   }
 }

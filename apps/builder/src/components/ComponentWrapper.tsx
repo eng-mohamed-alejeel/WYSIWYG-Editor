@@ -38,11 +38,12 @@ export const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
   children,
   isSelected = false,
   isHovered = false,
-  isPreview = false
+  isPreview = false,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { setSelectedIds, setHoveredId } = useBuilderStore();
-  const { isDragging, dropTargetId, dropPosition, startDrag, setDropTarget, handleDrop } = useDragDrop();
+  const { isDragging, dropTargetId, dropPosition, startDrag, setDropTarget, handleDrop } =
+    useDragDrop();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -175,7 +176,7 @@ export const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
       style={convertStylesToCSS({
         width: component.styles?.width || 'auto',
         height: component.styles?.height || 'auto',
-        ...component.styles
+        ...component.styles,
       })}
     >
       {children}

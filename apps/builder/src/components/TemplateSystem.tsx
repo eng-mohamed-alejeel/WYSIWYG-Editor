@@ -29,7 +29,7 @@ interface TemplateSystemProps {
 export const TemplateSystem: React.FC<TemplateSystemProps> = ({
   isOpen,
   onClose,
-  onSelectTemplate
+  onSelectTemplate,
 }) => {
   const [activeTab, setActiveTab] = useState('browse');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -43,7 +43,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
       thumbnail: 'https://via.placeholder.com/400x300?text=Landing+Page',
       category: 'landing',
       components: [],
-      tags: ['modern', 'startup', 'minimal']
+      tags: ['modern', 'startup', 'minimal'],
     },
     {
       id: 'blog-1',
@@ -52,7 +52,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
       thumbnail: 'https://via.placeholder.com/400x300?text=Blog+Template',
       category: 'blog',
       components: [],
-      tags: ['clean', 'content-focused', 'minimal']
+      tags: ['clean', 'content-focused', 'minimal'],
     },
     {
       id: 'portfolio-1',
@@ -61,7 +61,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
       thumbnail: 'https://via.placeholder.com/400x300?text=Portfolio',
       category: 'portfolio',
       components: [],
-      tags: ['creative', 'showcase', 'modern']
+      tags: ['creative', 'showcase', 'modern'],
     },
     {
       id: 'ecommerce-1',
@@ -71,7 +71,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
       category: 'ecommerce',
       components: [],
       tags: ['shop', 'products', 'modern'],
-      isPremium: true
+      isPremium: true,
     },
     {
       id: 'dashboard-1',
@@ -80,8 +80,8 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
       thumbnail: 'https://via.placeholder.com/400x300?text=Dashboard',
       category: 'dashboard',
       components: [],
-      tags: ['admin', 'professional', 'modern']
-    }
+      tags: ['admin', 'professional', 'modern'],
+    },
   ];
 
   const categories = [
@@ -90,14 +90,15 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
     { id: 'blog', label: 'Blog Templates' },
     { id: 'portfolio', label: 'Portfolios' },
     { id: 'ecommerce', label: 'E-commerce' },
-    { id: 'dashboard', label: 'Dashboards' }
+    { id: 'dashboard', label: 'Dashboards' },
   ];
 
-  const filteredTemplates = templates.filter(template => {
+  const filteredTemplates = templates.filter((template) => {
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -117,7 +118,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
           <Select
             value={selectedCategory}
             onChange={setSelectedCategory}
-            options={categories.map(c => ({ value: c.id, label: c.label }))}
+            options={categories.map((c) => ({ value: c.id, label: c.label }))}
             className="w-48"
           />
         </div>
@@ -130,7 +131,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
           />
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            {filteredTemplates.map(template => (
+            {filteredTemplates.map((template) => (
               <div
                 key={template.id}
                 className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
@@ -154,7 +155,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{template.description}</p>
                   <div className="flex flex-wrap gap-1">
-                    {template.tags.map(tag => (
+                    {template.tags.map((tag) => (
                       <span
                         key={tag}
                         className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
@@ -169,7 +170,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
           </div>
         )}
       </div>
-    )
+    ),
   };
 
   const myTemplatesTab: TabItem = {
@@ -185,7 +186,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
           onAction={() => {}}
         />
       </div>
-    )
+    ),
   };
 
   const createTab: TabItem = {
@@ -195,10 +196,7 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
       <div className="space-y-4">
         <div className="property-item">
           <label className="property-item-label">Template Name</label>
-          <Input
-            placeholder="My Template"
-            className="w-full"
-          />
+          <Input placeholder="My Template" className="w-full" />
         </div>
 
         <div className="property-item">
@@ -214,38 +212,28 @@ export const TemplateSystem: React.FC<TemplateSystemProps> = ({
           <Select
             value="custom"
             onChange={() => {}}
-            options={categories.filter(c => c.id !== 'all').map(c => ({ value: c.id, label: c.label }))}
+            options={categories
+              .filter((c) => c.id !== 'all')
+              .map((c) => ({ value: c.id, label: c.label }))}
             className="w-full"
           />
         </div>
 
         <div className="property-item">
           <label className="property-item-label">Tags</label>
-          <Input
-            placeholder="tag1, tag2, tag3..."
-            className="w-full"
-          />
+          <Input placeholder="tag1, tag2, tag3..." className="w-full" />
         </div>
 
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={() => {}}
-        >
+        <Button variant="primary" className="w-full" onClick={() => {}}>
           <Icon name="save" size="small" />
           Save as Template
         </Button>
       </div>
-    )
+    ),
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Template System"
-      size="large"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Template System" size="large">
       <Tabs
         items={[browseTab, myTemplatesTab, createTab]}
         defaultActiveTab={activeTab}

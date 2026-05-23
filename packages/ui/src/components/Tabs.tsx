@@ -100,7 +100,7 @@ export const Tabs: React.FC<TabsProps> = ({
   fullWidth = false,
   className = '',
   tabListClassName = '',
-  tabPanelClassName = ''
+  tabPanelClassName = '',
 }) => {
   const [internalActiveTab, setInternalActiveTab] = useState<string>(
     defaultActiveTab || (items.length > 0 ? items[0].id : '')
@@ -115,14 +115,14 @@ export const Tabs: React.FC<TabsProps> = ({
     onChange?.(tabId);
   };
 
-  const activeItem = items.find(item => item.id === activeTab);
+  const activeItem = items.find((item) => item.id === activeTab);
 
-  const classes = ['tabs', `tabs-${variant}`, `tabs-${position}`, className].filter(Boolean).join(' ');
-  const tabListClasses = [
-    'tabs-list',
-    fullWidth ? 'tabs-list-full-width' : '',
-    tabListClassName
-  ].filter(Boolean).join(' ');
+  const classes = ['tabs', `tabs-${variant}`, `tabs-${position}`, className]
+    .filter(Boolean)
+    .join(' ');
+  const tabListClasses = ['tabs-list', fullWidth ? 'tabs-list-full-width' : '', tabListClassName]
+    .filter(Boolean)
+    .join(' ');
   const tabPanelClasses = ['tabs-panel', tabPanelClassName].filter(Boolean).join(' ');
 
   return (

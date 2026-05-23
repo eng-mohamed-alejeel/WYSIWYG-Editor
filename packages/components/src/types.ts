@@ -1,6 +1,6 @@
 /**
  * Component Library Types
- * 
+ *
  * This module defines types specific to the component library.
  */
 
@@ -25,7 +25,7 @@ export type ComponentRenderFunction = (props: BaseComponentProps) => React.React
 /**
  * Component category
  */
-export type ComponentCategory = 
+export type ComponentCategory =
   | 'layout'
   | 'typography'
   | 'media'

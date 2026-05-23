@@ -21,7 +21,7 @@ export const PermissionsSystem: React.FC<PermissionsSystemProps> = ({ isOpen, on
       id: newRoleName.toLowerCase().replace(/\s+/g, '_'),
       name: newRoleName,
       description: newRoleDescription,
-      permissions: []
+      permissions: [],
     };
     console.log('Creating role:', newRole);
     setRoles([...roles, newRole]);
@@ -33,12 +33,13 @@ export const PermissionsSystem: React.FC<PermissionsSystemProps> = ({ isOpen, on
   const handleTogglePermission = (permissionId: string) => {
     if (!selectedRole) return;
     const updatedPermissions = selectedRole.permissions.includes(permissionId)
-      ? selectedRole.permissions.filter(p => p !== permissionId)
+      ? selectedRole.permissions.filter((p) => p !== permissionId)
       : [...selectedRole.permissions, permissionId];
     setSelectedRole({ ...selectedRole, permissions: updatedPermissions });
   };
 
-  const handleRoleChange = (userId: string, newRole: string) => console.log('Changing role for user:', userId, 'to:', newRole);
+  const handleRoleChange = (userId: string, newRole: string) =>
+    console.log('Changing role for user:', userId, 'to:', newRole);
   const handleRemoveUser = (userId: string) => console.log('Removing user:', userId);
 
   const tabs: TabItem[] = [
@@ -52,7 +53,7 @@ export const PermissionsSystem: React.FC<PermissionsSystemProps> = ({ isOpen, on
           onRoleSelect={setSelectedRole}
           onCreateRole={() => setIsCreateRoleModalOpen(true)}
         />
-      )
+      ),
     },
     {
       id: 'permissions',
@@ -63,7 +64,7 @@ export const PermissionsSystem: React.FC<PermissionsSystemProps> = ({ isOpen, on
           permissions={PERMISSIONS}
           onTogglePermission={handleTogglePermission}
         />
-      )
+      ),
     },
     {
       id: 'users',
@@ -74,14 +75,14 @@ export const PermissionsSystem: React.FC<PermissionsSystemProps> = ({ isOpen, on
           users={[
             { id: '1', name: 'John Doe', email: 'john@example.com', role: 'owner' },
             { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'editor' },
-            { id: '3', name: 'Bob Johnson', email: 'bob@example.com', role: 'viewer' }
+            { id: '3', name: 'Bob Johnson', email: 'bob@example.com', role: 'viewer' },
           ]}
           onInviteUser={() => {}}
           onRoleChange={handleRoleChange}
           onRemoveUser={handleRemoveUser}
         />
-      )
-    }
+      ),
+    },
   ];
 
   return (

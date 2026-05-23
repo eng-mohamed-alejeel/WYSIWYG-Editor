@@ -23,12 +23,13 @@ export const BrowseTab: React.FC<BrowseTabProps> = ({
   onCategoryChange,
   onInstall,
   onUninstall,
-  onToggle
+  onToggle,
 }) => {
-  const filteredPlugins = plugins.filter(plugin => {
+  const filteredPlugins = plugins.filter((plugin) => {
     const matchesCategory = selectedCategory === 'all' || plugin.category === selectedCategory;
-    const matchesSearch = plugin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         plugin.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      plugin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      plugin.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -45,7 +46,7 @@ export const BrowseTab: React.FC<BrowseTabProps> = ({
         <Select
           value={selectedCategory}
           onChange={onCategoryChange}
-          options={categories.map(c => ({ value: c.id, label: c.label }))}
+          options={categories.map((c) => ({ value: c.id, label: c.label }))}
           className="w-48"
         />
       </div>
@@ -58,7 +59,7 @@ export const BrowseTab: React.FC<BrowseTabProps> = ({
         />
       ) : (
         <div className="grid grid-cols-2 gap-4">
-          {filteredPlugins.map(plugin => (
+          {filteredPlugins.map((plugin) => (
             <div
               key={plugin.id}
               className="border rounded-lg p-4 hover:shadow-lg transition-shadow"
@@ -84,24 +85,13 @@ export const BrowseTab: React.FC<BrowseTabProps> = ({
                 <span className="text-xs text-gray-500">by {plugin.author}</span>
                 {plugin.isInstalled ? (
                   <div className="flex gap-2">
-                    <Switch
-                      checked={plugin.isEnabled}
-                      onChange={() => onToggle(plugin.id)}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="small"
-                      onClick={() => onUninstall(plugin.id)}
-                    >
+                    <Switch checked={plugin.isEnabled} onChange={() => onToggle(plugin.id)} />
+                    <Button variant="ghost" size="small" onClick={() => onUninstall(plugin.id)}>
                       <Icon name="delete" size="small" />
                     </Button>
                   </div>
                 ) : (
-                  <Button
-                    variant="primary"
-                    size="small"
-                    onClick={() => onInstall(plugin)}
-                  >
+                  <Button variant="primary" size="small" onClick={() => onInstall(plugin)}>
                     Install
                   </Button>
                 )}

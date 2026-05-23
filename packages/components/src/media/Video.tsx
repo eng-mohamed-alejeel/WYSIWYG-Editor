@@ -1,6 +1,6 @@
 /**
  * Video Component
- * 
+ *
  * A video component for displaying videos with various
  * customization options like size, controls, and autoplay.
  */
@@ -9,12 +9,7 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-export const Video: React.FC<BaseComponentProps> = ({
-  node,
-  context,
-  style,
-  className = ''
-}) => {
+export const Video: React.FC<BaseComponentProps> = ({ node, context, style, className = '' }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-video ${className}`.trim();
 
@@ -34,7 +29,7 @@ export const Video: React.FC<BaseComponentProps> = ({
         maxWidth: node.props.maxWidth || '100%',
         borderRadius: node.props.borderRadius || '0',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

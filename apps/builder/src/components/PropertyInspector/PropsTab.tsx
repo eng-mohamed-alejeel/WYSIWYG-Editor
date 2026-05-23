@@ -8,20 +8,20 @@ import {
   LinkComponentProps,
   ButtonComponentProps,
   ImageComponentProps,
-  VideoComponentProps
+  VideoComponentProps,
 } from './components/BasicComponentProps';
 import {
   InputComponentProps,
   TextareaComponentProps,
   SelectComponentProps,
   CheckboxComponentProps,
-  RadioComponentProps
+  RadioComponentProps,
 } from './components/FormComponentProps';
 import {
   DividerComponentProps,
   SpacerComponentProps,
   IconComponentProps,
-  LayoutComponentProps
+  LayoutComponentProps,
 } from './components/UtilityComponentProps';
 import {
   MenuComponentProps,
@@ -31,7 +31,7 @@ import {
   CarouselComponentProps,
   TableComponentProps,
   SearchComponentProps,
-  FilterComponentProps
+  FilterComponentProps,
 } from './components/AdvancedComponentProps';
 
 interface PropsTabProps {
@@ -124,19 +124,58 @@ export const PropsTab: React.FC<PropsTabProps> = ({ component, onPropChange }) =
         <h3 className="property-group-title">Custom Properties</h3>
         {Object.entries(component.props || {}).map(([key, value]) => {
           // Skip already handled properties
-          const handledProps = ['text', 'level', 'href', 'target', 'type', 'src', 'alt', 'controls',
-                               'autoPlay', 'loop', 'muted', 'placeholder', 'value', 'rows', 'options',
-                               'checked', 'name', 'color', 'height', 'icon', 'size', 'columns', 'gap', 'flex',
-                               'items', 'orientation', 'tabs', 'defaultTab', 'multiple', 'title', 'width',
-                               'closeOnOverlayClick', 'interval', 'showNav', 'showIndicators', 'headers',
-                               'striped', 'bordered', 'debounce', 'filterBy'];
+          const handledProps = [
+            'text',
+            'level',
+            'href',
+            'target',
+            'type',
+            'src',
+            'alt',
+            'controls',
+            'autoPlay',
+            'loop',
+            'muted',
+            'placeholder',
+            'value',
+            'rows',
+            'options',
+            'checked',
+            'name',
+            'color',
+            'height',
+            'icon',
+            'size',
+            'columns',
+            'gap',
+            'flex',
+            'items',
+            'orientation',
+            'tabs',
+            'defaultTab',
+            'multiple',
+            'title',
+            'width',
+            'closeOnOverlayClick',
+            'interval',
+            'showNav',
+            'showIndicators',
+            'headers',
+            'striped',
+            'bordered',
+            'debounce',
+            'filterBy',
+          ];
           if (handledProps.includes(key)) return null;
 
           return (
             <div key={key} className="property-item">
               <label className="property-item-label">{key}</label>
               {typeof value === 'boolean' ? (
-                <Switch checked={value as boolean} onChange={(checked) => onPropChange(key, checked)} />
+                <Switch
+                  checked={value as boolean}
+                  onChange={(checked) => onPropChange(key, checked)}
+                />
               ) : typeof value === 'number' ? (
                 <Input
                   type="number"

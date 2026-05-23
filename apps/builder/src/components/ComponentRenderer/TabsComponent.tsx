@@ -8,7 +8,11 @@ interface TabsComponentProps {
   renderChild: (child: ComponentNode) => React.ReactNode;
 }
 
-export const TabsComponent: React.FC<TabsComponentProps> = ({ component, renderChild, convertStylesToCSS }) => {
+export const TabsComponent: React.FC<TabsComponentProps> = ({
+  component,
+  renderChild,
+  convertStylesToCSS,
+}) => {
   const [activeTab, setActiveTab] = React.useState(0);
 
   return (
@@ -24,7 +28,7 @@ export const TabsComponent: React.FC<TabsComponentProps> = ({ component, renderC
               background: index === activeTab ? '#3b82f6' : 'transparent',
               color: index === activeTab ? 'white' : 'gray',
               cursor: 'pointer',
-              borderRadius: '4px 4px 0 0'
+              borderRadius: '4px 4px 0 0',
             }}
           >
             {child.props?.label || `Tab ${index + 1}`}

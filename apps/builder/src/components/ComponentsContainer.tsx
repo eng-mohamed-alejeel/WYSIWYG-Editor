@@ -13,11 +13,7 @@ export const ComponentsContainer: React.FC<ComponentsContainerProps> = ({ compon
   return (
     <div id="components-container" className="min-h-[200px]">
       {components?.map((component) => (
-        <ComponentRenderer
-          key={component.id}
-          component={component}
-          isPreview={isPreviewMode}
-        />
+        <ComponentRenderer key={component.id} component={component} isPreview={isPreviewMode} />
       ))}
     </div>
   );

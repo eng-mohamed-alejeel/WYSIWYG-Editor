@@ -16,70 +16,70 @@ const COMPONENTS: ComponentLibraryItem[] = [
     type: 'text',
     label: 'Text',
     icon: 'text',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'heading',
     type: 'heading',
     label: 'Heading',
     icon: 'heading',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'paragraph',
     type: 'paragraph',
     label: 'Paragraph',
     icon: 'text',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'link',
     type: 'link',
     label: 'Link',
     icon: 'link',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'button',
     type: 'button',
     label: 'Button',
     icon: 'button',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'image',
     type: 'image',
     label: 'Image',
     icon: 'image',
-    category: 'media'
+    category: 'media',
   },
   {
     id: 'video',
     type: 'video',
     label: 'Video',
     icon: 'video',
-    category: 'media'
+    category: 'media',
   },
   {
     id: 'divider',
     type: 'divider',
     label: 'Divider',
     icon: 'divider',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'spacer',
     type: 'spacer',
     label: 'Spacer',
     icon: 'spacer',
-    category: 'basic'
+    category: 'basic',
   },
   {
     id: 'icon',
     type: 'icon',
     label: 'Icon',
     icon: 'icon',
-    category: 'basic'
+    category: 'basic',
   },
   // Layout components
   {
@@ -87,35 +87,35 @@ const COMPONENTS: ComponentLibraryItem[] = [
     type: 'container',
     label: 'Container',
     icon: 'layout',
-    category: 'layout'
+    category: 'layout',
   },
   {
     id: 'row',
     type: 'row',
     label: 'Row',
     icon: 'grid',
-    category: 'layout'
+    category: 'layout',
   },
   {
     id: 'column',
     type: 'column',
     label: 'Column',
     icon: 'grid',
-    category: 'layout'
+    category: 'layout',
   },
   {
     id: 'grid',
     type: 'grid',
     label: 'Grid',
     icon: 'grid',
-    category: 'layout'
+    category: 'layout',
   },
   {
     id: 'section',
     type: 'section',
     label: 'Section',
     icon: 'layout',
-    category: 'layout'
+    category: 'layout',
   },
   // Form components
   {
@@ -123,35 +123,35 @@ const COMPONENTS: ComponentLibraryItem[] = [
     type: 'input',
     label: 'Input',
     icon: 'input',
-    category: 'forms'
+    category: 'forms',
   },
   {
     id: 'textarea',
     type: 'textarea',
     label: 'Textarea',
     icon: 'input',
-    category: 'forms'
+    category: 'forms',
   },
   {
     id: 'select',
     type: 'select',
     label: 'Select',
     icon: 'input',
-    category: 'forms'
+    category: 'forms',
   },
   {
     id: 'checkbox',
     type: 'checkbox',
     label: 'Checkbox',
     icon: 'checkbox',
-    category: 'forms'
+    category: 'forms',
   },
   {
     id: 'radio',
     type: 'radio',
     label: 'Radio',
     icon: 'radio',
-    category: 'forms'
+    category: 'forms',
   },
   // Advanced components
   {
@@ -159,57 +159,57 @@ const COMPONENTS: ComponentLibraryItem[] = [
     type: 'menu',
     label: 'Menu',
     icon: 'menu',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'tabs',
     type: 'tabs',
     label: 'Tabs',
     icon: 'tabs',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'accordion',
     type: 'accordion',
     label: 'Accordion',
     icon: 'accordion',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'modal',
     type: 'modal',
     label: 'Modal',
     icon: 'modal',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'carousel',
     type: 'carousel',
     label: 'Carousel',
     icon: 'carousel',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'table',
     type: 'table',
     label: 'Table',
     icon: 'table',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'search',
     type: 'search',
     label: 'Search',
     icon: 'search',
-    category: 'advanced'
+    category: 'advanced',
   },
   {
     id: 'filter',
     type: 'filter',
     label: 'Filter',
     icon: 'filter',
-    category: 'advanced'
-  }
+    category: 'advanced',
+  },
 ];
 
 interface ComponentLibraryProps {
@@ -217,10 +217,7 @@ interface ComponentLibraryProps {
   onDragEnd?: () => void;
 }
 
-export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
-  onDragStart,
-  onDragEnd
-}) => {
+export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({ onDragStart, onDragEnd }) => {
   const handleDragStart = (e: React.DragEvent, component: ComponentLibraryItem) => {
     e.dataTransfer.setData('componentType', component.type);
     e.dataTransfer.effectAllowed = 'copy';
@@ -232,25 +229,21 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
     { id: 'layout', label: 'Layout' },
     { id: 'media', label: 'Media' },
     { id: 'forms', label: 'Forms' },
-    { id: 'advanced', label: 'Advanced' }
+    { id: 'advanced', label: 'Advanced' },
   ];
 
   return (
     <div className="component-library">
-      {categories.map(category => {
-        const categoryComponents = COMPONENTS.filter(
-          comp => comp.category === category.id
-        );
+      {categories.map((category) => {
+        const categoryComponents = COMPONENTS.filter((comp) => comp.category === category.id);
 
         if (categoryComponents.length === 0) return null;
 
         return (
           <div key={category.id} className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2 px-2">
-              {category.label}
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2 px-2">{category.label}</h3>
             <div className="grid grid-cols-2 gap-2 px-2">
-              {categoryComponents.map(component => (
+              {categoryComponents.map((component) => (
                 <div
                   key={component.id}
                   draggable

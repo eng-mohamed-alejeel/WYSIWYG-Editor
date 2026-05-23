@@ -10,7 +10,7 @@ export const undoRedoActions = (set: any, get: any) => ({
       project: previousProject,
       historyIndex: newIndex,
       canUndo: newIndex > 0,
-      canRedo: true
+      canRedo: true,
     });
   },
 
@@ -25,7 +25,7 @@ export const undoRedoActions = (set: any, get: any) => ({
       project: nextProject,
       historyIndex: newIndex,
       canUndo: true,
-      canRedo: newIndex < state.history.length - 1
+      canRedo: newIndex < state.history.length - 1,
     });
   },
 
@@ -36,8 +36,8 @@ export const undoRedoActions = (set: any, get: any) => ({
         history: [JSON.stringify(state.project)],
         historyIndex: 0,
         canUndo: false,
-        canRedo: false
+        canRedo: false,
       });
     }
-  }
+  },
 });

@@ -24,8 +24,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
       id: '1',
       role: 'assistant',
       content: "Hello! I'm your AI assistant. How can I help you build your project today?",
-      timestamp: new Date()
-    }
+      timestamp: new Date(),
+    },
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -47,10 +47,10 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
       id: Date.now().toString(),
       role: 'user',
       content: text,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
 
@@ -60,10 +60,10 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: generateAIResponse(text),
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
       setIsLoading(false);
     }, 1500);
   };
@@ -91,7 +91,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
       return "I can help make your design responsive! Here's what I can do:\n\n• Preview different breakpoints (mobile, tablet, desktop)\n• Suggest responsive layouts\n• Optimize for touch interactions\n• Adjust typography and spacing\n\nWhich device would you like to optimize for?";
     }
 
-    return 'I understand you\'re asking about: "' + userInput + '". Could you provide more details so I can better assist you? You can ask me about:\n\n• Creating components\n• Styling and design\n• Responsive design\n• Exporting\n• Performance optimization\n• And much more!';
+    return (
+      'I understand you\'re asking about: "' +
+      userInput +
+      '". Could you provide more details so I can better assist you? You can ask me about:\n\n• Creating components\n• Styling and design\n• Responsive design\n• Exporting\n• Performance optimization\n• And much more!'
+    );
   };
 
   const ChatMessage: React.FC<{ message: AIMessage }> = ({ message }) => (
@@ -156,7 +160,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
           </div>
         </div>
       </div>
-    )
+    ),
   };
 
   const suggestionsTab: TabItem = {
@@ -176,24 +180,24 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
               {
                 label: 'Create a hero section',
                 icon: 'layout',
-                prompt: 'Create a hero section with a call-to-action'
+                prompt: 'Create a hero section with a call-to-action',
               },
               {
                 label: 'Make design responsive',
                 icon: 'smartphone',
-                prompt: 'Help me make my design responsive'
+                prompt: 'Help me make my design responsive',
               },
               {
                 label: 'Suggest color scheme',
                 icon: 'palette',
-                prompt: 'Suggest a color scheme for my project'
+                prompt: 'Suggest a color scheme for my project',
               },
               {
                 label: 'Optimize performance',
                 icon: 'activity',
-                prompt: 'Optimize my page for performance'
+                prompt: 'Optimize my page for performance',
               },
-              { label: 'Export project', icon: 'download', prompt: 'Help me export my project' }
+              { label: 'Export project', icon: 'download', prompt: 'Help me export my project' },
             ].map((action) => (
               <Button
                 key={action.label}
@@ -224,7 +228,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
               {[
                 'Consider adding more contrast to your primary button',
                 'Your hero image is slightly large, might affect LCP',
-                'The layout is looking great on mobile viewports'
+                'The layout is looking great on mobile viewports',
               ].map((insight, i) => (
                 <li key={i} className="flex gap-3 text-sm text-blue-800/80">
                   <span className="text-blue-400 mt-1">•</span>
@@ -235,7 +239,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => 
           </div>
         </div>
       </div>
-    )
+    ),
   };
 
   return (

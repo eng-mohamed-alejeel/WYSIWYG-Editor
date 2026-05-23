@@ -20,7 +20,7 @@ const DEFAULT_CONFIG: Required<EditorConfig> = {
   enableAnalytics: false,
   maxHistorySize: 50,
   autoSaveInterval: 30000,
-  defaultBreakpoint: 'desktop'
+  defaultBreakpoint: 'desktop',
 };
 
 const INITIAL_STATE: EditorState = {
@@ -29,30 +29,30 @@ const INITIAL_STATE: EditorState = {
   selection: {
     selectedIds: [],
     hoveredId: null,
-    focusedId: null
+    focusedId: null,
   },
   history: {
     past: [],
     present: null,
     future: [],
-    maxSize: 50
+    maxSize: 50,
   },
   isDirty: false,
   isPreviewMode: false,
   currentBreakpoint: 'desktop',
   zoom: 1,
-  clipboard: []
+  clipboard: [],
 };
 
 export const Editor: React.FC<EditorProps> = ({
   initialState,
   config,
   onStateChange,
-  children
+  children,
 }) => {
   const [state, setState] = useState<EditorState>({
     ...INITIAL_STATE,
-    ...initialState
+    ...initialState,
   });
 
   const configRef = useRef({ ...DEFAULT_CONFIG, ...config });
@@ -64,7 +64,7 @@ export const Editor: React.FC<EditorProps> = ({
     const interval = setInterval(() => {
       if (state.isDirty) {
         console.log('Auto-saving project...');
-        setState(prev => ({ ...prev, isDirty: false }));
+        setState((prev) => ({ ...prev, isDirty: false }));
       }
     }, configRef.current.autoSaveInterval);
 
@@ -72,36 +72,39 @@ export const Editor: React.FC<EditorProps> = ({
   }, [state.isDirty]);
 
   // Execute command
-  const executeCommand = useCallback((command: Command) => {
-    setState(prevState => {
-      const newPast = [...prevState.history.past, prevState.history.present].filter(Boolean);
-      const newFuture: Command[] = [];
+  const executeCommand = useCallback(
+    (command: Command) => {
+      setState((prevState) => {
+        const newPast = [...prevState.history.past, prevState.history.present].filter(Boolean);
+        const newFuture: Command[] = [];
 
-      if (newPast.length > configRef.current.maxHistorySize) {
-        newPast.shift();
-      }
+        if (newPast.length > configRef.current.maxHistorySize) {
+          newPast.shift();
+        }
 
-      command.execute();
+        command.execute();
 
-      const newState = {
-        ...prevState,
-        history: {
-          ...prevState.history,
-          past: newPast,
-          present: command,
-          future: newFuture
-        },
-        isDirty: true
-      };
+        const newState = {
+          ...prevState,
+          history: {
+            ...prevState.history,
+            past: newPast,
+            present: command,
+            future: newFuture,
+          },
+          isDirty: true,
+        };
 
-      onStateChange?.(newState);
-      return newState;
-    });
-  }, [onStateChange]);
+        onStateChange?.(newState);
+        return newState;
+      });
+    },
+    [onStateChange]
+  );
 
   // Undo
   const undo = useCallback(() => {
-    setState(prevState => {
+    setState((prevState) => {
       if (!prevState.history.present || prevState.history.past.length === 0) {
         return prevState;
       }
@@ -119,9 +122,9 @@ export const Editor: React.FC<EditorProps> = ({
           ...prevState.history,
           past: newPast,
           present: newPresent,
-          future: newFuture
+          future: newFuture,
         },
-        isDirty: true
+        isDirty: true,
       };
 
       onStateChange?.(newState);
@@ -131,7 +134,7 @@ export const Editor: React.FC<EditorProps> = ({
 
   // Redo
   const redo = useCallback(() => {
-    setState(prevState => {
+    setState((prevState) => {
       if (prevState.history.future.length === 0) {
         return prevState;
       }
@@ -149,9 +152,9 @@ export const Editor: React.FC<EditorProps> = ({
           ...prevState.history,
           past: newPast,
           present: newPresent,
-          future: newFuture
+          future: newFuture,
         },
-        isDirty: true
+        isDirty: true,
       };
 
       onStateChange?.(newState);
@@ -160,163 +163,180 @@ export const Editor: React.FC<EditorProps> = ({
   }, [onStateChange]);
 
   // Update selection
-  const updateSelection = useCallback((updates: Partial<SelectionState>) => {
-    setState(prevState => {
-      const newSelection = {
-        ...prevState.selection,
-        ...updates
-      };
-
-      const newState = {
-        ...prevState,
-        selection: newSelection
-      };
-
-      onStateChange?.(newState);
-      return newState;
-    });
-  }, [onStateChange]);
-
-  // Update component
-  const updateComponent = useCallback((id: ComponentId, updates: Partial<ComponentNode>) => {
-    setState(prevState => {
-      const updateNode = (nodes: ComponentNode[]): ComponentNode[] => {
-        return nodes.map(node => {
-          if (node.id === id) {
-            return { ...node, ...updates };
-          }
-          if (node.children.length > 0) {
-            return { ...node, children: updateNode(node.children) };
-          }
-          return node;
-        });
-      };
-
-      const newState = {
-        ...prevState,
-        project: {
-          ...prevState.project,
-          pages: prevState.project?.pages?.map((page: any) => ({
-            ...page,
-            components: updateNode(page.components)
-          }))
-        },
-        isDirty: true
-      };
-
-      onStateChange?.(newState);
-      return newState;
-    });
-  }, [onStateChange]);
-
-  // Delete component
-  const deleteComponent = useCallback((id: ComponentId) => {
-    setState(prevState => {
-      const deleteNode = (nodes: ComponentNode[]): ComponentNode[] => {
-        return nodes.filter(node => {
-          if (node.id === id) return false;
-          if (node.children.length > 0) {
-            node.children = deleteNode(node.children);
-          }
-          return true;
-        });
-      };
-
-      const newState = {
-        ...prevState,
-        project: {
-          ...prevState.project,
-          pages: prevState.project?.pages?.map((page: any) => ({
-            ...page,
-            components: deleteNode(page.components)
-          }))
-        },
-        selection: {
+  const updateSelection = useCallback(
+    (updates: Partial<SelectionState>) => {
+      setState((prevState) => {
+        const newSelection = {
           ...prevState.selection,
-          selectedIds: prevState.selection.selectedIds.filter(selectedId => selectedId !== id)
-        },
-        isDirty: true
-      };
+          ...updates,
+        };
 
-      onStateChange?.(newState);
-      return newState;
-    });
-  }, [onStateChange]);
-
-  // Duplicate component
-  const duplicateComponent = useCallback((id: ComponentId) => {
-    setState(prevState => {
-      const findAndDuplicate = (nodes: ComponentNode[]): ComponentNode[] => {
-        return nodes.flatMap(node => {
-          if (node.id === id) {
-            const duplicated = {
-              ...node,
-              id: `${id}_copy_${Date.now()}`
-            };
-            return [node, duplicated];
-          }
-          if (node.children.length > 0) {
-            return [{ ...node, children: findAndDuplicate(node.children) }];
-          }
-          return [node];
-        });
-      };
-
-      const newState = {
-        ...prevState,
-        project: {
-          ...prevState.project,
-          pages: prevState.project?.pages?.map((page: any) => ({
-            ...page,
-            components: findAndDuplicate(page.components)
-          }))
-        },
-        isDirty: true
-      };
-
-      onStateChange?.(newState);
-      return newState;
-    });
-  }, [onStateChange]);
-
-  // Copy component
-  const copyComponent = useCallback((id: ComponentId) => {
-    setState(prevState => {
-      const findNode = (nodes: ComponentNode[]): ComponentNode | null => {
-        for (const node of nodes) {
-          if (node.id === id) return node;
-          if (node.children.length > 0) {
-            const found = findNode(node.children);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
-
-      const nodeToCopy = prevState.project?.pages?.find((page: any) => page.id === prevState.currentPageId)?.components;
-      const copiedNode = nodeToCopy ? findNode(nodeToCopy) : null;
-
-      if (copiedNode) {
         const newState = {
           ...prevState,
-          clipboard: [copiedNode]
+          selection: newSelection,
         };
+
         onStateChange?.(newState);
         return newState;
-      }
+      });
+    },
+    [onStateChange]
+  );
 
-      return prevState;
-    });
-  }, [onStateChange]);
+  // Update component
+  const updateComponent = useCallback(
+    (id: ComponentId, updates: Partial<ComponentNode>) => {
+      setState((prevState) => {
+        const updateNode = (nodes: ComponentNode[]): ComponentNode[] => {
+          return nodes.map((node) => {
+            if (node.id === id) {
+              return { ...node, ...updates };
+            }
+            if (node.children.length > 0) {
+              return { ...node, children: updateNode(node.children) };
+            }
+            return node;
+          });
+        };
+
+        const newState = {
+          ...prevState,
+          project: {
+            ...prevState.project,
+            pages: prevState.project?.pages?.map((page: any) => ({
+              ...page,
+              components: updateNode(page.components),
+            })),
+          },
+          isDirty: true,
+        };
+
+        onStateChange?.(newState);
+        return newState;
+      });
+    },
+    [onStateChange]
+  );
+
+  // Delete component
+  const deleteComponent = useCallback(
+    (id: ComponentId) => {
+      setState((prevState) => {
+        const deleteNode = (nodes: ComponentNode[]): ComponentNode[] => {
+          return nodes.filter((node) => {
+            if (node.id === id) return false;
+            if (node.children.length > 0) {
+              node.children = deleteNode(node.children);
+            }
+            return true;
+          });
+        };
+
+        const newState = {
+          ...prevState,
+          project: {
+            ...prevState.project,
+            pages: prevState.project?.pages?.map((page: any) => ({
+              ...page,
+              components: deleteNode(page.components),
+            })),
+          },
+          selection: {
+            ...prevState.selection,
+            selectedIds: prevState.selection.selectedIds.filter((selectedId) => selectedId !== id),
+          },
+          isDirty: true,
+        };
+
+        onStateChange?.(newState);
+        return newState;
+      });
+    },
+    [onStateChange]
+  );
+
+  // Duplicate component
+  const duplicateComponent = useCallback(
+    (id: ComponentId) => {
+      setState((prevState) => {
+        const findAndDuplicate = (nodes: ComponentNode[]): ComponentNode[] => {
+          return nodes.flatMap((node) => {
+            if (node.id === id) {
+              const duplicated = {
+                ...node,
+                id: `${id}_copy_${Date.now()}`,
+              };
+              return [node, duplicated];
+            }
+            if (node.children.length > 0) {
+              return [{ ...node, children: findAndDuplicate(node.children) }];
+            }
+            return [node];
+          });
+        };
+
+        const newState = {
+          ...prevState,
+          project: {
+            ...prevState.project,
+            pages: prevState.project?.pages?.map((page: any) => ({
+              ...page,
+              components: findAndDuplicate(page.components),
+            })),
+          },
+          isDirty: true,
+        };
+
+        onStateChange?.(newState);
+        return newState;
+      });
+    },
+    [onStateChange]
+  );
+
+  // Copy component
+  const copyComponent = useCallback(
+    (id: ComponentId) => {
+      setState((prevState) => {
+        const findNode = (nodes: ComponentNode[]): ComponentNode | null => {
+          for (const node of nodes) {
+            if (node.id === id) return node;
+            if (node.children.length > 0) {
+              const found = findNode(node.children);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+
+        const nodeToCopy = prevState.project?.pages?.find(
+          (page: any) => page.id === prevState.currentPageId
+        )?.components;
+        const copiedNode = nodeToCopy ? findNode(nodeToCopy) : null;
+
+        if (copiedNode) {
+          const newState = {
+            ...prevState,
+            clipboard: [copiedNode],
+          };
+          onStateChange?.(newState);
+          return newState;
+        }
+
+        return prevState;
+      });
+    },
+    [onStateChange]
+  );
 
   // Paste components
   const pasteComponents = useCallback(() => {
-    setState(prevState => {
+    setState((prevState) => {
       if (prevState.clipboard.length === 0) return prevState;
 
-      const newNodes = prevState.clipboard.map(node => ({
+      const newNodes = prevState.clipboard.map((node) => ({
         ...node,
-        id: `${node.id}_pasted_${Date.now()}`
+        id: `${node.id}_pasted_${Date.now()}`,
       }));
 
       const newState = {
@@ -327,13 +347,13 @@ export const Editor: React.FC<EditorProps> = ({
             if (page.id === prevState.currentPageId) {
               return {
                 ...page,
-                components: [...page.components, ...newNodes]
+                components: [...page.components, ...newNodes],
               };
             }
             return page;
-          })
+          }),
         },
-        isDirty: true
+        isDirty: true,
       };
 
       onStateChange?.(newState);
@@ -353,14 +373,10 @@ export const Editor: React.FC<EditorProps> = ({
     deleteComponent,
     duplicateComponent,
     copyComponent,
-    pasteComponents
+    pasteComponents,
   };
 
-  return (
-    <EditorContext.Provider value={contextValue}>
-      {children}
-    </EditorContext.Provider>
-  );
+  return <EditorContext.Provider value={contextValue}>{children}</EditorContext.Provider>;
 };
 
 // Create editor context

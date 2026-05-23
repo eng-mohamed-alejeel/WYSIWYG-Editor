@@ -16,7 +16,7 @@ export class HistoryManager {
     this.state = {
       past: [],
       present: null,
-      future: []
+      future: [],
     };
     this.maxSize = maxSize;
     this.listeners = new Set();
@@ -30,7 +30,7 @@ export class HistoryManager {
 
   // Notify all listeners
   private notify() {
-    this.listeners.forEach(listener => listener(this.state));
+    this.listeners.forEach((listener) => listener(this.state));
   }
 
   // Execute a command
@@ -46,7 +46,7 @@ export class HistoryManager {
     this.state = {
       past: newPast,
       present: command,
-      future: []
+      future: [],
     };
 
     this.notify();
@@ -68,7 +68,7 @@ export class HistoryManager {
     this.state = {
       past: newPast,
       present: newPresent,
-      future: newFuture
+      future: newFuture,
     };
 
     this.notify();
@@ -91,7 +91,7 @@ export class HistoryManager {
     this.state = {
       past: newPast,
       present: newPresent,
-      future: newFuture
+      future: newFuture,
     };
 
     this.notify();
@@ -113,7 +113,7 @@ export class HistoryManager {
     this.state = {
       past: [],
       present: null,
-      future: []
+      future: [],
     };
     this.notify();
   }

@@ -1,6 +1,6 @@
 /**
  * Column Component
- * 
+ *
  * A column component that creates a vertical layout container.
  * Used in conjunction with Row components to create grid layouts.
  */
@@ -9,13 +9,12 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-
 export const Column: React.FC<BaseComponentProps> = ({
   node,
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-column ${className}`.trim();
@@ -33,7 +32,7 @@ export const Column: React.FC<BaseComponentProps> = ({
         flex: node.props.flex || '1',
         minWidth: node.props.minWidth || '0',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

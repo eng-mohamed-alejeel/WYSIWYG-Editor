@@ -18,7 +18,7 @@ export class UpdateProjectSettingsCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      settings: this.settings
+      settings: this.settings,
     });
   }
 
@@ -27,7 +27,7 @@ export class UpdateProjectSettingsCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      settings: this.previousSettings
+      settings: this.previousSettings,
     });
   }
 }
@@ -49,7 +49,7 @@ export class UpdateProjectStylesCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      styles: this.styles
+      styles: this.styles,
     });
   }
 
@@ -58,7 +58,7 @@ export class UpdateProjectStylesCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      styles: this.previousStyles
+      styles: this.previousStyles,
     });
   }
 }
@@ -80,7 +80,7 @@ export class AddPageCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: [...this.pages, this.page]
+      pages: [...this.pages, this.page],
     });
   }
 
@@ -89,7 +89,7 @@ export class AddPageCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: this.pages
+      pages: this.pages,
     });
   }
 }
@@ -113,7 +113,7 @@ export class DeletePageCommand extends BaseCommand {
     const newPages = this.pages.filter((p: any) => p.id !== this.pageId);
     setProject({
       ...project,
-      pages: newPages
+      pages: newPages,
     });
 
     // If we deleted the current page, switch to another one
@@ -128,7 +128,7 @@ export class DeletePageCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: this.pages
+      pages: this.pages,
     });
   }
 }
@@ -154,7 +154,7 @@ export class UpdatePageCommand extends BaseCommand {
     );
     setProject({
       ...project,
-      pages: newPages
+      pages: newPages,
     });
   }
 
@@ -166,7 +166,7 @@ export class UpdatePageCommand extends BaseCommand {
     );
     setProject({
       ...project,
-      pages: newPages
+      pages: newPages,
     });
   }
 }
@@ -188,7 +188,7 @@ export class ReorderPagesCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: this.pages
+      pages: this.pages,
     });
   }
 
@@ -197,7 +197,7 @@ export class ReorderPagesCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: this.previousOrder
+      pages: this.previousOrder,
     });
   }
 }
@@ -219,7 +219,7 @@ export class DuplicatePageCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: [...project.pages, this.duplicatedPage]
+      pages: [...project.pages, this.duplicatedPage],
     });
   }
 
@@ -228,7 +228,7 @@ export class DuplicatePageCommand extends BaseCommand {
     const { project } = useBuilderStore.getState();
     setProject({
       ...project,
-      pages: project.pages.filter((p: any) => p.id !== this.duplicatedPage.id)
+      pages: project.pages.filter((p: any) => p.id !== this.duplicatedPage.id),
     });
   }
 }

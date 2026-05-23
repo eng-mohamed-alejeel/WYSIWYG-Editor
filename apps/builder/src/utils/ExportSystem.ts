@@ -51,7 +51,10 @@ export default ExportedComponent;`;
     return code;
   }
 
-  static async exportToWordPress(components: ComponentNode[], options: ExportOptions): Promise<string> {
+  static async exportToWordPress(
+    components: ComponentNode[],
+    options: ExportOptions
+  ): Promise<string> {
     let blocks = `<?php
 /**
  * Plugin Name: Custom Blocks
@@ -94,105 +97,113 @@ add_action('init', 'register_custom_blocks');`;
   }
 
   private static renderComponentsToHTML(components: ComponentNode[]): string {
-    return components.map(component => {
-      const props = this.propsToHTMLAttributes(component.props);
-      const styles = this.stylesToCSS(component.styles);
+    return components
+      .map((component) => {
+        const props = this.propsToHTMLAttributes(component.props);
+        const styles = this.stylesToCSS(component.styles);
 
-      let html = `<${component.type} ${props} style="${styles}">`;
+        let html = `<${component.type} ${props} style="${styles}">`;
 
-      if (component.children.length > 0) {
-        html += this.renderComponentsToHTML(component.children);
-      }
+        if (component.children.length > 0) {
+          html += this.renderComponentsToHTML(component.children);
+        }
 
-      if (component.props?.text) {
-        html += component.props.text;
-      }
+        if (component.props?.text) {
+          html += component.props.text;
+        }
 
-      html += `</${component.type}>`;
+        html += `</${component.type}>`;
 
-      return html;
-    }).join('\n');
+        return html;
+      })
+      .join('\n');
   }
 
   private static renderComponentsToReact(components: ComponentNode[], indent: number): string {
-    return components.map(component => {
-      const props = this.propsToReactProps(component.props);
-      const styles = this.stylesToReactStyles(component.styles);
-      const indentStr = ' '.repeat(indent);
+    return components
+      .map((component) => {
+        const props = this.propsToReactProps(component.props);
+        const styles = this.stylesToReactStyles(component.styles);
+        const indentStr = ' '.repeat(indent);
 
-      let code = `${indentStr}<${this.capitalize(component.type)}
+        let code = `${indentStr}<${this.capitalize(component.type)}
 `;
-      code += `${indentStr}  ${props}
+        code += `${indentStr}  ${props}
 `;
-      code += `${indentStr}  style={${styles}}
+        code += `${indentStr}  style={${styles}}
 `;
 
-      if (component.children.length > 0) {
-        code += `${indentStr}>
+        if (component.children.length > 0) {
+          code += `${indentStr}>
 `;
-        code += this.renderComponentsToReact(component.children, indent + 2);
-        code += `${indentStr}</${this.capitalize(component.type)}>
+          code += this.renderComponentsToReact(component.children, indent + 2);
+          code += `${indentStr}</${this.capitalize(component.type)}>
 `;
-      } else {
-        code += `${indentStr}/>\n`;
-      }
+        } else {
+          code += `${indentStr}/>\n`;
+        }
 
-      return code;
-    }).join('\n');
+        return code;
+      })
+      .join('\n');
   }
 
   private static renderComponentsToWordPress(components: ComponentNode[], indent: number): string {
-    return components.map(component => {
-      const indentStr = ' '.repeat(indent);
-      let code = `${indentStr}register_block_type('${component.type}', array(
+    return components
+      .map((component) => {
+        const indentStr = ' '.repeat(indent);
+        let code = `${indentStr}register_block_type('${component.type}', array(
 `;
-      code += `${indentStr}  'attributes' => array(
+        code += `${indentStr}  'attributes' => array(
 `;
-      code += `${indentStr}    'content' => array(
+        code += `${indentStr}    'content' => array(
 `;
-      code += `${indentStr}      'type' => 'string',
+        code += `${indentStr}      'type' => 'string',
 `;
-      code += `${indentStr}      'default' => '${component.props?.text || ''}',
+        code += `${indentStr}      'default' => '${component.props?.text || ''}',
 `;
-      code += `${indentStr}    ),
+        code += `${indentStr}    ),
 `;
-      code += `${indentStr}  ),
+        code += `${indentStr}  ),
 `;
-      code += `${indentStr}  'render_callback' => function($attributes) {
+        code += `${indentStr}  'render_callback' => function($attributes) {
 `;
-      code += `${indentStr}    return '<${component.type}>' . $attributes['content'] . '</${component.type}>';
+        code += `${indentStr}    return '<${component.type}>' . $attributes['content'] . '</${component.type}>';
 `;
-      code += `${indentStr}  },
+        code += `${indentStr}  },
 `;
-      code += `${indentStr}));\n`;
+        code += `${indentStr}));\n`;
 
-      return code;
-    }).join('\n');
+        return code;
+      })
+      .join('\n');
   }
 
   private static renderComponentsToOdoo(components: ComponentNode[], indent: number): string {
-    return components.map(component => {
-      const indentStr = ' '.repeat(indent);
-      let xml = `${indentStr}<record id="snippet_${component.id}" model="ir.ui.view">
+    return components
+      .map((component) => {
+        const indentStr = ' '.repeat(indent);
+        let xml = `${indentStr}<record id="snippet_${component.id}" model="ir.ui.view">
 `;
-      xml += `${indentStr}  <field name="name">${component.type} Snippet</field>
+        xml += `${indentStr}  <field name="name">${component.type} Snippet</field>
 `;
-      xml += `${indentStr}  <field name="type">qweb</field>
+        xml += `${indentStr}  <field name="type">qweb</field>
 `;
-      xml += `${indentStr}  <field name="arch" type="xml">
+        xml += `${indentStr}  <field name="arch" type="xml">
 `;
-      xml += `${indentStr}    <t t-name="website.snippet_${component.id}">
+        xml += `${indentStr}    <t t-name="website.snippet_${component.id}">
 `;
-      xml += `${indentStr}      <${component.type} t-esc="widget.snippet.content"/>
+        xml += `${indentStr}      <${component.type} t-esc="widget.snippet.content"/>
 `;
-      xml += `${indentStr}    </t>
+        xml += `${indentStr}    </t>
 `;
-      xml += `${indentStr}  </field>
+        xml += `${indentStr}  </field>
 `;
-      xml += `${indentStr}</record>\n`;
+        xml += `${indentStr}</record>\n`;
 
-      return xml;
-    }).join('\n');
+        return xml;
+      })
+      .join('\n');
   }
 
   private static propsToHTMLAttributes(props: any): string {
@@ -236,10 +247,7 @@ add_action('init', 'register_custom_blocks');`;
   }
 
   private static minifyHTML(html: string): string {
-    return html
-      .replace(/\s+/g, ' ')
-      .replace(/>\s+</g, '><')
-      .trim();
+    return html.replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
   }
 
   private static minifyCode(code: string): string {

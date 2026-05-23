@@ -1,6 +1,6 @@
 /**
  * Input Component
- * 
+ *
  * An input component for text input fields.
  * Supports various input types and validation states.
  */
@@ -9,13 +9,7 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-
-export const Input: React.FC<BaseComponentProps> = ({
-  node,
-  context,
-  style,
-  className = ''
-}) => {
+export const Input: React.FC<BaseComponentProps> = ({ node, context, style, className = '' }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-input ${className}`.trim();
 
@@ -41,7 +35,7 @@ export const Input: React.FC<BaseComponentProps> = ({
         color: node.props.color || '#111827',
         width: node.props.width || '100%',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

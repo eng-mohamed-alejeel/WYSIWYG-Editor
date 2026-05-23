@@ -56,7 +56,13 @@ export interface NotificationProps {
   /**
    * Notification position
    */
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center'
+    | 'bottom-center';
 
   /**
    * Action button text
@@ -81,7 +87,7 @@ export const Notification: React.FC<NotificationProps> = ({
   icon,
   position = 'top-right',
   actionText,
-  onAction
+  onAction,
 }) => {
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -90,7 +96,7 @@ export const Notification: React.FC<NotificationProps> = ({
   }, [visible]);
 
   useEffect(() => {
-    if (autoClose && isVisible) {
+    if (autoClose !== undefined && autoClose > 0 && isVisible) {
       const timer = setTimeout(() => {
         setIsVisible(false);
         onClose?.();
@@ -98,6 +104,7 @@ export const Notification: React.FC<NotificationProps> = ({
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [autoClose, isVisible, onClose]);
 
   const handleClose = () => {
@@ -106,7 +113,7 @@ export const Notification: React.FC<NotificationProps> = ({
   };
 
   const getIcon = () => {
-    if (icon) {
+    if (icon !== undefined && icon !== null) {
       return typeof icon === 'string' ? <Icon name={icon} /> : icon;
     }
 
@@ -114,7 +121,7 @@ export const Notification: React.FC<NotificationProps> = ({
       success: 'success',
       error: 'error',
       warning: 'warning',
-      info: 'info'
+      info: 'info',
     };
 
     return <Icon name={defaultIcons[type]} />;
@@ -122,38 +129,29 @@ export const Notification: React.FC<NotificationProps> = ({
 
   if (!isVisible) return null;
 
-  const classes = [
-    'notification',
-    `notification-${type}`,
-    `notification-${position}`,
-    className
-  ].filter(Boolean).join(' ');
+  const classes = ['notification', `notification-${type}`, `notification-${position}`, className]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={classes} role="alert">
-      <div className="notification-icon">
-        {getIcon()}
-      </div>
+      <div className="notification-icon">{getIcon()}</div>
       <div className="notification-content">
-        {title && (
-          <h4 className="notification-title">
-            {title}
-          </h4>
+        {title !== undefined && title !== null && title.trim().length > 0 && (
+          <h4 className="notification-title">{title}</h4>
         )}
-        {message && (
-          <p className="notification-message">
-            {message}
-          </p>
+        {message !== undefined && message !== null && message.trim().length > 0 && (
+          <p className="notification-message">{message}</p>
         )}
       </div>
-      {actionText && onAction && (
-        <button
-          className="notification-action"
-          onClick={onAction}
-        >
-          {actionText}
-        </button>
-      )}
+      {actionText !== undefined &&
+        actionText !== null &&
+        actionText.trim().length > 0 &&
+        onAction && (
+          <button className="notification-action" onClick={onAction}>
+            {actionText}
+          </button>
+        )}
       {showClose && (
         <button
           className="notification-close"

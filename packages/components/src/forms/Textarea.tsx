@@ -1,6 +1,6 @@
 /**
  * Textarea Component
- * 
+ *
  * A textarea component for multi-line text input.
  * Supports various customization options and validation states.
  */
@@ -13,7 +13,7 @@ export const Textarea: React.FC<BaseComponentProps> = ({
   node,
   context,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-textarea ${className}`.trim();
@@ -42,7 +42,7 @@ export const Textarea: React.FC<BaseComponentProps> = ({
         minHeight: node.props.minHeight || '100px',
         resize: node.props.resize || 'vertical',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

@@ -1,6 +1,6 @@
 /**
  * Heading Component
- * 
+ *
  * A heading component for displaying titles and headings.
  * Supports h1-h6 heading levels.
  */
@@ -9,12 +9,7 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-export const Heading: React.FC<BaseComponentProps> = ({
-  node,
-  context,
-  style,
-  className = ''
-}) => {
+export const Heading: React.FC<BaseComponentProps> = ({ node, context, style, className = '' }) => {
   const { isEditable, isPreview } = context;
   const level = node.props.level || 'h1';
   const baseClassName = `wysiwyg-heading wysiwyg-heading-${level} ${className}`.trim();
@@ -29,7 +24,7 @@ export const Heading: React.FC<BaseComponentProps> = ({
         fontWeight: node.props.fontWeight || '700',
         lineHeight: node.props.lineHeight || '1.2',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

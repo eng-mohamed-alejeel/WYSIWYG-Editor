@@ -12,12 +12,11 @@ import {
   Asset,
   AssetMetadata,
   StorageEvent,
-  StorageEventListener
+  StorageEventListener,
 } from '../types';
 
 export class LocalStorageAdapter implements StorageAdapter {
   type = 'local' as const;
-  private config: StorageConfig | null = null;
   private eventListeners: StorageEventListener[] = [];
   private connected = false;
   private readonly STORAGE_PREFIX = 'wysiwyg_';
@@ -25,48 +24,43 @@ export class LocalStorageAdapter implements StorageAdapter {
   private readonly ASSETS_KEY = 'assets';
   private readonly COMPONENTS_KEY = 'components';
 
-  async initialize(config: StorageConfig): Promise<StorageResult> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async initialize(_config: StorageConfig): Promise<StorageResult> {
     try {
-      this.config = config;
       this.connected = true;
 
       // Initialize storage if empty
-      if (!localStorage.getItem(this.STORAGE_PREFIX + this.PROJECTS_KEY)) {
-        localStorage.setItem(
-          this.STORAGE_PREFIX + this.PROJECTS_KEY,
-          JSON.stringify([])
-        );
+      const projectsKey = this.STORAGE_PREFIX + this.PROJECTS_KEY;
+      if (localStorage.getItem(projectsKey) === null) {
+        localStorage.setItem(projectsKey, JSON.stringify([]));
       }
 
-      if (!localStorage.getItem(this.STORAGE_PREFIX + this.ASSETS_KEY)) {
-        localStorage.setItem(
-          this.STORAGE_PREFIX + this.ASSETS_KEY,
-          JSON.stringify([])
-        );
+      const assetsKey = this.STORAGE_PREFIX + this.ASSETS_KEY;
+      if (localStorage.getItem(assetsKey) === null) {
+        localStorage.setItem(assetsKey, JSON.stringify([]));
       }
 
-      if (!localStorage.getItem(this.STORAGE_PREFIX + this.COMPONENTS_KEY)) {
-        localStorage.setItem(
-          this.STORAGE_PREFIX + this.COMPONENTS_KEY,
-          JSON.stringify({})
-        );
+      const componentsKey = this.STORAGE_PREFIX + this.COMPONENTS_KEY;
+      if (localStorage.getItem(componentsKey) === null) {
+        localStorage.setItem(componentsKey, JSON.stringify({}));
       }
 
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async saveProject(project: Project): Promise<StorageResult<Project>> {
     try {
       this.ensureConnected();
 
       const projects = this.getProjects();
-      const existingIndex = projects.findIndex(p => p.id === project.id);
+      const existingIndex = projects.findIndex((p) => p.id === project.id);
 
       if (existingIndex >= 0) {
         projects[existingIndex] = project;
@@ -80,29 +74,30 @@ export class LocalStorageAdapter implements StorageAdapter {
         target: 'project',
         targetId: project.id,
         data: project,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true, data: project };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async loadProject(id: string): Promise<StorageResult<Project>> {
     try {
       this.ensureConnected();
 
       const projects = this.getProjects();
-      const project = projects.find(p => p.id === id);
+      const project = projects.find((p) => p.id === id);
 
       if (!project) {
         return {
           success: false,
-          error: `Project with id ${id} not found`
+          error: `Project with id ${id} not found`,
         };
       }
 
@@ -111,42 +106,44 @@ export class LocalStorageAdapter implements StorageAdapter {
         target: 'project',
         targetId: id,
         data: project,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true, data: project };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async deleteProject(id: string): Promise<StorageResult> {
     try {
       this.ensureConnected();
 
       const projects = this.getProjects();
-      const filteredProjects = projects.filter(p => p.id !== id);
+      const filteredProjects = projects.filter((p) => p.id !== id);
 
       this.setProjects(filteredProjects);
       this.emitEvent({
         type: 'delete',
         target: 'project',
         targetId: id,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async listProjects(): Promise<StorageResult<Project[]>> {
     try {
       this.ensureConnected();
@@ -156,47 +153,50 @@ export class LocalStorageAdapter implements StorageAdapter {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
-  async saveComponent(component: any): Promise<StorageResult> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async saveComponent(component: Record<string, unknown>): Promise<StorageResult> {
     try {
       this.ensureConnected();
 
       const components = this.getComponents();
-      components[component.id] = component;
+      const componentId = String(component.id);
+      components[componentId] = component;
 
       this.setComponents(components);
       this.emitEvent({
         type: 'save',
         target: 'component',
-        targetId: component.id,
+        targetId: componentId,
         data: component,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
-  async loadComponent(id: ComponentId): Promise<StorageResult> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async loadComponent(id: ComponentId): Promise<StorageResult<Record<string, unknown>>> {
     try {
       this.ensureConnected();
 
       const components = this.getComponents();
       const component = components[id];
 
-      if (!component) {
+      if (component === undefined) {
         return {
           success: false,
-          error: `Component with id ${id} not found`
+          error: `Component with id ${id} not found`,
         };
       }
 
@@ -205,18 +205,19 @@ export class LocalStorageAdapter implements StorageAdapter {
         target: 'component',
         targetId: id,
         data: component,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true, data: component };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async deleteComponent(id: ComponentId): Promise<StorageResult> {
     try {
       this.ensureConnected();
@@ -229,18 +230,19 @@ export class LocalStorageAdapter implements StorageAdapter {
         type: 'delete',
         target: 'component',
         targetId: id,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async uploadAsset(file: File, metadata?: AssetMetadata): Promise<StorageResult<Asset>> {
     try {
       this.ensureConnected();
@@ -256,10 +258,10 @@ export class LocalStorageAdapter implements StorageAdapter {
         metadata: {
           name: file.name,
           type: file.type,
-          ...metadata
+          ...metadata,
         },
         createdAt: Date.now(),
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
 
       reader.onload = () => {
@@ -272,7 +274,7 @@ export class LocalStorageAdapter implements StorageAdapter {
           target: 'asset',
           targetId: assetId,
           data: asset,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       };
 
@@ -282,7 +284,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -292,12 +294,12 @@ export class LocalStorageAdapter implements StorageAdapter {
       this.ensureConnected();
 
       const assets = this.getAssets();
-      const asset = assets.find(a => a.id === id);
+      const asset = assets.find((a) => a.id === id);
 
       if (!asset) {
         return {
           success: false,
-          error: `Asset with id ${id} not found`
+          error: `Asset with id ${id} not found`,
         };
       }
 
@@ -309,42 +311,44 @@ export class LocalStorageAdapter implements StorageAdapter {
         target: 'asset',
         targetId: id,
         data: blob,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true, data: blob };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async deleteAsset(id: string): Promise<StorageResult> {
     try {
       this.ensureConnected();
 
       const assets = this.getAssets();
-      const filteredAssets = assets.filter(a => a.id !== id);
+      const filteredAssets = assets.filter((a) => a.id !== id);
 
       this.setAssets(filteredAssets);
       this.emitEvent({
         type: 'delete',
         target: 'asset',
         targetId: id,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async listAssets(): Promise<StorageResult<Asset[]>> {
     try {
       this.ensureConnected();
@@ -354,7 +358,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -363,6 +367,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     return this.connected;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async disconnect(): Promise<void> {
     this.connected = false;
     this.eventListeners = [];
@@ -373,7 +378,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   removeEventListener(listener: StorageEventListener): void {
-    this.eventListeners = this.eventListeners.filter(l => l !== listener);
+    this.eventListeners = this.eventListeners.filter((l) => l !== listener);
   }
 
   private ensureConnected(): void {
@@ -384,42 +389,42 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   private getProjects(): Project[] {
     const data = localStorage.getItem(this.STORAGE_PREFIX + this.PROJECTS_KEY);
-    return data ? JSON.parse(data) : [];
+    if (data !== null) {
+      return JSON.parse(data) as Project[];
+    }
+    return [];
   }
 
   private setProjects(projects: Project[]): void {
-    localStorage.setItem(
-      this.STORAGE_PREFIX + this.PROJECTS_KEY,
-      JSON.stringify(projects)
-    );
+    localStorage.setItem(this.STORAGE_PREFIX + this.PROJECTS_KEY, JSON.stringify(projects));
   }
 
   private getAssets(): Asset[] {
     const data = localStorage.getItem(this.STORAGE_PREFIX + this.ASSETS_KEY);
-    return data ? JSON.parse(data) : [];
+    if (data !== null) {
+      return JSON.parse(data) as Asset[];
+    }
+    return [];
   }
 
   private setAssets(assets: Asset[]): void {
-    localStorage.setItem(
-      this.STORAGE_PREFIX + this.ASSETS_KEY,
-      JSON.stringify(assets)
-    );
+    localStorage.setItem(this.STORAGE_PREFIX + this.ASSETS_KEY, JSON.stringify(assets));
   }
 
-  private getComponents(): Record<string, any> {
+  private getComponents(): Record<string, Record<string, unknown>> {
     const data = localStorage.getItem(this.STORAGE_PREFIX + this.COMPONENTS_KEY);
-    return data ? JSON.parse(data) : {};
+    if (data !== null) {
+      return JSON.parse(data) as Record<string, Record<string, unknown>>;
+    }
+    return {};
   }
 
-  private setComponents(components: Record<string, any>): void {
-    localStorage.setItem(
-      this.STORAGE_PREFIX + this.COMPONENTS_KEY,
-      JSON.stringify(components)
-    );
+  private setComponents(components: Record<string, Record<string, unknown>>): void {
+    localStorage.setItem(this.STORAGE_PREFIX + this.COMPONENTS_KEY, JSON.stringify(components));
   }
 
   private emitEvent(event: StorageEvent): void {
-    this.eventListeners.forEach(listener => {
+    this.eventListeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {

@@ -117,31 +117,21 @@ export const Input: React.FC<InputProps> = ({
     iconClasses,
     prefixClasses,
     suffixClasses,
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={`input-wrapper ${fullWidth ? 'input-wrapper-full-width' : ''}`}>
-      {label && (
-        <label className="input-label">
-          {label}
-        </label>
-      )}
+      {label && <label className="input-label">{label}</label>}
       <div className="input-container">
         {icon && <span className="input-icon">{icon}</span>}
         {prefix && <span className="input-prefix">{prefix}</span>}
-        <input
-          className={classes}
-          disabled={disabled}
-          {...props}
-        />
+        <input className={classes} disabled={disabled} {...props} />
         {suffix && <span className="input-suffix">{suffix}</span>}
       </div>
-      {error && errorMessage && (
-        <span className="input-error-message">
-          {errorMessage}
-        </span>
-      )}
+      {error && errorMessage && <span className="input-error-message">{errorMessage}</span>}
     </div>
   );
 };

@@ -9,7 +9,7 @@ export const basicActions = (set: any, get: any) => ({
       history: newHistory,
       historyIndex: newHistory.length - 1,
       canUndo: true,
-      canRedo: false
+      canRedo: false,
     });
   },
   setCurrentPageId: (pageId: any) => set({ currentPageId: pageId }),
@@ -18,5 +18,5 @@ export const basicActions = (set: any, get: any) => ({
   setCurrentBreakpoint: (breakpoint: any) => set({ currentBreakpoint: breakpoint }),
   setZoom: (zoom: any) => set({ zoom }),
   setIsDirty: (isDirty: any) => set({ isDirty }),
-  setIsPreviewMode: (isPreviewMode: any) => set({ isPreviewMode })
+  setIsPreviewMode: (isPreviewMode: any) => set({ isPreviewMode }),
 });

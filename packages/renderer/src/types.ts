@@ -1,10 +1,10 @@
 /**
  * Renderer Types
- * 
+ *
  * This module defines the types used by the rendering system.
  */
 
-import { ComponentNode, ComponentDefinition, Breakpoint, StyleObject } from '@wysiwyg/core';
+import { ComponentNode, Breakpoint, StyleObject } from '@wysiwyg/core';
 
 /**
  * Renderer context
@@ -22,10 +22,7 @@ export interface RendererContext {
 /**
  * Component renderer function
  */
-export type ComponentRenderer = (
-  node: ComponentNode,
-  context: RendererContext
-) => React.ReactNode;
+export type ComponentRenderer = (node: ComponentNode, context: RendererContext) => React.ReactNode;
 
 /**
  * Render options

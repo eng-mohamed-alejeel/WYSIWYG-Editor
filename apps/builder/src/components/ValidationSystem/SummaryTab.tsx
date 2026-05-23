@@ -7,9 +7,9 @@ interface SummaryTabProps {
 }
 
 export const SummaryTab: React.FC<SummaryTabProps> = ({ issues, components }) => {
-  const errorCount = issues.filter(i => i.type === 'error').length;
-  const warningCount = issues.filter(i => i.type === 'warning').length;
-  const infoCount = issues.filter(i => i.type === 'info').length;
+  const errorCount = issues.filter((i) => i.type === 'error').length;
+  const warningCount = issues.filter((i) => i.type === 'warning').length;
+  const infoCount = issues.filter((i) => i.type === 'info').length;
 
   return (
     <div className="space-y-4">
@@ -33,19 +33,41 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({ issues, components }) =>
         <div className="space-y-1">
           <div className="flex justify-between text-sm">
             <span>Accessibility</span>
-            <span className="text-gray-600">{issues.filter(i => i.message.includes('alt')).length} issues</span>
+            <span className="text-gray-600">
+              {issues.filter((i) => i.message.includes('alt')).length} issues
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Performance</span>
-            <span className="text-gray-600">{issues.filter(i => i.message.includes('performance') || i.message.includes('large')).length} issues</span>
+            <span className="text-gray-600">
+              {
+                issues.filter(
+                  (i) => i.message.includes('performance') || i.message.includes('large')
+                ).length
+              }{' '}
+              issues
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span>SEO</span>
-            <span className="text-gray-600">{issues.filter(i => i.message.includes('SEO') || i.message.includes('heading')).length} issues</span>
+            <span className="text-gray-600">
+              {
+                issues.filter((i) => i.message.includes('SEO') || i.message.includes('heading'))
+                  .length
+              }{' '}
+              issues
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Responsive Design</span>
-            <span className="text-gray-600">{issues.filter(i => i.message.includes('responsive') || i.message.includes('width')).length} issues</span>
+            <span className="text-gray-600">
+              {
+                issues.filter(
+                  (i) => i.message.includes('responsive') || i.message.includes('width')
+                ).length
+              }{' '}
+              issues
+            </span>
           </div>
         </div>
       </div>
@@ -59,11 +81,13 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({ issues, components }) =>
           </div>
           <div className="flex justify-between">
             <span>Components with Issues</span>
-            <span className="text-gray-600">{new Set(issues.map(i => i.componentId)).size}</span>
+            <span className="text-gray-600">{new Set(issues.map((i) => i.componentId)).size}</span>
           </div>
           <div className="flex justify-between">
             <span>Components without Issues</span>
-            <span className="text-gray-600">{components.length - new Set(issues.map(i => i.componentId)).size}</span>
+            <span className="text-gray-600">
+              {components.length - new Set(issues.map((i) => i.componentId)).size}
+            </span>
           </div>
         </div>
       </div>

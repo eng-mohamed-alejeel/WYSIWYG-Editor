@@ -69,14 +69,16 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   compact = false,
   variant = 'default',
   iconSize = 'large',
-  children
+  children,
 }) => {
   const classes = [
     'empty-state',
     `empty-state-${variant}`,
     compact ? 'empty-state-compact' : '',
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const renderIcon = () => {
     if (typeof icon === 'string') {
@@ -87,29 +89,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
   return (
     <div className={classes}>
-      <div className="empty-state-icon">
-        {renderIcon()}
-      </div>
-      {title && (
-        <h3 className="empty-state-title">
-          {title}
-        </h3>
-      )}
-      {description && (
-        <p className="empty-state-description">
-          {description}
-        </p>
-      )}
-      {children && (
-        <div className="empty-state-content">
-          {children}
-        </div>
-      )}
+      <div className="empty-state-icon">{renderIcon()}</div>
+      {title && <h3 className="empty-state-title">{title}</h3>}
+      {description && <p className="empty-state-description">{description}</p>}
+      {children && <div className="empty-state-content">{children}</div>}
       {actionText && onAction && (
-        <button
-          className="empty-state-action"
-          onClick={onAction}
-        >
+        <button className="empty-state-action" onClick={onAction}>
           {actionText}
         </button>
       )}

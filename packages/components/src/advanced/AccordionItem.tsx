@@ -1,6 +1,6 @@
 /**
  * AccordionItem Component
- * 
+ *
  * An individual item component used within the Accordion.
  * Contains a header and collapsible content panel.
  */
@@ -20,7 +20,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
   isExpanded = false,
   onToggle,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-accordion-item ${className}`.trim();
@@ -34,7 +34,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
         ...parseInlineStyles(style),
         border: node.props.border || '1px solid #e5e7eb',
         borderRadius: node.props.borderRadius || '0.375rem',
-        overflow: 'hidden'
+        overflow: 'hidden',
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
@@ -49,14 +49,19 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          userSelect: 'none'
+          userSelect: 'none',
         } as React.CSSProperties)}
         onClick={() => !node.props.disabled && onToggle?.()}
       >
         <span style={mergeStyles({ fontWeight: '600' } as React.CSSProperties)}>
           {node.props.title || 'Accordion Item'}
         </span>
-        <span style={mergeStyles({ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' } as React.CSSProperties)}>
+        <span
+          style={mergeStyles({
+            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s',
+          } as React.CSSProperties)}
+        >
           {node.props.icon || '▼'}
         </span>
       </div>
@@ -65,7 +70,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
         style={mergeStyles({
           padding: node.props.contentPadding || '0.75rem 1rem',
           display: isExpanded ? 'block' : 'none',
-          backgroundColor: node.props.contentBackgroundColor || '#ffffff'
+          backgroundColor: node.props.contentBackgroundColor || '#ffffff',
         } as React.CSSProperties)}
       >
         {children}
@@ -81,7 +86,7 @@ function parseInlineStyles(style?: string): React.CSSProperties {
   const declarations = style.split(';').filter(Boolean);
 
   for (const declaration of declarations) {
-    const [property, value] = declaration.split(':').map(s => s.trim());
+    const [property, value] = declaration.split(':').map((s) => s.trim());
     if (property && value) {
       styles[property] = value;
     }
@@ -92,12 +97,12 @@ function parseInlineStyles(style?: string): React.CSSProperties {
 
 function mergeStyles(...styleObjects: Array<Record<string, any>>): React.CSSProperties {
   const merged: Record<string, any> = {};
-  
+
   for (const styleObj of styleObjects) {
     if (styleObj && typeof styleObj === 'object') {
       Object.assign(merged, styleObj);
     }
   }
-  
+
   return merged as React.CSSProperties;
 }

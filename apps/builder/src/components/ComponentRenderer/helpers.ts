@@ -1,7 +1,9 @@
 import React from 'react';
 
 // Helper function to convert StyleObject to CSSProperties
-export const convertStylesToCSS = (styles?: Record<string, string | number>): React.CSSProperties => {
+export const convertStylesToCSS = (
+  styles?: Record<string, string | number>
+): React.CSSProperties => {
   if (!styles) return {};
 
   const cssStyles: React.CSSProperties = {};

@@ -1,6 +1,6 @@
 /**
  * Section Component
- * 
+ *
  * A container component that represents a section of a page.
  * Can contain other components and provides layout structure.
  */
@@ -14,7 +14,7 @@ export const Section: React.FC<BaseComponentProps> = ({
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-section ${className}`.trim();
@@ -25,7 +25,7 @@ export const Section: React.FC<BaseComponentProps> = ({
       className={baseClassName}
       style={mergeStyles({
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

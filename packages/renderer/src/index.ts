@@ -1,6 +1,6 @@
 /**
  * WYSIWYG Editor Renderer Package
- * 
+ *
  * This is the main entry point for the renderer package.
  * It exports all rendering-related functionality.
  */

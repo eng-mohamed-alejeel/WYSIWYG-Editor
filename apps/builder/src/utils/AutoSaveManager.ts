@@ -18,7 +18,7 @@ export class AutoSaveManager {
       interval: options.interval || 30000, // Default 30 seconds
       enabled: options.enabled !== false,
       onSave: options.onSave,
-      onError: options.onError
+      onError: options.onError,
     };
   }
 
@@ -54,7 +54,8 @@ export class AutoSaveManager {
     try {
       this.isSaving = true;
 
-      const { project, currentPageId, selectedIds, currentBreakpoint, zoom } = useBuilderStore.getState();
+      const { project, currentPageId, selectedIds, currentBreakpoint, zoom } =
+        useBuilderStore.getState();
 
       const saveData = {
         project,
@@ -62,7 +63,7 @@ export class AutoSaveManager {
         selectedIds,
         currentBreakpoint,
         zoom,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // Save to localStorage
@@ -78,7 +79,6 @@ export class AutoSaveManager {
       // Mark project as not dirty
       const { setIsDirty } = useBuilderStore.getState();
       setIsDirty(false);
-
     } catch (error) {
       console.error('Auto-save failed:', error);
 

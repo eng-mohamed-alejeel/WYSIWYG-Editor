@@ -8,11 +8,16 @@ interface CarouselComponentProps {
   renderChild: (child: ComponentNode) => React.ReactNode;
 }
 
-export const CarouselComponent: React.FC<CarouselComponentProps> = ({ component, renderChild, convertStylesToCSS }) => {
+export const CarouselComponent: React.FC<CarouselComponentProps> = ({
+  component,
+  renderChild,
+  convertStylesToCSS,
+}) => {
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % component.children.length);
-  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + component.children.length) % component.children.length);
+  const prevSlide = () =>
+    setCurrentIndex((prev) => (prev - 1 + component.children.length) % component.children.length);
 
   return (
     <div style={convertStylesToCSS(component.styles)}>
@@ -21,10 +26,10 @@ export const CarouselComponent: React.FC<CarouselComponentProps> = ({ component,
           style={{
             display: 'flex',
             transition: 'transform 0.3s ease-in-out',
-            transform: `translateX(-${currentIndex * 100}%)`
+            transform: `translateX(-${currentIndex * 100}%)`,
           }}
         >
-          {component.children.map(child => (
+          {component.children.map((child) => (
             <div key={child.id} style={{ flex: '0 0 100%', padding: '0.5rem' }}>
               {renderChild(child)}
             </div>
@@ -46,7 +51,7 @@ export const CarouselComponent: React.FC<CarouselComponentProps> = ({ component,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           }}
         >
           ◀
@@ -67,13 +72,15 @@ export const CarouselComponent: React.FC<CarouselComponentProps> = ({ component,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           }}
         >
           ▶
         </button>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '0.5rem' }}
+      >
         {component.children.map((_, index) => (
           <button
             key={index}
@@ -85,7 +92,7 @@ export const CarouselComponent: React.FC<CarouselComponentProps> = ({ component,
               background: index === currentIndex ? '#3b82f6' : '#d1d5db',
               border: 'none',
               cursor: 'pointer',
-              transition: 'background 0.2s'
+              transition: 'background 0.2s',
             }}
           />
         ))}

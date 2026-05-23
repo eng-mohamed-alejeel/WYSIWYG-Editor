@@ -1,6 +1,6 @@
 /**
  * Component Registry
- * 
+ *
  * This module manages the registration and retrieval of component renderers.
  */
 
@@ -77,7 +77,7 @@ export class DefaultComponentRegistry implements ComponentRegistry {
    * Unregister multiple component renderers at once
    */
   unregisterBatch(types: string[]): void {
-    types.forEach(type => {
+    types.forEach((type) => {
       this.unregister(type);
     });
   }

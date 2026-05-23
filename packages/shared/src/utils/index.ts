@@ -1,6 +1,6 @@
 /**
  * Shared Utilities for WYSIWYG Visual Component Builder
- * 
+ *
  * This module provides utility functions used across multiple packages.
  */
 
@@ -89,7 +89,7 @@ export function cssToStyleObject(css: string): StyleObject {
   const declarations = css.split(';').filter(Boolean);
 
   for (const declaration of declarations) {
-    const [property, value] = declaration.split(':').map(s => s.trim());
+    const [property, value] = declaration.split(':').map((s) => s.trim());
     if (property && value) {
       const camelProperty = kebabCaseToCamelCase(property);
       styles[camelProperty as StyleProperty] = value;
@@ -147,12 +147,10 @@ export const Easing = {
     t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
   easeInQuart: (t: number) => t * t * t * t,
   easeOutQuart: (t: number) => 1 - --t * t * t * t,
-  easeInOutQuart: (t: number) =>
-    t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t,
+  easeInOutQuart: (t: number) => (t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t),
   easeInQuint: (t: number) => t * t * t * t * t,
   easeOutQuint: (t: number) => 1 + --t * t * t * t * t,
-  easeInOutQuint: (t: number) =>
-    t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t
+  easeInOutQuint: (t: number) => (t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t),
 } as const;
 
 /**
@@ -233,7 +231,7 @@ export function toTitleCase(str: string): string {
   return str
     .toLowerCase()
     .split(' ')
-    .map(word => capitalize(word))
+    .map((word) => capitalize(word))
     .join(' ');
 }
 
@@ -254,7 +252,7 @@ export function isEmpty(value: any): boolean {
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj;
   if (obj instanceof Date) return new Date(obj.getTime()) as any;
-  if (obj instanceof Array) return obj.map(item => deepClone(item)) as any;
+  if (obj instanceof Array) return obj.map((item) => deepClone(item)) as any;
   if (obj instanceof Object) {
     const clonedObj = {} as any;
     for (const key in obj) {
@@ -291,9 +289,7 @@ export function setPathValue(obj: any, path: string, value: any): void {
  * Check if device is mobile
  */
 export function isMobile(): boolean {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 /**
@@ -309,7 +305,7 @@ export function isTouchDevice(): boolean {
 export function getViewportSize(): { width: number; height: number } {
   return {
     width: window.innerWidth,
-    height: window.innerHeight
+    height: window.innerHeight,
   };
 }
 

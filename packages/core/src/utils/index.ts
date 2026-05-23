@@ -1,6 +1,6 @@
 /**
  * Core Utilities for WYSIWYG Visual Component Builder
- * 
+ *
  * This module provides utility functions used throughout the platform.
  */
 
@@ -16,10 +16,7 @@ export function generateId(prefix: string = 'component'): ComponentId {
 /**
  * Find a component by ID in the tree
  */
-export function findComponentById(
-  tree: ComponentNode[],
-  id: ComponentId
-): ComponentNode | null {
+export function findComponentById(tree: ComponentNode[], id: ComponentId): ComponentNode | null {
   for (const node of tree) {
     if (node.id === id) {
       return node;
@@ -64,14 +61,14 @@ export function updateComponentById(
   id: ComponentId,
   updates: Partial<ComponentNode>
 ): ComponentNode[] {
-  return tree.map(node => {
+  return tree.map((node) => {
     if (node.id === id) {
       return { ...node, ...updates };
     }
     if (node.children.length > 0) {
       return {
         ...node,
-        children: updateComponentById(node.children, id, updates)
+        children: updateComponentById(node.children, id, updates),
       };
     }
     return node;
@@ -81,11 +78,8 @@ export function updateComponentById(
 /**
  * Delete a component from the tree by ID
  */
-export function deleteComponentById(
-  tree: ComponentNode[],
-  id: ComponentId
-): ComponentNode[] {
-  return tree.filter(node => {
+export function deleteComponentById(tree: ComponentNode[], id: ComponentId): ComponentNode[] {
+  return tree.filter((node) => {
     if (node.id === id) {
       return false;
     }
@@ -108,7 +102,7 @@ export function moveComponent(
   // Find and remove the component
   let component: ComponentNode | null = null;
   const removeComponent = (nodes: ComponentNode[]): ComponentNode[] => {
-    return nodes.filter(node => {
+    return nodes.filter((node) => {
       if (node.id === componentId) {
         component = node;
         return false;
@@ -137,7 +131,7 @@ export function moveComponent(
 
   // Find the new parent and add the component
   const addToParent = (nodes: ComponentNode[]): ComponentNode[] => {
-    return nodes.map(node => {
+    return nodes.map((node) => {
       if (node.id === newParentId) {
         const newChildren = [...node.children];
         if (newIndex !== undefined) {
@@ -150,7 +144,7 @@ export function moveComponent(
       if (node.children.length > 0) {
         return {
           ...node,
-          children: addToParent(node.children)
+          children: addToParent(node.children),
         };
       }
       return node;
@@ -167,7 +161,7 @@ export function cloneComponentTree(tree: ComponentNode[]): ComponentNode[] {
   const cloneNode = (node: ComponentNode): ComponentNode => ({
     ...node,
     id: generateId(node.type),
-    children: node.children.map(cloneNode)
+    children: node.children.map(cloneNode),
   });
 
   return tree.map(cloneNode);
@@ -195,10 +189,7 @@ export function getAllComponentIds(tree: ComponentNode[]): ComponentId[] {
 /**
  * Get all components of a specific type
  */
-export function getComponentsByType(
-  tree: ComponentNode[],
-  type: ComponentType
-): ComponentNode[] {
+export function getComponentsByType(tree: ComponentNode[], type: ComponentType): ComponentNode[] {
   const components: ComponentNode[] = [];
 
   const traverse = (nodes: ComponentNode[]) => {
@@ -239,16 +230,13 @@ export function isValidChild(
 /**
  * Deep merge objects
  */
-export function deepMerge<T extends Record<string, any>>(
-  target: T,
-  source: Partial<T>
-): T {
+export function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
   const result = { ...target };
 
   for (const key in source) {
     const sourceValue = source[key];
     const targetValue = result[key];
-    
+
     if (
       sourceValue &&
       typeof sourceValue === 'object' &&
@@ -319,7 +307,7 @@ export function formatFileSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 }
 
 /**
@@ -347,7 +335,7 @@ export function sanitizeHtml(html: string): string {
  * Generate a random color
  */
 export function generateRandomColor(): string {
-  return '#' + Math.floor(Math.random()*16777215).toString(16);
+  return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
 
 /**
@@ -359,7 +347,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
     ? {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
+        b: parseInt(result[3], 16),
       }
     : null;
 }
@@ -368,8 +356,13 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
  * Convert RGB color to hex
  */
 export function rgbToHex(r: number, g: number, b: number): string {
-  return '#' + [r, g, b].map(x => {
-    const hex = x.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  }).join('');
+  return (
+    '#' +
+    [r, g, b]
+      .map((x) => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      })
+      .join('')
+  );
 }

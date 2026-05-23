@@ -17,7 +17,7 @@ export const AITextGenerator: React.FC<AITextGeneratorProps> = ({
   isOpen,
   onClose,
   onGenerate,
-  initialText = ''
+  initialText = '',
 }) => {
   const [activeTab, setActiveTab] = useState('generate');
   const [prompt, setPrompt] = useState('');
@@ -41,19 +41,29 @@ export const AITextGenerator: React.FC<AITextGeneratorProps> = ({
     }, 2000);
   };
 
-  const generateText = (inputPrompt: string, selectedTone: string, selectedLength: string): string => {
+  const generateText = (
+    inputPrompt: string,
+    selectedTone: string,
+    selectedLength: string
+  ): string => {
     const tones = {
-      professional: 'This is a professionally written text that maintains a formal tone and business-appropriate language.',
-      casual: "Hey there! This is a friendly and casual text that's easy to read and sounds like you're chatting with a friend.",
-      creative: '✨ This is a creatively written text that uses imaginative language and engaging storytelling techniques.',
-      technical: 'This is a technical text that uses precise terminology and follows industry standards.',
-      persuasive: 'This is a persuasive text designed to convince and motivate the reader to take action.'
+      professional:
+        'This is a professionally written text that maintains a formal tone and business-appropriate language.',
+      casual:
+        "Hey there! This is a friendly and casual text that's easy to read and sounds like you're chatting with a friend.",
+      creative:
+        '✨ This is a creatively written text that uses imaginative language and engaging storytelling techniques.',
+      technical:
+        'This is a technical text that uses precise terminology and follows industry standards.',
+      persuasive:
+        'This is a persuasive text designed to convince and motivate the reader to take action.',
     };
 
     const lengths = {
       short: 'This is a concise version of the text, focusing on the key points.',
-      medium: 'This is a balanced version of the text that provides enough detail without being too lengthy.',
-      long: 'This is a comprehensive version of the text that covers all aspects in detail and provides extensive information.'
+      medium:
+        'This is a balanced version of the text that provides enough detail without being too lengthy.',
+      long: 'This is a comprehensive version of the text that covers all aspects in detail and provides extensive information.',
     };
 
     return `${tones[selectedTone as keyof typeof tones]}
@@ -100,7 +110,7 @@ Based on your request: "${inputPrompt}"`;
                 { value: 'casual', label: 'Casual' },
                 { value: 'creative', label: 'Creative' },
                 { value: 'technical', label: 'Technical' },
-                { value: 'persuasive', label: 'Persuasive' }
+                { value: 'persuasive', label: 'Persuasive' },
               ]}
               className="w-full"
             />
@@ -114,7 +124,7 @@ Based on your request: "${inputPrompt}"`;
               options={[
                 { value: 'short', label: 'Short' },
                 { value: 'medium', label: 'Medium' },
-                { value: 'long', label: 'Long' }
+                { value: 'long', label: 'Long' },
               ]}
               className="w-full"
             />
@@ -131,7 +141,7 @@ Based on your request: "${inputPrompt}"`;
               { value: 'ar', label: 'Arabic' },
               { value: 'fr', label: 'French' },
               { value: 'de', label: 'German' },
-              { value: 'es', label: 'Spanish' }
+              { value: 'es', label: 'Spanish' },
             ]}
             className="w-full"
           />
@@ -156,7 +166,7 @@ Based on your request: "${inputPrompt}"`;
           )}
         </Button>
       </div>
-    )
+    ),
   };
 
   const improveTab: TabItem = {
@@ -166,11 +176,7 @@ Based on your request: "${inputPrompt}"`;
       <div className="space-y-4">
         <div className="property-item">
           <label className="property-item-label">Original Text</label>
-          <textarea
-            className="property-item-input w-full h-32"
-            value={initialText}
-            readOnly
-          />
+          <textarea className="property-item-input w-full h-32" value={initialText} readOnly />
         </div>
 
         <div className="property-item">
@@ -183,7 +189,7 @@ Based on your request: "${inputPrompt}"`;
               { value: 'casual', label: 'Make Casual' },
               { value: 'creative', label: 'Make Creative' },
               { value: 'concise', label: 'Make Concise' },
-              { value: 'expand', label: 'Expand' }
+              { value: 'expand', label: 'Expand' },
             ]}
             className="w-full"
           />
@@ -208,7 +214,7 @@ Based on your request: "${inputPrompt}"`;
           )}
         </Button>
       </div>
-    )
+    ),
   };
 
   const templatesTab: TabItem = {
@@ -265,16 +271,11 @@ Based on your request: "${inputPrompt}"`;
           </Button>
         </div>
       </div>
-    )
+    ),
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="AI Text Generator"
-      size="large"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="AI Text Generator" size="large">
       <div className="flex gap-4">
         <div className="flex-1">
           <Tabs
@@ -305,11 +306,7 @@ Based on your request: "${inputPrompt}"`;
               onChange={(e) => setGeneratedText(e.target.value)}
             />
 
-            <Button
-              variant="primary"
-              onClick={handleUseText}
-              className="w-full"
-            >
+            <Button variant="primary" onClick={handleUseText} className="w-full">
               <Icon name="check" size="small" />
               Use This Text
             </Button>

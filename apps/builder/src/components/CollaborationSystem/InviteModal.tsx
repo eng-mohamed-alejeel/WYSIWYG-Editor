@@ -22,15 +22,10 @@ export const InviteModal: React.FC<InviteModalProps> = ({
   onEmailChange,
   inviteRole,
   onRoleChange,
-  onInvite
+  onInvite,
 }) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Invite Team Member"
-      size="small"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Invite Team Member" size="small">
       <div className="space-y-4">
         <div className="property-item">
           <label className="property-item-label">Email</label>
@@ -50,7 +45,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({
             onChange={(value) => onRoleChange(value as 'editor' | 'viewer')}
             options={[
               { value: 'editor', label: 'Editor - Can edit and comment' },
-              { value: 'viewer', label: 'Viewer - Can view and comment' }
+              { value: 'viewer', label: 'Viewer - Can view and comment' },
             ]}
             className="w-full"
           />
@@ -60,11 +55,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            onClick={onInvite}
-            disabled={!inviteEmail.trim()}
-          >
+          <Button variant="primary" onClick={onInvite} disabled={!inviteEmail.trim()}>
             <Icon name="send" size="small" />
             Send Invite
           </Button>

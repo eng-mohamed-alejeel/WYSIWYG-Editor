@@ -1,6 +1,6 @@
 /**
  * TableRow Component
- * 
+ *
  * A table row component for use within the Table component.
  * Supports various styling options and hover effects.
  */
@@ -14,7 +14,7 @@ export const TableRow: React.FC<BaseComponentProps> = ({
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-table-row ${className}`.trim();
@@ -27,7 +27,7 @@ export const TableRow: React.FC<BaseComponentProps> = ({
         backgroundColor: node.props.backgroundColor || 'transparent',
         ...getHoverStyles(node.props),
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
@@ -42,6 +42,6 @@ function getHoverStyles(props: any): React.CSSProperties {
   if (!props.hoverBackgroundColor) return {};
 
   return {
-    transition: 'background-color 0.2s ease'
+    transition: 'background-color 0.2s ease',
   };
 }

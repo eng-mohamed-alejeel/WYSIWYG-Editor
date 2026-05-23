@@ -19,7 +19,13 @@ interface UsersTabProps {
   onRemoveUser: (userId: string) => void;
 }
 
-export const UsersTab: React.FC<UsersTabProps> = ({ roles, users, onInviteUser, onRoleChange, onRemoveUser }) => (
+export const UsersTab: React.FC<UsersTabProps> = ({
+  roles,
+  users,
+  onInviteUser,
+  onRoleChange,
+  onRemoveUser,
+}) => (
   <div className="space-y-4">
     <div className="flex justify-between items-center">
       <h3 className="font-semibold">Team Members</h3>
@@ -29,7 +35,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({ roles, users, onInviteUser, 
       </Button>
     </div>
     <div className="space-y-2">
-      {users.map(user => (
+      {users.map((user) => (
         <div key={user.id} className="p-3 border rounded-lg">
           <div className="flex justify-between items-center">
             <div>
@@ -40,7 +46,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({ roles, users, onInviteUser, 
               <Select
                 value={user.role}
                 onChange={(value) => onRoleChange(user.id, value)}
-                options={roles.map(r => ({ value: r.id, label: r.name }))}
+                options={roles.map((r) => ({ value: r.id, label: r.name }))}
                 className="w-32"
               />
               <Button variant="ghost" size="small" onClick={() => onRemoveUser(user.id)}>

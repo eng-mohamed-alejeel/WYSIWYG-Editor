@@ -38,7 +38,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ project, handleProjectUp
             { value: 'ar', label: 'Arabic' },
             { value: 'fr', label: 'French' },
             { value: 'de', label: 'German' },
-            { value: 'es', label: 'Spanish' }
+            { value: 'es', label: 'Spanish' },
           ]}
           className="w-full"
         />
@@ -50,7 +50,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ project, handleProjectUp
           onChange={(value) => handleProjectUpdate({ direction: value })}
           options={[
             { value: 'ltr', label: 'Left to Right' },
-            { value: 'rtl', label: 'Right to Left' }
+            { value: 'rtl', label: 'Right to Left' },
           ]}
           className="w-full"
         />
@@ -66,7 +66,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ project, handleProjectUp
           options={[
             { value: 'desktop', label: 'Desktop (1200px)' },
             { value: 'tablet', label: 'Tablet (768px)' },
-            { value: 'mobile', label: 'Mobile (375px)' }
+            { value: 'mobile', label: 'Mobile (375px)' },
           ]}
           className="w-full"
         />

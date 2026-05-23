@@ -81,10 +81,7 @@ export const BasicComponents: React.FC<BasicComponentsProps> = ({ component }) =
     case 'icon':
       return (
         <div style={convertStylesToCSS(component.styles)}>
-          <Icon
-            name={component.props?.icon || 'star'}
-            size={component.props?.size || 'medium'}
-          />
+          <Icon name={component.props?.icon || 'star'} size={component.props?.size || 'medium'} />
         </div>
       );
 

@@ -1,6 +1,6 @@
 /**
  * Text Component
- * 
+ *
  * A text component for displaying paragraphs and text content.
  * Supports various text styles and formatting options.
  */
@@ -9,12 +9,7 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-export const Text: React.FC<BaseComponentProps> = ({
-  node,
-  context,
-  style,
-  className = ''
-}) => {
+export const Text: React.FC<BaseComponentProps> = ({ node, context, style, className = '' }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-text ${className}`.trim();
 
@@ -29,7 +24,7 @@ export const Text: React.FC<BaseComponentProps> = ({
         color: node.props.color || 'inherit',
         textAlign: node.props.textAlign || 'left',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

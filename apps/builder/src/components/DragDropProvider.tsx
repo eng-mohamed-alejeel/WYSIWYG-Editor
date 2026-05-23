@@ -9,7 +9,10 @@ interface DragDropContextType {
   dropPosition: 'before' | 'after' | 'inside' | null;
   startDrag: (component: ComponentNode) => void;
   endDrag: () => void;
-  setDropTarget: (targetId: ComponentId | null, position: 'before' | 'after' | 'inside' | null) => void;
+  setDropTarget: (
+    targetId: ComponentId | null,
+    position: 'before' | 'after' | 'inside' | null
+  ) => void;
   handleDrop: () => void;
 }
 
@@ -47,13 +50,13 @@ export const DragDropProvider: React.FC<DragDropProviderProps> = ({ children }) 
     setDropPosition(null);
   }, []);
 
-  const setDropTarget = useCallback((
-    targetId: ComponentId | null,
-    position: 'before' | 'after' | 'inside' | null
-  ) => {
-    setDropTargetId(targetId);
-    setDropPosition(position);
-  }, []);
+  const setDropTarget = useCallback(
+    (targetId: ComponentId | null, position: 'before' | 'after' | 'inside' | null) => {
+      setDropTargetId(targetId);
+      setDropPosition(position);
+    },
+    []
+  );
 
   const handleDrop = useCallback(() => {
     if (!draggedComponent || !dropTargetId || !dropPosition) return;
@@ -64,11 +67,7 @@ export const DragDropProvider: React.FC<DragDropProviderProps> = ({ children }) 
       return;
     }
 
-    moveComponent(
-      draggedComponent.id,
-      dropTargetId,
-      dropPosition
-    );
+    moveComponent(draggedComponent.id, dropTargetId, dropPosition);
 
     endDrag();
   }, [draggedComponent, dropTargetId, dropPosition, moveComponent, endDrag]);
@@ -81,14 +80,10 @@ export const DragDropProvider: React.FC<DragDropProviderProps> = ({ children }) 
     startDrag,
     endDrag,
     setDropTarget,
-    handleDrop
+    handleDrop,
   };
 
-  return (
-    <DragDropContext.Provider value={value}>
-      {children}
-    </DragDropContext.Provider>
-  );
+  return <DragDropContext.Provider value={value}>{children}</DragDropContext.Provider>;
 };
 
 export default DragDropProvider;

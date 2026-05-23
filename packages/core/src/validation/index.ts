@@ -1,6 +1,6 @@
 /**
  * Validation Schemas using Zod
- * 
+ *
  * This module provides validation schemas for all data structures
  * used throughout the platform.
  */
@@ -26,15 +26,45 @@ export const BreakpointSchema = z.enum(['mobile', 'tablet', 'desktop', 'wide']);
  * Style Property validation
  */
 export const StylePropertySchema = z.enum([
-  'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight',
-  'marginTop', 'marginBottom', 'marginLeft', 'marginRight',
-  'backgroundColor', 'color', 'fontSize', 'fontWeight',
-  'lineHeight', 'textAlign', 'borderRadius', 'borderWidth',
-  'borderColor', 'borderStyle', 'boxShadow', 'opacity',
-  'display', 'flexDirection', 'justifyContent', 'alignItems',
-  'gap', 'gridTemplateColumns', 'gridTemplateRows',
-  'width', 'height', 'maxWidth', 'minWidth', 'maxHeight', 'minHeight',
-  'position', 'top', 'right', 'bottom', 'left', 'zIndex'
+  'paddingTop',
+  'paddingBottom',
+  'paddingLeft',
+  'paddingRight',
+  'marginTop',
+  'marginBottom',
+  'marginLeft',
+  'marginRight',
+  'backgroundColor',
+  'color',
+  'fontSize',
+  'fontWeight',
+  'lineHeight',
+  'textAlign',
+  'borderRadius',
+  'borderWidth',
+  'borderColor',
+  'borderStyle',
+  'boxShadow',
+  'opacity',
+  'display',
+  'flexDirection',
+  'justifyContent',
+  'alignItems',
+  'gap',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'width',
+  'height',
+  'maxWidth',
+  'minWidth',
+  'maxHeight',
+  'minHeight',
+  'position',
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'zIndex',
 ]);
 
 /**
@@ -60,27 +90,29 @@ export const ComponentPropsSchema = z.record(z.string(), z.any());
 /**
  * Component Metadata validation
  */
-export const ComponentMetadataSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  category: z.string().optional(),
-  locked: z.boolean().optional(),
-  visible: z.boolean().optional(),
-  customData: z.record(z.string(), z.any()).optional()
-}).optional();
+export const ComponentMetadataSchema = z
+  .object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    category: z.string().optional(),
+    locked: z.boolean().optional(),
+    visible: z.boolean().optional(),
+    customData: z.record(z.string(), z.any()).optional(),
+  })
+  .optional();
 
 /**
  * Component Node validation
  */
-export const ComponentNodeSchema = z.object({
+export const ComponentNodeSchema: z.ZodTypeAny = z.object({
   id: ComponentIdSchema,
   type: ComponentTypeSchema,
   props: ComponentPropsSchema,
   styles: StyleObjectSchema,
   responsiveStyles: ResponsiveStylesSchema,
   children: z.array(z.lazy(() => ComponentNodeSchema)),
-  metadata: ComponentMetadataSchema
+  metadata: ComponentMetadataSchema,
 });
 
 export type ComponentNodeValidation = z.infer<typeof ComponentNodeSchema>;
@@ -89,9 +121,19 @@ export type ComponentNodeValidation = z.infer<typeof ComponentNodeSchema>;
  * Inspector Field Type validation
  */
 export const InspectorFieldTypeSchema = z.enum([
-  'text', 'number', 'color', 'select', 'multiselect',
-  'boolean', 'image', 'link', 'richtext', 'code',
-  'array', 'object', 'style'
+  'text',
+  'number',
+  'color',
+  'select',
+  'multiselect',
+  'boolean',
+  'image',
+  'link',
+  'richtext',
+  'code',
+  'array',
+  'object',
+  'style',
 ]);
 
 /**
@@ -101,7 +143,7 @@ export const ValidationRuleSchema = z.object({
   type: z.enum(['required', 'min', 'max', 'pattern', 'custom']),
   value: z.any().optional(),
   message: z.string(),
-  validator: z.function().optional()
+  validator: z.function().optional(),
 });
 
 /**
@@ -112,16 +154,20 @@ export const InspectorFieldSchema = z.object({
   label: z.string(),
   type: InspectorFieldTypeSchema,
   defaultValue: z.any().optional(),
-  options: z.array(z.object({
-    label: z.string(),
-    value: z.any()
-  })).optional(),
+  options: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.any(),
+      })
+    )
+    .optional(),
   validation: z.array(ValidationRuleSchema).optional(),
   group: z.string().optional(),
   visible: z.boolean().optional(),
   disabled: z.boolean().optional(),
   placeholder: z.string().optional(),
-  helpText: z.string().optional()
+  helpText: z.string().optional(),
 });
 
 /**
@@ -139,7 +185,7 @@ export const ComponentDefinitionSchema = z.object({
   allowedParents: z.array(ComponentTypeSchema).optional(),
   inspector: z.array(InspectorFieldSchema),
   isContainer: z.boolean().optional(),
-  isVoid: z.boolean().optional()
+  isVoid: z.boolean().optional(),
 });
 
 /**
@@ -150,20 +196,22 @@ export const PageMetadataSchema = z.object({
   description: z.string().optional(),
   keywords: z.array(z.string()).optional(),
   author: z.string().optional(),
-  customData: z.record(z.string(), z.any()).optional()
+  customData: z.record(z.string(), z.any()).optional(),
 });
 
 /**
  * Page Settings validation
  */
 export const PageSettingsSchema = z.object({
-  seo: z.object({
-    title: z.string().optional(),
-    description: z.string().optional(),
-    ogImage: z.string().optional()
-  }).optional(),
+  seo: z
+    .object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+      ogImage: z.string().optional(),
+    })
+    .optional(),
   customHead: z.string().optional(),
-  customBody: z.string().optional()
+  customBody: z.string().optional(),
 });
 
 /**
@@ -175,7 +223,7 @@ export const PageSchema = z.object({
   slug: z.string(),
   components: z.array(z.lazy(() => ComponentNodeSchema)),
   metadata: PageMetadataSchema,
-  settings: PageSettingsSchema
+  settings: PageSettingsSchema,
 });
 
 /**
@@ -191,7 +239,7 @@ export const ThemeColorsSchema = z.object({
   warning: z.string(),
   error: z.string(),
   info: z.string(),
-  custom: z.record(z.string(), z.string()).optional()
+  custom: z.record(z.string(), z.string()).optional(),
 });
 
 /**
@@ -201,7 +249,7 @@ export const ThemeTypographySchema = z.object({
   fontFamily: z.object({
     heading: z.string(),
     body: z.string(),
-    mono: z.string()
+    mono: z.string(),
   }),
   fontSize: z.object({
     xs: z.string(),
@@ -211,20 +259,20 @@ export const ThemeTypographySchema = z.object({
     xl: z.string(),
     '2xl': z.string(),
     '3xl': z.string(),
-    '4xl': z.string()
+    '4xl': z.string(),
   }),
   fontWeight: z.object({
     light: z.number(),
     normal: z.number(),
     medium: z.number(),
     semibold: z.number(),
-    bold: z.number()
+    bold: z.number(),
   }),
   lineHeight: z.object({
     tight: z.number(),
     normal: z.number(),
-    relaxed: z.number()
-  })
+    relaxed: z.number(),
+  }),
 });
 
 /**
@@ -236,7 +284,7 @@ export const ThemeSpacingSchema = z.object({
   md: z.string(),
   lg: z.string(),
   xl: z.string(),
-  '2xl': z.string()
+  '2xl': z.string(),
 });
 
 /**
@@ -248,7 +296,7 @@ export const ThemeBorderRadiusSchema = z.object({
   md: z.string(),
   lg: z.string(),
   xl: z.string(),
-  full: z.string()
+  full: z.string(),
 });
 
 /**
@@ -258,7 +306,7 @@ export const ThemeShadowsSchema = z.object({
   sm: z.string(),
   md: z.string(),
   lg: z.string(),
-  xl: z.string()
+  xl: z.string(),
 });
 
 /**
@@ -268,7 +316,7 @@ export const ThemeBreakpointsSchema = z.object({
   mobile: z.string(),
   tablet: z.string(),
   desktop: z.string(),
-  wide: z.string()
+  wide: z.string(),
 });
 
 /**
@@ -283,7 +331,7 @@ export const ThemeSchema = z.object({
   borderRadius: ThemeBorderRadiusSchema,
   shadows: ThemeShadowsSchema,
   breakpoints: ThemeBreakpointsSchema,
-  customTokens: z.record(z.string(), z.any()).optional()
+  customTokens: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -294,13 +342,15 @@ export const AssetTypeSchema = z.enum(['image', 'video', 'audio', 'font', 'file'
 /**
  * Asset Metadata validation
  */
-export const AssetMetadataSchema = z.object({
-  width: z.number().optional(),
-  height: z.number().optional(),
-  alt: z.string().optional(),
-  title: z.string().optional(),
-  customData: z.record(z.string(), z.any()).optional()
-}).optional();
+export const AssetMetadataSchema = z
+  .object({
+    width: z.number().optional(),
+    height: z.number().optional(),
+    alt: z.string().optional(),
+    title: z.string().optional(),
+    customData: z.record(z.string(), z.any()).optional(),
+  })
+  .optional();
 
 /**
  * Asset validation
@@ -312,7 +362,7 @@ export const AssetSchema = z.object({
   url: z.string(),
   size: z.number(),
   mimeType: z.string().optional(),
-  metadata: AssetMetadataSchema
+  metadata: AssetMetadataSchema,
 });
 
 /**
@@ -323,7 +373,7 @@ export const ProjectSettingsSchema = z.object({
   enableAiFeatures: z.boolean(),
   enableAnalytics: z.boolean(),
   customScripts: z.array(z.string()).optional(),
-  customStyles: z.string().optional()
+  customStyles: z.string().optional(),
 });
 
 /**
@@ -332,13 +382,15 @@ export const ProjectSettingsSchema = z.object({
 export const ProjectMetadataSchema = z.object({
   version: z.string(),
   platform: z.enum(['odoo', 'wordpress', 'nextjs', 'html']).optional(),
-  exportSettings: z.object({
-    format: z.enum(['html', 'react', 'wordpress', 'odoo']),
-    optimizeAssets: z.boolean(),
-    minify: z.boolean(),
-    includeSourceMaps: z.boolean(),
-    customExportPath: z.string().optional()
-  }).optional()
+  exportSettings: z
+    .object({
+      format: z.enum(['html', 'react', 'wordpress', 'odoo']),
+      optimizeAssets: z.boolean(),
+      minify: z.boolean(),
+      includeSourceMaps: z.boolean(),
+      customExportPath: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -354,7 +406,7 @@ export const ProjectSchema = z.object({
   settings: ProjectSettingsSchema,
   metadata: ProjectMetadataSchema,
   createdAt: z.string(),
-  updatedAt: z.string()
+  updatedAt: z.string(),
 });
 
 /**
@@ -365,7 +417,7 @@ export const CommandSchema = z.object({
   execute: z.function(),
   undo: z.function(),
   description: z.string().optional(),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 /**
@@ -375,7 +427,7 @@ export const HistoryStateSchema = z.object({
   past: z.array(CommandSchema),
   present: CommandSchema.nullable(),
   future: z.array(CommandSchema),
-  maxSize: z.number()
+  maxSize: z.number(),
 });
 
 /**
@@ -384,7 +436,7 @@ export const HistoryStateSchema = z.object({
 export const SelectionStateSchema = z.object({
   selectedIds: z.array(ComponentIdSchema),
   hoveredId: ComponentIdSchema.nullable(),
-  focusedId: ComponentIdSchema.nullable()
+  focusedId: ComponentIdSchema.nullable(),
 });
 
 /**
@@ -399,20 +451,22 @@ export const EditorStateSchema = z.object({
   isPreviewMode: z.boolean(),
   currentBreakpoint: BreakpointSchema,
   zoom: z.number(),
-  clipboard: z.array(ComponentNodeSchema)
+  clipboard: z.array(ComponentNodeSchema),
 });
 
 /**
  * Plugin Hooks validation
  */
-export const PluginHooksSchema = z.object({
-  onProjectLoad: z.function().optional(),
-  onProjectSave: z.function().optional(),
-  onComponentSelect: z.function().optional(),
-  onComponentUpdate: z.function().optional(),
-  onComponentDelete: z.function().optional(),
-  onExport: z.function().optional()
-}).optional();
+export const PluginHooksSchema = z
+  .object({
+    onProjectLoad: z.function().optional(),
+    onProjectSave: z.function().optional(),
+    onComponentSelect: z.function().optional(),
+    onComponentUpdate: z.function().optional(),
+    onComponentDelete: z.function().optional(),
+    onExport: z.function().optional(),
+  })
+  .optional();
 
 /**
  * Plugin Context validation
@@ -426,7 +480,7 @@ export const PluginContextSchema = z.object({
   updateSelection: z.function(),
   executeCommand: z.function(),
   undo: z.function(),
-  redo: z.function()
+  redo: z.function(),
 });
 
 /**
@@ -440,7 +494,7 @@ export const PluginSchema = z.object({
   destroy: z.function().optional(),
   components: z.array(ComponentDefinitionSchema).optional(),
   commands: z.array(CommandSchema).optional(),
-  hooks: PluginHooksSchema
+  hooks: PluginHooksSchema,
 });
 
 /**
@@ -451,7 +505,7 @@ export const ExportOptionsSchema = z.object({
   optimizeAssets: z.boolean(),
   minify: z.boolean(),
   includeSourceMaps: z.boolean(),
-  customOptions: z.record(z.string(), z.any()).optional()
+  customOptions: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -461,5 +515,5 @@ export const ExportResultSchema = z.object({
   success: z.boolean(),
   data: z.any().optional(),
   error: z.string().optional(),
-  warnings: z.array(z.string()).optional()
+  warnings: z.array(z.string()).optional(),
 });

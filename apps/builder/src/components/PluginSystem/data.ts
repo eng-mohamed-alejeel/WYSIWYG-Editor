@@ -10,7 +10,7 @@ export const plugins: Plugin[] = [
     icon: 'chart',
     category: 'integrations',
     isInstalled: true,
-    isEnabled: true
+    isEnabled: true,
   },
   {
     id: 'seo',
@@ -21,7 +21,7 @@ export const plugins: Plugin[] = [
     icon: 'search',
     category: 'tools',
     isInstalled: true,
-    isEnabled: true
+    isEnabled: true,
   },
   {
     id: 'ecommerce',
@@ -33,7 +33,7 @@ export const plugins: Plugin[] = [
     category: 'components',
     isInstalled: false,
     isEnabled: false,
-    isPremium: true
+    isPremium: true,
   },
   {
     id: 'forms',
@@ -44,7 +44,7 @@ export const plugins: Plugin[] = [
     icon: 'file-text',
     category: 'components',
     isInstalled: true,
-    isEnabled: false
+    isEnabled: false,
   },
   {
     id: 'animations',
@@ -55,7 +55,7 @@ export const plugins: Plugin[] = [
     icon: 'zap',
     category: 'components',
     isInstalled: false,
-    isEnabled: false
+    isEnabled: false,
   },
   {
     id: 'social',
@@ -66,7 +66,7 @@ export const plugins: Plugin[] = [
     icon: 'share',
     category: 'integrations',
     isInstalled: false,
-    isEnabled: false
+    isEnabled: false,
   },
   {
     id: 'dark-theme',
@@ -77,8 +77,8 @@ export const plugins: Plugin[] = [
     icon: 'moon',
     category: 'themes',
     isInstalled: true,
-    isEnabled: false
-  }
+    isEnabled: false,
+  },
 ];
 
 export const categories = [
@@ -86,5 +86,5 @@ export const categories = [
   { id: 'components', label: 'Components' },
   { id: 'tools', label: 'Tools' },
   { id: 'integrations', label: 'Integrations' },
-  { id: 'themes', label: 'Themes' }
+  { id: 'themes', label: 'Themes' },
 ];

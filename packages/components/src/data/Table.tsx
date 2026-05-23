@@ -1,6 +1,6 @@
 /**
  * Table Component
- * 
+ *
  * A table component for displaying tabular data.
  * Supports various styling options and responsive behavior.
  */
@@ -14,7 +14,7 @@ export const Table: React.FC<BaseComponentProps> = ({
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-table ${className}`.trim();
@@ -24,7 +24,7 @@ export const Table: React.FC<BaseComponentProps> = ({
       className="wysiwyg-table-wrapper"
       style={mergeStyles({
         overflowX: node.props.responsive !== false ? 'auto' : 'visible',
-        width: '100%'
+        width: '100%',
       } as React.CSSProperties)}
     >
       <table
@@ -35,7 +35,7 @@ export const Table: React.FC<BaseComponentProps> = ({
           ...parseInlineStyles(style),
           width: node.props.width || '100%',
           borderCollapse: node.props.borderCollapse || 'collapse',
-          backgroundColor: node.props.backgroundColor || '#ffffff'
+          backgroundColor: node.props.backgroundColor || '#ffffff',
         } as React.CSSProperties)}
         data-component-type={node.type}
         data-editable={isEditable}
@@ -46,5 +46,3 @@ export const Table: React.FC<BaseComponentProps> = ({
     </div>
   );
 };
-
-

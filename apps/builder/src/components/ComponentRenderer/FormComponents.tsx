@@ -72,7 +72,7 @@ export const FormComponents: React.FC<FormComponentsProps> = ({ component }) => 
           style={convertStylesToCSS({
             border: 'none',
             borderTop: `1px solid ${component.props?.color || '#e5e7eb'}`,
-            ...component.styles
+            ...component.styles,
           })}
         />
       );
@@ -82,7 +82,7 @@ export const FormComponents: React.FC<FormComponentsProps> = ({ component }) => 
         <div
           style={convertStylesToCSS({
             height: component.props?.height || '1rem',
-            ...component.styles
+            ...component.styles,
           })}
         />
       );

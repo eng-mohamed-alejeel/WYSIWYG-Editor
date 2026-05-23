@@ -1,6 +1,6 @@
 /**
  * AICodeAssistant Component
- * 
+ *
  * An AI-powered code assistant component for generating,
  * explaining, and improving code with the help of artificial intelligence.
  */
@@ -13,7 +13,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
   node,
   context,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const [code, setCode] = useState('');
@@ -30,10 +30,11 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
     setIsProcessing(true);
     try {
       // Simulate AI processing - in real implementation, this would call an AI API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       if (mode === 'generate') {
-        const newCode = `// Generated code based on: "${prompt}"\n\n` +
+        const newCode =
+          `// Generated code based on: "${prompt}"\n\n` +
           `// This is a simulated response. In a real implementation, this would connect to an AI service ` +
           `like OpenAI's GPT or GitHub Copilot to generate actual code.\n\n` +
           `function ${prompt.split(' ')[0] || 'example'}() {\n` +
@@ -44,7 +45,8 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
 
         setGeneratedCode(newCode);
       } else if (mode === 'explain') {
-        const newExplanation = `Code Explanation:\n\n` +
+        const newExplanation =
+          `Code Explanation:\n\n` +
           `This is a simulated explanation of the provided code. In a real implementation, ` +
           `the AI would analyze your code and provide a detailed explanation of what it does, ` +
           `how it works, and any potential issues or improvements.\n\n` +
@@ -56,10 +58,12 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
 
         setExplanation(newExplanation);
       } else if (mode === 'improve') {
-        const improvedCode = `// Improved version of your code\n\n` +
+        const improvedCode =
+          `// Improved version of your code\n\n` +
           `// This is a simulated improvement. In a real implementation, the AI would analyze ` +
           `your code and suggest improvements for better performance, readability, and maintainability.\n\n` +
-          code + '\n\n' +
+          code +
+          '\n\n' +
           `// AI would add comments explaining the improvements made\n` +
           `// and suggest refactoring options where appropriate.`;
 
@@ -88,17 +92,29 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
         padding: node.props.padding || '1.5rem',
         backgroundColor: node.props.backgroundColor || '#ffffff',
         borderRadius: node.props.borderRadius || '0.75rem',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
       data-preview={isPreview}
     >
-      <h3 style={mergeStyles({ margin: '0 0 1rem 0', fontSize: '1.25rem', fontWeight: '600' } as React.CSSProperties)}>
+      <h3
+        style={mergeStyles({
+          margin: '0 0 1rem 0',
+          fontSize: '1.25rem',
+          fontWeight: '600',
+        } as React.CSSProperties)}
+      >
         {node.props.title || 'AI Code Assistant'}
       </h3>
 
-      <div style={mergeStyles({ display: 'flex', gap: '0.5rem', marginBottom: '1rem' } as React.CSSProperties)}>
+      <div
+        style={mergeStyles({
+          display: 'flex',
+          gap: '0.5rem',
+          marginBottom: '1rem',
+        } as React.CSSProperties)}
+      >
         <button
           onClick={() => setMode('generate')}
           style={mergeStyles({
@@ -110,7 +126,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
             borderRadius: '0.375rem',
             cursor: 'pointer',
             fontSize: '0.875rem',
-            fontWeight: '600'
+            fontWeight: '600',
           } as React.CSSProperties)}
         >
           Generate
@@ -126,7 +142,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
             borderRadius: '0.375rem',
             cursor: 'pointer',
             fontSize: '0.875rem',
-            fontWeight: '600'
+            fontWeight: '600',
           } as React.CSSProperties)}
         >
           Explain
@@ -142,7 +158,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
             borderRadius: '0.375rem',
             cursor: 'pointer',
             fontSize: '0.875rem',
-            fontWeight: '600'
+            fontWeight: '600',
           } as React.CSSProperties)}
         >
           Improve
@@ -151,13 +167,22 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
 
       {mode === 'generate' && (
         <div style={mergeStyles({ marginBottom: '1rem' } as React.CSSProperties)}>
-          <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+          <label
+            style={mergeStyles({
+              display: 'block',
+              marginBottom: '0.5rem',
+              fontWeight: '500',
+            } as React.CSSProperties)}
+          >
             {node.props.promptLabel || 'Describe the code you want to generate'}
           </label>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder={node.props.promptPlaceholder || 'E.g., Create a function that sorts an array of numbers...'}
+            placeholder={
+              node.props.promptPlaceholder ||
+              'E.g., Create a function that sorts an array of numbers...'
+            }
             rows={3}
             disabled={isProcessing}
             style={mergeStyles({
@@ -166,7 +191,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
               borderRadius: '0.375rem',
               border: '1px solid #e5e7eb',
               fontSize: '0.875rem',
-              resize: 'vertical'
+              resize: 'vertical',
             } as React.CSSProperties)}
           />
         </div>
@@ -174,7 +199,13 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
 
       {mode !== 'generate' && (
         <div style={mergeStyles({ marginBottom: '1rem' } as React.CSSProperties)}>
-          <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+          <label
+            style={mergeStyles({
+              display: 'block',
+              marginBottom: '0.5rem',
+              fontWeight: '500',
+            } as React.CSSProperties)}
+          >
             {node.props.codeLabel || 'Your Code'}
           </label>
           <textarea
@@ -190,14 +221,20 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
               border: '1px solid #e5e7eb',
               fontSize: '0.875rem',
               fontFamily: 'monospace',
-              resize: 'vertical'
+              resize: 'vertical',
             } as React.CSSProperties)}
           />
         </div>
       )}
 
       <div style={mergeStyles({ marginBottom: '1rem' } as React.CSSProperties)}>
-        <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+        <label
+          style={mergeStyles({
+            display: 'block',
+            marginBottom: '0.5rem',
+            fontWeight: '500',
+          } as React.CSSProperties)}
+        >
           {node.props.languageLabel || 'Programming Language'}
         </label>
         <select
@@ -210,7 +247,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
             borderRadius: '0.375rem',
             border: '1px solid #e5e7eb',
             fontSize: '0.875rem',
-            backgroundColor: '#ffffff'
+            backgroundColor: '#ffffff',
           } as React.CSSProperties)}
         >
           <option value="javascript">JavaScript</option>
@@ -239,19 +276,34 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
           color: '#ffffff',
           border: 'none',
           borderRadius: '0.375rem',
-          cursor: isProcessing || (mode === 'generate' ? !prompt.trim() : !code.trim()) ? 'not-allowed' : 'pointer',
+          cursor:
+            isProcessing || (mode === 'generate' ? !prompt.trim() : !code.trim())
+              ? 'not-allowed'
+              : 'pointer',
           opacity: isProcessing || (mode === 'generate' ? !prompt.trim() : !code.trim()) ? 0.6 : 1,
           fontSize: '0.875rem',
           fontWeight: '600',
-          marginBottom: '1rem'
+          marginBottom: '1rem',
         } as React.CSSProperties)}
       >
-        {isProcessing ? 'Processing...' : mode === 'generate' ? 'Generate Code' : mode === 'explain' ? 'Explain Code' : 'Improve Code'}
+        {isProcessing
+          ? 'Processing...'
+          : mode === 'generate'
+            ? 'Generate Code'
+            : mode === 'explain'
+              ? 'Explain Code'
+              : 'Improve Code'}
       </button>
 
       {mode === 'explain' && explanation && (
         <div>
-          <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+          <label
+            style={mergeStyles({
+              display: 'block',
+              marginBottom: '0.5rem',
+              fontWeight: '500',
+            } as React.CSSProperties)}
+          >
             {node.props.explanationLabel || 'Code Explanation'}
           </label>
           <div
@@ -263,7 +315,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
               fontSize: '0.875rem',
               whiteSpace: 'pre-wrap',
               maxHeight: '300px',
-              overflow: 'auto'
+              overflow: 'auto',
             } as React.CSSProperties)}
           >
             {explanation}
@@ -273,7 +325,14 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
 
       {mode !== 'explain' && generatedCode && (
         <div>
-          <div style={mergeStyles({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' } as React.CSSProperties)}>
+          <div
+            style={mergeStyles({
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '0.5rem',
+            } as React.CSSProperties)}
+          >
             <label style={mergeStyles({ fontWeight: '500' } as React.CSSProperties)}>
               {node.props.generatedCodeLabel || 'Generated Code'}
             </label>
@@ -287,7 +346,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
                 borderRadius: '0.375rem',
                 cursor: 'pointer',
                 fontSize: '0.875rem',
-                fontWeight: '600'
+                fontWeight: '600',
               } as React.CSSProperties)}
             >
               {node.props.insertButtonText || 'Insert'}
@@ -304,7 +363,7 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
               border: '1px solid #e5e7eb',
               fontSize: '0.875rem',
               fontFamily: 'monospace',
-              resize: 'vertical'
+              resize: 'vertical',
             } as React.CSSProperties)}
           />
         </div>
@@ -312,5 +371,3 @@ export const AICodeAssistant: React.FC<BaseComponentProps> = ({
     </div>
   );
 };
-
-

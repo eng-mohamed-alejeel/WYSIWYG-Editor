@@ -8,7 +8,11 @@ interface StylesTabProps {
   onStyleChange: (key: string, value: StyleValue) => void;
 }
 
-const getStyleValue = (styles: ComponentStyles | undefined, key: keyof ComponentStyles, defaultValue: string): string => {
+const getStyleValue = (
+  styles: ComponentStyles | undefined,
+  key: keyof ComponentStyles,
+  defaultValue: string
+): string => {
   const value = styles?.[key];
   return value !== undefined ? String(value) : defaultValue;
 };
@@ -91,7 +95,7 @@ export const StylesTab: React.FC<StylesTabProps> = ({ component, onStyleChange }
               { value: '600', label: '600' },
               { value: '700', label: '700' },
               { value: '800', label: '800' },
-              { value: '900', label: '900' }
+              { value: '900', label: '900' },
             ]}
             className="w-full"
           />
@@ -106,7 +110,7 @@ export const StylesTab: React.FC<StylesTabProps> = ({ component, onStyleChange }
               { value: 'left', label: 'Left' },
               { value: 'center', label: 'Center' },
               { value: 'right', label: 'Right' },
-              { value: 'justify', label: 'Justify' }
+              { value: 'justify', label: 'Justify' },
             ]}
             className="w-full"
           />
@@ -190,7 +194,7 @@ export const StylesTab: React.FC<StylesTabProps> = ({ component, onStyleChange }
               { value: 'solid', label: 'Solid' },
               { value: 'dashed', label: 'Dashed' },
               { value: 'dotted', label: 'Dotted' },
-              { value: 'double', label: 'Double' }
+              { value: 'double', label: 'Double' },
             ]}
             className="w-full"
           />

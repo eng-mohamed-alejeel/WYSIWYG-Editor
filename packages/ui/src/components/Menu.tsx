@@ -144,7 +144,7 @@ export const Menu: React.FC<MenuProps> = ({
   collapsed = false,
   onCollapseToggle,
   showBadges = true,
-  theme = 'light'
+  theme = 'light',
 }) => {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
@@ -184,11 +184,7 @@ export const Menu: React.FC<MenuProps> = ({
   const renderBadge = (badge?: string | number) => {
     if (!badge || !showBadges) return null;
 
-    return (
-      <span className="menu-item-badge">
-        {badge}
-      </span>
-    );
+    return <span className="menu-item-badge">{badge}</span>;
   };
 
   const renderMenuItem = (item: MenuItem, level: number = 0) => {
@@ -202,21 +198,23 @@ export const Menu: React.FC<MenuProps> = ({
       isActive ? 'menu-item-active' : '',
       item.disabled ? 'menu-item-disabled' : '',
       hasSubmenu ? 'menu-item-has-submenu' : '',
-      item.className || ''
-    ].filter(Boolean).join(' ');
+      item.className || '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const submenuClasses = [
       'menu-submenu',
       isExpanded ? 'menu-submenu-expanded' : '',
-      `menu-submenu-level-${level + 1}`
-    ].filter(Boolean).join(' ');
+      `menu-submenu-level-${level + 1}`,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const content = (
       <>
         {renderIcon(item.icon)}
-        <span className="menu-item-label">
-          {item.label}
-        </span>
+        <span className="menu-item-label">{item.label}</span>
         {renderBadge(item.badge)}
         {hasSubmenu && (
           <Icon
@@ -265,14 +263,9 @@ export const Menu: React.FC<MenuProps> = ({
   const sizeClasses = `menu-${size}`;
   const themeClasses = `menu-${theme}`;
   const collapsedClasses = collapsed ? 'menu-collapsed' : '';
-  const classes = [
-    'menu',
-    variantClasses,
-    sizeClasses,
-    themeClasses,
-    collapsedClasses,
-    className
-  ].filter(Boolean).join(' ');
+  const classes = ['menu', variantClasses, sizeClasses, themeClasses, collapsedClasses, className]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <nav className={classes}>

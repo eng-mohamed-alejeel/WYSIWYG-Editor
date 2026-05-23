@@ -1,6 +1,6 @@
 /**
  * AIImageGenerator Component
- * 
+ *
  * An AI-powered image generator component for creating images
  * with the help of artificial intelligence.
  */
@@ -13,7 +13,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
   node,
   context,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const [prompt, setPrompt] = useState('');
@@ -29,11 +29,13 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
     setIsGenerating(true);
     try {
       // Simulate AI image generation - in real implementation, this would call an AI API
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       // Generate placeholder images using a service like picsum.photos
-      const newImages = Array.from({ length: 4 }, (_, i) => 
-        `https://picsum.photos/seed/${prompt}-${Date.now()}-${i}/${getImageSizeDimensions(imageSize).width}/${getImageSizeDimensions(imageSize).height}`
+      const newImages = Array.from(
+        { length: 4 },
+        (_, i) =>
+          `https://picsum.photos/seed/${prompt}-${Date.now()}-${i}/${getImageSizeDimensions(imageSize).width}/${getImageSizeDimensions(imageSize).height}`
       );
 
       setGeneratedImages(newImages);
@@ -56,7 +58,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
       medium: { width: 512, height: 512 },
       large: { width: 768, height: 768 },
       wide: { width: 768, height: 512 },
-      tall: { width: 512, height: 768 }
+      tall: { width: 512, height: 768 },
     };
     return sizes[size] || sizes.medium;
   };
@@ -71,18 +73,30 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
         padding: node.props.padding || '1.5rem',
         backgroundColor: node.props.backgroundColor || '#ffffff',
         borderRadius: node.props.borderRadius || '0.75rem',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
       data-preview={isPreview}
     >
-      <h3 style={mergeStyles({ margin: '0 0 1rem 0', fontSize: '1.25rem', fontWeight: '600' } as React.CSSProperties)}>
+      <h3
+        style={mergeStyles({
+          margin: '0 0 1rem 0',
+          fontSize: '1.25rem',
+          fontWeight: '600',
+        } as React.CSSProperties)}
+      >
         {node.props.title || 'AI Image Generator'}
       </h3>
 
       <div style={mergeStyles({ marginBottom: '1rem' } as React.CSSProperties)}>
-        <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+        <label
+          style={mergeStyles({
+            display: 'block',
+            marginBottom: '0.5rem',
+            fontWeight: '500',
+          } as React.CSSProperties)}
+        >
           {node.props.promptLabel || 'Prompt'}
         </label>
         <textarea
@@ -97,14 +111,26 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
             borderRadius: '0.375rem',
             border: '1px solid #e5e7eb',
             fontSize: '0.875rem',
-            resize: 'vertical'
+            resize: 'vertical',
           } as React.CSSProperties)}
         />
       </div>
 
-      <div style={mergeStyles({ display: 'flex', gap: '1rem', marginBottom: '1rem' } as React.CSSProperties)}>
+      <div
+        style={mergeStyles({
+          display: 'flex',
+          gap: '1rem',
+          marginBottom: '1rem',
+        } as React.CSSProperties)}
+      >
         <div style={mergeStyles({ flex: 1 } as React.CSSProperties)}>
-          <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+          <label
+            style={mergeStyles({
+              display: 'block',
+              marginBottom: '0.5rem',
+              fontWeight: '500',
+            } as React.CSSProperties)}
+          >
             {node.props.styleLabel || 'Style'}
           </label>
           <select
@@ -117,7 +143,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
               borderRadius: '0.375rem',
               border: '1px solid #e5e7eb',
               fontSize: '0.875rem',
-              backgroundColor: '#ffffff'
+              backgroundColor: '#ffffff',
             } as React.CSSProperties)}
           >
             <option value="realistic">Realistic</option>
@@ -130,7 +156,13 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
         </div>
 
         <div style={mergeStyles({ flex: 1 } as React.CSSProperties)}>
-          <label style={mergeStyles({ display: 'block', marginBottom: '0.5rem', fontWeight: '500' } as React.CSSProperties)}>
+          <label
+            style={mergeStyles({
+              display: 'block',
+              marginBottom: '0.5rem',
+              fontWeight: '500',
+            } as React.CSSProperties)}
+          >
             {node.props.sizeLabel || 'Size'}
           </label>
           <select
@@ -143,7 +175,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
               borderRadius: '0.375rem',
               border: '1px solid #e5e7eb',
               fontSize: '0.875rem',
-              backgroundColor: '#ffffff'
+              backgroundColor: '#ffffff',
             } as React.CSSProperties)}
           >
             <option value="small">Small (256x256)</option>
@@ -169,7 +201,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
           opacity: isGenerating || !prompt.trim() ? 0.6 : 1,
           fontSize: '0.875rem',
           fontWeight: '600',
-          marginBottom: '1rem'
+          marginBottom: '1rem',
         } as React.CSSProperties)}
       >
         {isGenerating ? 'Generating...' : node.props.generateButtonText || 'Generate Images'}
@@ -177,7 +209,14 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
 
       {generatedImages.length > 0 && (
         <div>
-          <div style={mergeStyles({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' } as React.CSSProperties)}>
+          <div
+            style={mergeStyles({
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '0.5rem',
+            } as React.CSSProperties)}
+          >
             <label style={mergeStyles({ fontWeight: '500' } as React.CSSProperties)}>
               {node.props.generatedImagesLabel || 'Generated Images'}
             </label>
@@ -192,7 +231,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
                   borderRadius: '0.375rem',
                   cursor: 'pointer',
                   fontSize: '0.875rem',
-                  fontWeight: '600'
+                  fontWeight: '600',
                 } as React.CSSProperties)}
               >
                 {node.props.insertButtonText || 'Insert Selected'}
@@ -200,7 +239,13 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
             )}
           </div>
 
-          <div style={mergeStyles({ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } as React.CSSProperties)}>
+          <div
+            style={mergeStyles({
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '1rem',
+            } as React.CSSProperties)}
+          >
             {generatedImages.map((image, index) => (
               <div
                 key={index}
@@ -210,7 +255,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
                   cursor: 'pointer',
                   border: selectedImage === image ? '3px solid #3b82f6' : '3px solid transparent',
                   borderRadius: '0.375rem',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
                 } as React.CSSProperties)}
               >
                 <img
@@ -219,7 +264,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
                   style={mergeStyles({
                     width: '100%',
                     height: 'auto',
-                    display: 'block'
+                    display: 'block',
                   } as React.CSSProperties)}
                 />
                 {selectedImage === image && (
@@ -237,7 +282,7 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '0.875rem',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     } as React.CSSProperties)}
                   >
                     ✓
@@ -251,5 +296,3 @@ export const AIImageGenerator: React.FC<BaseComponentProps> = ({
     </div>
   );
 };
-
-

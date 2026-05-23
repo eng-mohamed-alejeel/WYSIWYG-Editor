@@ -68,7 +68,7 @@ export const Switch: React.FC<SwitchProps> = ({
   className = '',
   id,
   name,
-  labelOnLeft = false
+  labelOnLeft = false,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
@@ -77,23 +77,16 @@ export const Switch: React.FC<SwitchProps> = ({
   const sizeClasses = `switch-${size}`;
   const colorClasses = `switch-${color}`;
   const disabledClasses = disabled ? 'switch-disabled' : '';
-  const classes = [
-    'switch',
-    sizeClasses,
-    colorClasses,
-    disabledClasses,
-    className
-  ].filter(Boolean).join(' ');
+  const classes = ['switch', sizeClasses, colorClasses, disabledClasses, className]
+    .filter(Boolean)
+    .join(' ');
 
   const switchId = id || `switch-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
     <div className={`switch-wrapper ${labelOnLeft ? 'switch-wrapper-label-left' : ''}`}>
       {label && (
-        <label
-          htmlFor={switchId}
-          className="switch-label"
-        >
+        <label htmlFor={switchId} className="switch-label">
           {label}
         </label>
       )}

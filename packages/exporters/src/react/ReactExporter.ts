@@ -19,15 +19,15 @@ export class ReactExporter implements Exporter {
           includeSourceMaps: options?.includeSourceMaps ?? false,
           minify: options?.minify ?? false,
           optimizeAssets: options?.optimizeAssets ?? false,
-          customExportPath: options?.customOptions?.customExportPath
+          customExportPath: options?.customOptions?.customExportPath as string | undefined,
         },
         assets: [],
-        styles: []
+        styles: [],
       };
 
       // Generate React components for each page
       const pagesComponents = await Promise.all(
-        project.pages.map(page => this.exportPage(page, options))
+        project.pages.map((page) => this.exportPage(page, options))
       );
 
       const components = this.generateProjectComponents(project, pagesComponents, context);
@@ -37,13 +37,13 @@ export class ReactExporter implements Exporter {
         data: {
           components,
           assets: context.assets,
-          styles: context.styles
-        }
+          styles: context.styles,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -51,36 +51,36 @@ export class ReactExporter implements Exporter {
   async exportPage(page: Page, options?: ExportOptions): Promise<ExportResult> {
     try {
       const componentsCode = await Promise.all(
-        page.components.map(component => this.exportComponent(component, options))
+        page.components.map((component) => this.exportComponent(component, options))
       );
 
       const componentCode = this.generatePageComponent(page, componentsCode);
 
       return {
         success: true,
-        data: { componentCode }
+        data: { componentCode },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
-  async exportComponent(component: ComponentNode, options?: ExportOptions): Promise<ExportResult> {
+  exportComponent(component: ComponentNode, _options?: ExportOptions): Promise<ExportResult> {
     try {
       const componentCode = this.generateComponentCode(component);
 
-      return {
+      return Promise.resolve({
         success: true,
-        data: { componentCode }
-      };
+        data: { componentCode },
+      });
     } catch (error) {
-      return {
+      return Promise.resolve({
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      };
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
   }
 
@@ -101,8 +101,12 @@ export class ReactExporter implements Exporter {
     // Generate each page component
     pagesComponents.forEach((result, index) => {
       const page = project.pages[index];
-      if (page && result.data?.componentCode) {
-        components[`${this.toPascalCase(page.name)}.tsx`] = result.data.componentCode;
+      if (page !== undefined && result.data !== undefined && 'componentCode' in result.data) {
+        components[`${this.toPascalCase(page.name)}.tsx`] = (
+          result.data as {
+            componentCode: string;
+          }
+        ).componentCode;
       }
     });
 
@@ -114,9 +118,19 @@ export class ReactExporter implements Exporter {
 
   private generatePageComponent(page: Page, componentsCode: ExportResult[]): string {
     const imports = this.generateImports(page.components);
-    const render = componentsCode.map(result => result.data?.componentCode || '').join('');
+    const renderedComponents = componentsCode
+      .map((result) =>
+        result.data !== undefined && 'componentCode' in result.data
+          ? (
+              result.data as {
+                componentCode: string;
+              }
+            ).componentCode
+          : ''
+      )
+      .join('');
 
-    return `import React from 'react';
+    const componentTemplate = `import React from 'react';
 ${imports}
 
 interface ${this.toPascalCase(page.name)}Props {
@@ -130,26 +144,26 @@ export const ${this.toPascalCase(page.name)}: React.FC<${this.toPascalCase(page.
 }) => {
   return (
     <div className={\`page page-${page.id} \${className || ''}\`} style={style}>
-      {render}
+      {${renderedComponents}}
     </div>
   );
 };
 
 export default ${this.toPascalCase(page.name)};`;
+
+    return componentTemplate;
   }
 
   private generateComponentCode(component: ComponentNode): string {
     const style = this.generateStyleObject(component.styles);
-    const childrenCode = component.children
-      .map(child => this.generateComponentCode(child))
-      .join('');
+    component.children.map((child) => this.generateComponentCode(child)).join('');
 
     return `<div id="${component.id}" className="component component-${component.type}" style={${style}}>
-  {childrenCode}
+  {component.children.map((child) => this.generateComponentCode(child)).join('')}
 </div>`;
   }
 
-  private generateStyleObject(styles: Record<string, any>): string {
+  private generateStyleObject(styles: Record<string, string | number>): string {
     const styleEntries = Object.entries(styles)
       .map(([key, value]) => `    '${key}': '${value}'`)
       .join(',\n');
@@ -170,12 +184,15 @@ ${styleEntries}
     components.forEach(collectTypes);
 
     return Array.from(uniqueTypes)
-      .map(type => `import { ${this.toPascalCase(type)} } from './components/${this.toPascalCase(type)}';`)
+      .map(
+        (type) =>
+          `import { ${this.toPascalCase(type)} } from './components/${this.toPascalCase(type)}';`
+      )
       .join('\n');
   }
 
-  private generateThemeProvider(project: Project, context: ExportContext): string {
-    const theme = project.theme || {};
+  private generateThemeProvider(project: Project, _context: ExportContext): string {
+    const theme = project.theme ?? {};
     const themeObject = JSON.stringify(theme, null, 2);
 
     return `import React, { createContext, useContext } from 'react';
@@ -207,13 +224,15 @@ export const useTheme = () => {
 export default ThemeProvider;`;
   }
 
-  private generateAppComponent(project: Project, context: ExportContext): string {
+  private generateAppComponent(project: Project, _context: ExportContext): string {
     const pageImports = project.pages
-      .map(page => `import ${this.toPascalCase(page.name)} from './${this.toPascalCase(page.name)}';`)
+      .map(
+        (page) => `import ${this.toPascalCase(page.name)} from './${this.toPascalCase(page.name)}';`
+      )
       .join('\n');
 
     const pageComponents = project.pages
-      .map(page => `        <${this.toPascalCase(page.name)} key={page.id} />`)
+      .map((page) => `        <${this.toPascalCase(page.name)} key={page.id} />`)
       .join('\n');
 
     return `import React from 'react';
@@ -234,7 +253,7 @@ export default App;`;
   private toPascalCase(str: string): string {
     return str
       .replace(/[-_]/g, ' ')
-      .replace(/\w/g, l => l.toUpperCase())
+      .replace(/\b\w/g, (l) => l.toUpperCase())
       .replace(/\s+/g, '');
   }
 }

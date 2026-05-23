@@ -1,6 +1,6 @@
 /**
  * TabItem Component
- * 
+ *
  * An individual tab item component used within the Tabs component.
  * Contains the tab label and content panel.
  */
@@ -21,10 +21,11 @@ export const TabItem: React.FC<TabItemProps> = ({
   isActive = false,
   onClick,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
-  const baseClassName = `wysiwyg-tab-item ${isActive ? 'wysiwyg-tab-item-active' : ''} ${className}`.trim();
+  const baseClassName =
+    `wysiwyg-tab-item ${isActive ? 'wysiwyg-tab-item-active' : ''} ${className}`.trim();
 
   return (
     <div
@@ -41,7 +42,7 @@ export const TabItem: React.FC<TabItemProps> = ({
         borderBottom: isActive ? '2px solid #3b82f6' : '2px solid transparent',
         borderRadius: node.props.borderRadius || '0.375rem',
         transition: 'all 0.2s',
-        fontWeight: isActive ? '600' : '400'
+        fontWeight: isActive ? '600' : '400',
       } as React.CSSProperties)}
       onClick={() => !node.props.disabled && onClick?.()}
       data-component-type={node.type}

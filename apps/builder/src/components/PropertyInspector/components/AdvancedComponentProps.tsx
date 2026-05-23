@@ -12,11 +12,14 @@ export const MenuComponentProps: React.FC<PropsTabProps> = ({ component, onPropC
     <div className="property-item">
       <label className="property-item-label">Menu Items</label>
       <textarea
-        value={component.props?.items?.map((item: any) => `${item.label}:${item.href}`).join('\n') || ''}
+        value={
+          component.props?.items?.map((item: any) => `${item.label}:${item.href}`).join('\n') || ''
+        }
         onChange={(e) => {
-          const items = e.target.value.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
+          const items = e.target.value
+            .split('\n')
+            .filter((line) => line.trim())
+            .map((line) => {
               const [label, href] = line.split(':');
               return { label: label?.trim() || line, href: href?.trim() || '#' };
             });
@@ -35,7 +38,7 @@ export const MenuComponentProps: React.FC<PropsTabProps> = ({ component, onPropC
         className="w-full"
         options={[
           { label: 'Horizontal', value: 'horizontal' },
-          { label: 'Vertical', value: 'vertical' }
+          { label: 'Vertical', value: 'vertical' },
         ]}
       />
     </div>
@@ -49,8 +52,9 @@ export const TabsComponentProps: React.FC<PropsTabProps> = ({ component, onPropC
       <textarea
         value={component.props?.tabs?.map((tab: any) => `${tab.label}:${tab.id}`).join('\n') || ''}
         onChange={(e) => {
-          const tabs = e.target.value.split('\n')
-            .filter(line => line.trim())
+          const tabs = e.target.value
+            .split('\n')
+            .filter((line) => line.trim())
             .map((line, index) => {
               const [label, id] = line.split(':');
               return { label: label?.trim() || line, id: id?.trim() || `tab-${index}` };
@@ -79,10 +83,13 @@ export const AccordionComponentProps: React.FC<PropsTabProps> = ({ component, on
     <div className="property-item">
       <label className="property-item-label">Accordion Items</label>
       <textarea
-        value={component.props?.items?.map((item: any) => `${item.title}:${item.id}`).join('\n') || ''}
+        value={
+          component.props?.items?.map((item: any) => `${item.title}:${item.id}`).join('\n') || ''
+        }
         onChange={(e) => {
-          const items = e.target.value.split('\n')
-            .filter(line => line.trim())
+          const items = e.target.value
+            .split('\n')
+            .filter((line) => line.trim())
             .map((line, index) => {
               const [title, id] = line.split(':');
               return { title: title?.trim() || line, id: id?.trim() || `accordion-${index}` };
@@ -179,7 +186,10 @@ export const TableComponentProps: React.FC<PropsTabProps> = ({ component, onProp
       <textarea
         value={component.props?.headers?.join(',') || ''}
         onChange={(e) => {
-          const headers = e.target.value.split(',').map(h => h.trim()).filter(h => h);
+          const headers = e.target.value
+            .split(',')
+            .map((h) => h.trim())
+            .filter((h) => h);
           onPropChange('headers', headers);
         }}
         className="w-full"
@@ -244,11 +254,14 @@ export const FilterComponentProps: React.FC<PropsTabProps> = ({ component, onPro
     <div className="property-item">
       <label className="property-item-label">Options</label>
       <textarea
-        value={component.props?.options?.map((opt: any) => `${opt.label}:${opt.value}`).join('\n') || ''}
+        value={
+          component.props?.options?.map((opt: any) => `${opt.label}:${opt.value}`).join('\n') || ''
+        }
         onChange={(e) => {
-          const options = e.target.value.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
+          const options = e.target.value
+            .split('\n')
+            .filter((line) => line.trim())
+            .map((line) => {
               const [label, value] = line.split(':');
               return { label: label?.trim() || line, value: value?.trim() || line };
             });

@@ -56,7 +56,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   disabled = false,
   className = '',
   arrowClassName = '',
-  contentClassName = ''
+  contentClassName = '',
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -98,15 +98,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
     >
       {children}
       {isVisible && !disabled && (
-        <div
-          ref={tooltipRef}
-          className={classes}
-          role="tooltip"
-        >
+        <div ref={tooltipRef} className={classes} role="tooltip">
           <div className={`tooltip-arrow ${arrowClassName}`} />
-          <div className={`tooltip-content ${contentClassName}`}>
-            {content}
-          </div>
+          <div className={`tooltip-content ${contentClassName}`}>{content}</div>
         </div>
       )}
     </div>

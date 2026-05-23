@@ -19,7 +19,7 @@ export const CommentsTab: React.FC<CommentsTabProps> = ({
   onCommentChange,
   onAddComment,
   onResolveComment,
-  onDeleteComment
+  onDeleteComment,
 }) => {
   return (
     <div className="space-y-4">
@@ -30,12 +30,7 @@ export const CommentsTab: React.FC<CommentsTabProps> = ({
           placeholder="Add a comment..."
           className="flex-1"
         />
-        <Button
-          variant="primary"
-          size="small"
-          onClick={onAddComment}
-          disabled={!newComment.trim()}
-        >
+        <Button variant="primary" size="small" onClick={onAddComment} disabled={!newComment.trim()}>
           <Icon name="send" size="small" />
         </Button>
       </div>
@@ -46,7 +41,7 @@ export const CommentsTab: React.FC<CommentsTabProps> = ({
             No comments yet. Start the conversation!
           </div>
         ) : (
-          comments.map(comment => (
+          comments.map((comment) => (
             <div
               key={comment.id}
               className={`p-3 border rounded-lg ${comment.resolved ? 'opacity-50' : ''}`}
@@ -68,21 +63,13 @@ export const CommentsTab: React.FC<CommentsTabProps> = ({
                       <Icon name="check" size="small" />
                     </Button>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    onClick={() => onDeleteComment(comment.id)}
-                  >
+                  <Button variant="ghost" size="small" onClick={() => onDeleteComment(comment.id)}>
                     <Icon name="delete" size="small" />
                   </Button>
                 </div>
               </div>
               <p className="text-sm">{comment.content}</p>
-              {comment.resolved && (
-                <div className="mt-2 text-sm text-green-600">
-                  ✓ Resolved
-                </div>
-              )}
+              {comment.resolved && <div className="mt-2 text-sm text-green-600">✓ Resolved</div>}
             </div>
           ))
         )}

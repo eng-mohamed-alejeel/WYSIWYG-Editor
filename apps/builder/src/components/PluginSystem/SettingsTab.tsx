@@ -11,7 +11,7 @@ interface SettingsTabProps {
 export const SettingsTab: React.FC<SettingsTabProps> = ({
   selectedPlugin,
   onToggle,
-  onSettingChange
+  onSettingChange,
 }) => {
   if (!selectedPlugin) {
     return (
@@ -35,22 +35,20 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
 
       <div className="property-item">
         <label className="property-item-label">Enable Plugin</label>
-        <Switch
-          checked={selectedPlugin.isEnabled}
-          onChange={() => onToggle(selectedPlugin.id)}
-        />
+        <Switch checked={selectedPlugin.isEnabled} onChange={() => onToggle(selectedPlugin.id)} />
       </div>
 
-      {selectedPlugin.settings && Object.entries(selectedPlugin.settings).map(([key, value]) => (
-        <div key={key} className="property-item">
-          <label className="property-item-label">{key}</label>
-          <Input
-            value={value as string}
-            onChange={(e) => onSettingChange?.(selectedPlugin.id, key, e.target.value)}
-            className="w-full"
-          />
-        </div>
-      ))}
+      {selectedPlugin.settings &&
+        Object.entries(selectedPlugin.settings).map(([key, value]) => (
+          <div key={key} className="property-item">
+            <label className="property-item-label">{key}</label>
+            <Input
+              value={value as string}
+              onChange={(e) => onSettingChange?.(selectedPlugin.id, key, e.target.value)}
+              className="w-full"
+            />
+          </div>
+        ))}
     </div>
   );
 };

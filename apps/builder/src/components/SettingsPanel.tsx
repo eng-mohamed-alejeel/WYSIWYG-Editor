@@ -8,32 +8,38 @@ import { AdvancedTab } from './SettingsPanel/AdvancedTab';
 export const SettingsPanel: React.FC = () => {
   const { project, setProject } = useBuilderStore();
 
-  const handleProjectUpdate = useCallback((updates: any) => {
-    if (project) {
-      setProject({
-        ...project,
-        ...updates
-      });
-    }
-  }, [project, setProject]);
+  const handleProjectUpdate = useCallback(
+    (updates: any) => {
+      if (project) {
+        setProject({
+          ...project,
+          ...updates,
+        });
+      }
+    },
+    [project, setProject]
+  );
 
-  const tabs = useMemo<TabItem[]>(() => [
-    {
-      id: 'general',
-      label: 'General',
-      content: <GeneralTab project={project} handleProjectUpdate={handleProjectUpdate} />
-    },
-    {
-      id: 'styles',
-      label: 'Styles',
-      content: <StylesTab project={project} handleProjectUpdate={handleProjectUpdate} />
-    },
-    {
-      id: 'advanced',
-      label: 'Advanced',
-      content: <AdvancedTab project={project} handleProjectUpdate={handleProjectUpdate} />
-    }
-  ], [project, handleProjectUpdate]);
+  const tabs = useMemo<TabItem[]>(
+    () => [
+      {
+        id: 'general',
+        label: 'General',
+        content: <GeneralTab project={project} handleProjectUpdate={handleProjectUpdate} />,
+      },
+      {
+        id: 'styles',
+        label: 'Styles',
+        content: <StylesTab project={project} handleProjectUpdate={handleProjectUpdate} />,
+      },
+      {
+        id: 'advanced',
+        label: 'Advanced',
+        content: <AdvancedTab project={project} handleProjectUpdate={handleProjectUpdate} />,
+      },
+    ],
+    [project, handleProjectUpdate]
+  );
 
   return (
     <div className="h-full flex flex-col">

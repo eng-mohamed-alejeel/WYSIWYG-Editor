@@ -1,6 +1,6 @@
 /**
  * Modal Component
- * 
+ *
  * A modal component for displaying content in an overlay.
  * Supports various sizes, positions, and animation options.
  */
@@ -14,7 +14,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const isOpen = node.props.isOpen !== false;
@@ -71,7 +71,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         ...(node.styles as Record<string, any>),
         ...modalPositionStyles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}
@@ -84,7 +84,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0
+          bottom: 0,
         } as React.CSSProperties)}
         onClick={closeOnOverlayClick ? node.props.onClose : undefined}
       />
@@ -98,7 +98,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
           maxHeight: '90vh',
           overflow: 'auto',
           ...modalSizeStyles,
-          padding: node.props.padding || '1.5rem'
+          padding: node.props.padding || '1.5rem',
         } as React.CSSProperties)}
       >
         {node.props.showHeader !== false && (
@@ -110,10 +110,16 @@ export const Modal: React.FC<BaseComponentProps> = ({
               alignItems: 'center',
               marginBottom: '1rem',
               paddingBottom: '1rem',
-              borderBottom: '1px solid #e5e7eb'
+              borderBottom: '1px solid #e5e7eb',
             } as React.CSSProperties)}
           >
-            <h3 style={mergeStyles({ margin: 0, fontSize: '1.25rem', fontWeight: '600' } as React.CSSProperties)}>
+            <h3
+              style={mergeStyles({
+                margin: 0,
+                fontSize: '1.25rem',
+                fontWeight: '600',
+              } as React.CSSProperties)}
+            >
               {node.props.title || 'Modal'}
             </h3>
             {node.props.showCloseButton !== false && (
@@ -126,7 +132,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
                   cursor: 'pointer',
                   padding: '0.25rem 0.5rem',
                   lineHeight: 1,
-                  color: '#6b7280'
+                  color: '#6b7280',
                 } as React.CSSProperties)}
                 onClick={node.props.onClose}
               >
@@ -135,9 +141,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
             )}
           </div>
         )}
-        <div className="wysiwyg-modal-body">
-          {children}
-        </div>
+        <div className="wysiwyg-modal-body">{children}</div>
         {node.props.showFooter !== false && node.props.footer && (
           <div
             className="wysiwyg-modal-footer"
@@ -147,7 +151,7 @@ export const Modal: React.FC<BaseComponentProps> = ({
               borderTop: '1px solid #e5e7eb',
               display: 'flex',
               justifyContent: 'flex-end',
-              gap: '0.5rem'
+              gap: '0.5rem',
             } as React.CSSProperties)}
           >
             {node.props.footer}
@@ -162,23 +166,23 @@ function getModalSizeStyles(size: string): React.CSSProperties {
   const sizes: Record<string, React.CSSProperties> = {
     small: {
       width: '90%',
-      maxWidth: '400px'
+      maxWidth: '400px',
     },
     medium: {
       width: '90%',
-      maxWidth: '600px'
+      maxWidth: '600px',
     },
     large: {
       width: '90%',
-      maxWidth: '800px'
+      maxWidth: '800px',
     },
     fullscreen: {
       width: '100%',
       height: '100%',
       maxWidth: 'none',
       maxHeight: 'none',
-      borderRadius: 0
-    }
+      borderRadius: 0,
+    },
   };
   return sizes[size] || sizes.medium;
 }
@@ -187,30 +191,28 @@ function getModalPositionStyles(position: string): React.CSSProperties {
   const positions: Record<string, React.CSSProperties> = {
     center: {
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     top: {
       alignItems: 'flex-start',
       justifyContent: 'center',
-      paddingTop: '10vh'
+      paddingTop: '10vh',
     },
     bottom: {
       alignItems: 'flex-end',
       justifyContent: 'center',
-      paddingBottom: '10vh'
+      paddingBottom: '10vh',
     },
     left: {
       alignItems: 'center',
       justifyContent: 'flex-start',
-      paddingLeft: '10vw'
+      paddingLeft: '10vw',
     },
     right: {
       alignItems: 'center',
       justifyContent: 'flex-end',
-      paddingRight: '10vw'
-    }
+      paddingRight: '10vw',
+    },
   };
   return positions[position] || positions.center;
 }
-
-

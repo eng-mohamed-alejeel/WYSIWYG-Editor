@@ -55,7 +55,7 @@ export const IconComponentProps: React.FC<PropsTabProps> = ({ component, onPropC
         options={[
           { label: 'Small', value: 'small' },
           { label: 'Medium', value: 'medium' },
-          { label: 'Large', value: 'large' }
+          { label: 'Large', value: 'large' },
         ]}
       />
     </div>

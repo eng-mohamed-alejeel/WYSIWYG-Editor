@@ -1,6 +1,6 @@
 /**
  * Container Component
- * 
+ *
  * A container component that provides a constrained width wrapper
  * for content, commonly used to center content on the page.
  */
@@ -9,13 +9,12 @@ import React from 'react';
 import { BaseComponentProps } from '../types';
 import { parseInlineStyles, mergeStyles } from '../utils/styleUtils';
 
-
 export const Container: React.FC<BaseComponentProps> = ({
   node,
   context,
   children,
   style,
-  className = ''
+  className = '',
 }) => {
   const { isEditable, isPreview } = context;
   const baseClassName = `wysiwyg-container ${className}`.trim();
@@ -29,7 +28,7 @@ export const Container: React.FC<BaseComponentProps> = ({
         margin: '0 auto',
         padding: node.props.padding || '0 1rem',
         ...node.styles,
-        ...parseInlineStyles(style)
+        ...parseInlineStyles(style),
       } as React.CSSProperties)}
       data-component-type={node.type}
       data-editable={isEditable}

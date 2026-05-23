@@ -107,25 +107,22 @@ export const Select: React.FC<SelectProps> = ({
   label,
   placeholder = 'Select an option',
   fullWidth = false,
-  className = ''
+  className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<SelectOption | undefined>(
-    options.find(opt => opt.value === value)
+    options.find((opt) => opt.value === value)
   );
   const selectRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const option = options.find(opt => opt.value === value);
+    const option = options.find((opt) => opt.value === value);
     setSelectedOption(option);
   }, [value, options]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectRef.current &&
-        !selectRef.current.contains(event.target as Node)
-      ) {
+      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -164,16 +161,17 @@ export const Select: React.FC<SelectProps> = ({
     errorClasses,
     fullWidthClasses,
     openClasses,
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={`select-wrapper ${fullWidth ? 'select-wrapper-full-width' : ''}`} ref={selectRef}>
-      {label && (
-        <label className="select-label">
-          {label}
-        </label>
-      )}
+    <div
+      className={`select-wrapper ${fullWidth ? 'select-wrapper-full-width' : ''}`}
+      ref={selectRef}
+    >
+      {label && <label className="select-label">{label}</label>}
       <div
         className={classes}
         onClick={handleToggle}
@@ -186,13 +184,9 @@ export const Select: React.FC<SelectProps> = ({
           {selectedOption ? (
             <>
               {selectedOption.icon && (
-                <span className="select-option-icon">
-                  {selectedOption.icon}
-                </span>
+                <span className="select-option-icon">{selectedOption.icon}</span>
               )}
-              <span className="select-option-label">
-                {selectedOption.label}
-              </span>
+              <span className="select-option-label">{selectedOption.label}</span>
             </>
           ) : (
             <span className="select-placeholder">{placeholder}</span>
@@ -221,35 +215,21 @@ export const Select: React.FC<SelectProps> = ({
           {options.map((option) => (
             <div
               key={option.value}
-              className={`select-option ${
-                option.disabled ? 'select-option-disabled' : ''
-              } ${
-                selectedOption?.value === option.value
-                  ? 'select-option-selected'
-                  : ''
+              className={`select-option ${option.disabled ? 'select-option-disabled' : ''} ${
+                selectedOption?.value === option.value ? 'select-option-selected' : ''
               }`}
               onClick={() => handleOptionClick(option)}
               role="option"
               aria-selected={selectedOption?.value === option.value}
               aria-disabled={option.disabled}
             >
-              {option.icon && (
-                <span className="select-option-icon">
-                  {option.icon}
-                </span>
-              )}
-              <span className="select-option-label">
-                {option.label}
-              </span>
+              {option.icon && <span className="select-option-icon">{option.icon}</span>}
+              <span className="select-option-label">{option.label}</span>
             </div>
           ))}
         </div>
       )}
-      {error && errorMessage && (
-        <span className="select-error-message">
-          {errorMessage}
-        </span>
-      )}
+      {error && errorMessage && <span className="select-error-message">{errorMessage}</span>}
     </div>
   );
 };

@@ -24,10 +24,7 @@ interface LoggingSystemProps {
   onClose: () => void;
 }
 
-export const LoggingSystem: React.FC<LoggingSystemProps> = ({
-  isOpen,
-  onClose
-}) => {
+export const LoggingSystem: React.FC<LoggingSystemProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('logs');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
@@ -49,7 +46,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
         level: 'info',
         category: 'component',
         message: 'Component added successfully',
-        details: { componentId: 'comp_123', type: 'button' }
+        details: { componentId: 'comp_123', type: 'button' },
       },
       {
         id: '2',
@@ -57,7 +54,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
         level: 'warning',
         category: 'validation',
         message: 'Missing alt text on image',
-        details: { componentId: 'comp_456' }
+        details: { componentId: 'comp_456' },
       },
       {
         id: '3',
@@ -65,7 +62,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
         level: 'error',
         category: 'export',
         message: 'Export failed: Invalid component structure',
-        details: { error: 'Invalid structure', componentId: 'comp_789' }
+        details: { error: 'Invalid structure', componentId: 'comp_789' },
       },
       {
         id: '4',
@@ -73,7 +70,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
         level: 'debug',
         category: 'performance',
         message: 'Render time: 150ms',
-        details: { componentId: 'comp_123', renderTime: 150 }
+        details: { componentId: 'comp_123', renderTime: 150 },
       },
       {
         id: '5',
@@ -81,8 +78,8 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
         level: 'info',
         category: 'user',
         message: 'User action: selected component',
-        details: { componentId: 'comp_123', userId: 'user_1' }
-      }
+        details: { componentId: 'comp_123', userId: 'user_1' },
+      },
     ];
 
     setLogs(mockLogs);
@@ -105,11 +102,13 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
     setLogs([]);
   };
 
-  const filteredLogs = logs.filter(log => {
+  const filteredLogs = logs.filter((log) => {
     const matchesLevel = selectedLevel === 'all' || log.level === selectedLevel;
     const matchesCategory = selectedCategory === 'all' || log.category === selectedCategory;
-    const matchesSearch = log.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (log.details && JSON.stringify(log.details).toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSearch =
+      log.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (log.details &&
+        JSON.stringify(log.details).toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesLevel && matchesCategory && matchesSearch;
   });
 
@@ -134,7 +133,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
               { value: 'info', label: 'Info' },
               { value: 'warning', label: 'Warning' },
               { value: 'error', label: 'Error' },
-              { value: 'debug', label: 'Debug' }
+              { value: 'debug', label: 'Debug' },
             ]}
             className="w-32"
           />
@@ -147,26 +146,18 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
               { value: 'validation', label: 'Validation' },
               { value: 'export', label: 'Export' },
               { value: 'performance', label: 'Performance' },
-              { value: 'user', label: 'User' }
+              { value: 'user', label: 'User' },
             ]}
             className="w-32"
           />
         </div>
 
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={handleExportLogs}
-          >
+          <Button variant="ghost" size="small" onClick={handleExportLogs}>
             <Icon name="download" size="small" />
             Export
           </Button>
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={handleClearLogs}
-          >
+          <Button variant="ghost" size="small" onClick={handleClearLogs}>
             <Icon name="delete" size="small" />
             Clear
           </Button>
@@ -180,14 +171,17 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
           />
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto">
-            {filteredLogs.map(log => (
+            {filteredLogs.map((log) => (
               <div
                 key={log.id}
                 className={`p-3 border rounded-lg ${
-                  log.level === 'error' ? 'border-red-300 bg-red-50' :
-                  log.level === 'warning' ? 'border-yellow-300 bg-yellow-50' :
-                  log.level === 'debug' ? 'border-gray-300 bg-gray-50' :
-                  'border-blue-300 bg-blue-50'
+                  log.level === 'error'
+                    ? 'border-red-300 bg-red-50'
+                    : log.level === 'warning'
+                      ? 'border-yellow-300 bg-yellow-50'
+                      : log.level === 'debug'
+                        ? 'border-gray-300 bg-gray-50'
+                        : 'border-blue-300 bg-blue-50'
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -195,10 +189,13 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
                     <div className="flex items-center gap-2 mb-1">
                       <Badge
                         variant={
-                          log.level === 'error' ? 'danger' :
-                          log.level === 'warning' ? 'warning' :
-                          log.level === 'debug' ? 'secondary' :
-                          'default'
+                          log.level === 'error'
+                            ? 'danger'
+                            : log.level === 'warning'
+                              ? 'warning'
+                              : log.level === 'debug'
+                                ? 'secondary'
+                                : 'default'
                         }
                         size="sm"
                       >
@@ -214,9 +211,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
                     <p className="text-sm">{log.message}</p>
                     {log.details && (
                       <details className="mt-2">
-                        <summary className="text-sm text-gray-600 cursor-pointer">
-                          Details
-                        </summary>
+                        <summary className="text-sm text-gray-600 cursor-pointer">Details</summary>
                         <pre className="text-xs bg-gray-100 p-2 mt-2 rounded overflow-auto">
                           {JSON.stringify(log.details, null, 2)}
                         </pre>
@@ -229,7 +224,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
           </div>
         )}
       </div>
-    )
+    ),
   };
 
   const settingsTab: TabItem = {
@@ -246,7 +241,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
               { value: 'all', label: 'All Levels' },
               { value: 'info', label: 'Info and above' },
               { value: 'warning', label: 'Warning and above' },
-              { value: 'error', label: 'Error only' }
+              { value: 'error', label: 'Error only' },
             ]}
             className="w-full"
           />
@@ -261,7 +256,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
               { value: '1d', label: '1 day' },
               { value: '7d', label: '7 days' },
               { value: '30d', label: '30 days' },
-              { value: '90d', label: '90 days' }
+              { value: '90d', label: '90 days' },
             ]}
             className="w-full"
           />
@@ -270,7 +265,7 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
         <div className="space-y-2">
           <h3 className="font-semibold">Categories to Log</h3>
           <div className="space-y-2">
-            {['component', 'validation', 'export', 'performance', 'user'].map(category => (
+            {['component', 'validation', 'export', 'performance', 'user'].map((category) => (
               <label key={category} className="flex items-center gap-2">
                 <input type="checkbox" defaultChecked />
                 <span className="capitalize">{category}</span>
@@ -287,13 +282,13 @@ export const LoggingSystem: React.FC<LoggingSystemProps> = ({
             options={[
               { value: 'json', label: 'JSON' },
               { value: 'csv', label: 'CSV' },
-              { value: 'txt', label: 'Text' }
+              { value: 'txt', label: 'Text' },
             ]}
             className="w-full"
           />
         </div>
       </div>
-    )
+    ),
   };
 
   return (

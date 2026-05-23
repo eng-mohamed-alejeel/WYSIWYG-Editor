@@ -16,14 +16,8 @@ import { DragDropProvider } from './DragDropProvider';
 import { ComponentNode } from '@wysiwyg/core';
 
 export const EditorLayout: React.FC = () => {
-  const {
-    project,
-    currentPageId,
-    selectedIds,
-    isPreviewMode,
-    addComponent,
-    setSelectedIds
-  } = useBuilderStore();
+  const { project, currentPageId, selectedIds, isPreviewMode, addComponent, setSelectedIds } =
+    useBuilderStore();
 
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [activeLeftTab, setActiveLeftTab] = useState('components');
@@ -57,7 +51,7 @@ export const EditorLayout: React.FC = () => {
       type: draggedComponentType,
       props: {},
       styles: {},
-      children: []
+      children: [],
     };
 
     if (targetComponent) {
@@ -90,36 +84,36 @@ export const EditorLayout: React.FC = () => {
     {
       id: 'components',
       label: 'Components',
-      content: <ComponentLibrary onDragStart={handleDragStart} onDragEnd={handleDragEnd} />
+      content: <ComponentLibrary onDragStart={handleDragStart} onDragEnd={handleDragEnd} />,
     },
     {
       id: 'layers',
       label: 'Layers',
-      content: <LayerPanel components={getCurrentPageComponents()} />
+      content: <LayerPanel components={getCurrentPageComponents()} />,
     },
     {
       id: 'pages',
       label: 'Pages',
-      content: <PagePanel />
+      content: <PagePanel />,
     },
     {
       id: 'assets',
       label: 'Assets',
-      content: <AssetPanel />
-    }
+      content: <AssetPanel />,
+    },
   ];
 
   const rightTabs: TabItem[] = [
     {
       id: 'properties',
       label: 'Properties',
-      content: <PropertyInspector componentId={selectedIds[0] || null} />
+      content: <PropertyInspector componentId={selectedIds[0] || null} />,
     },
     {
       id: 'settings',
       label: 'Settings',
-      content: <SettingsPanel />
-    }
+      content: <SettingsPanel />,
+    },
   ];
 
   return (
@@ -131,12 +125,7 @@ export const EditorLayout: React.FC = () => {
         {/* Main Content */}
         <div className="flex flex-1 overflow-hidden">
           {/* Left Sidebar */}
-          <Panel
-            isOpen={true}
-            position="left"
-            size="small"
-            className="h-full"
-          >
+          <Panel isOpen={true} position="left" size="small" className="h-full">
             <Tabs
               items={leftTabs}
               activeTab={activeLeftTab}
@@ -154,7 +143,7 @@ export const EditorLayout: React.FC = () => {
                 onDragOver={handleDragOver}
                 className={`min-h-full ${isPreviewMode ? 'preview-mode' : 'edit-mode'}`}
               >
-                {getCurrentPageComponents().map(component => (
+                {getCurrentPageComponents().map((component) => (
                   <ComponentRenderer
                     key={component.id}
                     component={component}
@@ -166,12 +155,7 @@ export const EditorLayout: React.FC = () => {
           </div>
 
           {/* Right Sidebar */}
-          <Panel
-            isOpen={true}
-            position="right"
-            size="medium"
-            className="h-full"
-          >
+          <Panel isOpen={true} position="right" size="medium" className="h-full">
             <Tabs
               items={rightTabs}
               activeTab={activeRightTab}

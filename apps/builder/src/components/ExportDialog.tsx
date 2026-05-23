@@ -21,16 +21,12 @@ export interface ExportOptions {
   outputPath?: string;
 }
 
-export const ExportDialog: React.FC<ExportDialogProps> = ({
-  isOpen,
-  onClose,
-  onExport
-}) => {
+export const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose, onExport }) => {
   const [options, setOptions] = useState<ExportOptions>({
     format: 'html',
     minify: false,
     includeSourceMaps: false,
-    includeAssets: true
+    includeAssets: true,
   });
 
   const handleExport = () => {
@@ -39,12 +35,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Export Project"
-      size="medium"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Export Project" size="medium">
       <div className="space-y-6">
         <div className="property-group">
           <h3 className="property-group-title">Export Format</h3>
@@ -58,7 +49,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                 { value: 'html', label: 'HTML Website' },
                 { value: 'react', label: 'React Components' },
                 { value: 'wordpress', label: 'WordPress Blocks' },
-                { value: 'odoo', label: 'Odoo Snippets' }
+                { value: 'odoo', label: 'Odoo Snippets' },
               ]}
               className="w-full"
             />
@@ -105,9 +96,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
               checked={options.includeSourceMaps}
               onChange={(checked) => setOptions({ ...options, includeSourceMaps: checked })}
             />
-            <p className="text-sm text-gray-600 mt-1">
-              Generate source maps for easier debugging
-            </p>
+            <p className="text-sm text-gray-600 mt-1">Generate source maps for easier debugging</p>
           </div>
 
           <div className="property-item">
@@ -129,17 +118,11 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             <div className="space-y-4">
               <div className="property-item">
                 <label className="property-item-label">Include Bootstrap</label>
-                <Switch
-                  checked={false}
-                  onChange={() => {}}
-                />
+                <Switch checked={false} onChange={() => {}} />
               </div>
               <div className="property-item">
                 <label className="property-item-label">Include jQuery</label>
-                <Switch
-                  checked={false}
-                  onChange={() => {}}
-                />
+                <Switch checked={false} onChange={() => {}} />
               </div>
             </div>
           )}
@@ -148,17 +131,11 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             <div className="space-y-4">
               <div className="property-item">
                 <label className="property-item-label">Use TypeScript</label>
-                <Switch
-                  checked={false}
-                  onChange={() => {}}
-                />
+                <Switch checked={false} onChange={() => {}} />
               </div>
               <div className="property-item">
                 <label className="property-item-label">Use Tailwind CSS</label>
-                <Switch
-                  checked={false}
-                  onChange={() => {}}
-                />
+                <Switch checked={false} onChange={() => {}} />
               </div>
             </div>
           )}
@@ -167,12 +144,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             <div className="space-y-4">
               <div className="property-item">
                 <label className="property-item-label">Plugin Name</label>
-                <Input
-                  value=""
-                  onChange={() => {}}
-                  placeholder="my-blocks"
-                  className="w-full"
-                />
+                <Input value="" onChange={() => {}} placeholder="my-blocks" className="w-full" />
               </div>
             </div>
           )}

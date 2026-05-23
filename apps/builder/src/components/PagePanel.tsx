@@ -19,12 +19,12 @@ export const PagePanel: React.FC = () => {
       name: newPageName,
       path: `/${newPageName.toLowerCase().replace(/\s+/g, '-')}`,
       components: [],
-      settings: {}
+      settings: {},
     };
 
     setProject({
       ...project,
-      pages: [...(project?.pages || []), newPage]
+      pages: [...(project?.pages || []), newPage],
     });
 
     setNewPageName('');
@@ -39,7 +39,7 @@ export const PagePanel: React.FC = () => {
 
     setProject({
       ...project,
-      pages: project.pages.filter((p: any) => p.id !== pageId)
+      pages: project.pages.filter((p: any) => p.id !== pageId),
     });
 
     if (currentPageId === pageId) {
@@ -55,12 +55,12 @@ export const PagePanel: React.FC = () => {
       ...page,
       id: `page_${Date.now()}`,
       name: `${page.name} (Copy)`,
-      path: `${page.path}-copy`
+      path: `${page.path}-copy`,
     };
 
     setProject({
       ...project,
-      pages: [...(project?.pages || []), duplicatedPage]
+      pages: [...(project?.pages || []), duplicatedPage],
     });
   };
 
@@ -69,14 +69,14 @@ export const PagePanel: React.FC = () => {
       id: 'duplicate',
       label: 'Duplicate',
       icon: 'copy',
-      onClick: () => handleDuplicatePage(pageId)
+      onClick: () => handleDuplicatePage(pageId),
     },
     {
       id: 'delete',
       label: 'Delete',
       icon: 'delete',
-      onClick: () => handleDeletePage(pageId)
-    }
+      onClick: () => handleDeletePage(pageId),
+    },
   ];
 
   return (
@@ -84,11 +84,7 @@ export const PagePanel: React.FC = () => {
       <div className="page-panel">
         <div className="page-panel-header">
           <h3 className="text-sm font-semibold">Pages</h3>
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
+          <Button variant="ghost" size="small" onClick={() => setIsCreateModalOpen(true)}>
             <Icon name="plus" size="small" />
           </Button>
         </div>
@@ -137,17 +133,10 @@ export const PagePanel: React.FC = () => {
           </div>
 
           <div className="flex justify-end gap-3">
-            <Button
-              variant="ghost"
-              onClick={() => setIsCreateModalOpen(false)}
-            >
+            <Button variant="ghost" onClick={() => setIsCreateModalOpen(false)}>
               Cancel
             </Button>
-            <Button
-              variant="primary"
-              onClick={handleCreatePage}
-              disabled={!newPageName.trim()}
-            >
+            <Button variant="primary" onClick={handleCreatePage} disabled={!newPageName.trim()}>
               Create
             </Button>
           </div>

@@ -29,13 +29,13 @@ export const AssetPanel: React.FC = () => {
     const files = e.target.files;
     if (!files) return;
 
-    const newAssets: Asset[] = Array.from(files).map(file => ({
+    const newAssets: Asset[] = Array.from(files).map((file) => ({
       id: `asset_${Date.now()}_${Math.random()}`,
       name: file.name,
       type: getFileType(file.type),
       url: URL.createObjectURL(file),
       size: file.size,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     }));
 
     setAssets([...assets, ...newAssets]);
@@ -50,11 +50,12 @@ export const AssetPanel: React.FC = () => {
   };
 
   const handleDelete = (assetId: string) => {
-    setAssets(assets.filter(asset => asset.id !== assetId));
+    setAssets(assets.filter((asset) => asset.id !== assetId));
   };
 
-  const filteredAssets = assets.filter(asset => {
-    const matchesCategory = selectedCategory === 'all' || 
+  const filteredAssets = assets.filter((asset) => {
+    const matchesCategory =
+      selectedCategory === 'all' ||
       (selectedCategory === 'images' && asset.type === 'image') ||
       (selectedCategory === 'videos' && asset.type === 'video') ||
       (selectedCategory === 'fonts' && asset.type === 'font') ||
@@ -81,31 +82,31 @@ export const AssetPanel: React.FC = () => {
   const allTab: TabItem = {
     id: 'all',
     label: 'All',
-    content: renderAssetGrid(filteredAssets)
+    content: renderAssetGrid(filteredAssets),
   };
 
   const imagesTab: TabItem = {
     id: 'images',
     label: 'Images',
-    content: renderAssetGrid(filteredAssets.filter(a => a.type === 'image'))
+    content: renderAssetGrid(filteredAssets.filter((a) => a.type === 'image')),
   };
 
   const videosTab: TabItem = {
     id: 'videos',
     label: 'Videos',
-    content: renderAssetGrid(filteredAssets.filter(a => a.type === 'video'))
+    content: renderAssetGrid(filteredAssets.filter((a) => a.type === 'video')),
   };
 
   const fontsTab: TabItem = {
     id: 'fonts',
     label: 'Fonts',
-    content: renderAssetGrid(filteredAssets.filter(a => a.type === 'font'))
+    content: renderAssetGrid(filteredAssets.filter((a) => a.type === 'font')),
   };
 
   const iconsTab: TabItem = {
     id: 'icons',
     label: 'Icons',
-    content: renderAssetGrid(filteredAssets.filter(a => a.type === 'icon'))
+    content: renderAssetGrid(filteredAssets.filter((a) => a.type === 'icon')),
   };
 
   function renderAssetGrid(items: Asset[]) {
@@ -123,15 +124,13 @@ export const AssetPanel: React.FC = () => {
 
     return (
       <div className="asset-grid">
-        {items.map(asset => (
+        {items.map((asset) => (
           <div key={asset.id} className="asset-item">
             <div className="asset-item-preview">
               {asset.type === 'image' && (
                 <Image src={asset.url} alt={asset.name} width={100} height={100} />
               )}
-              {asset.type === 'video' && (
-                <video src={asset.url} />
-              )}
+              {asset.type === 'video' && <video src={asset.url} />}
               {asset.type !== 'image' && asset.type !== 'video' && (
                 <Icon name="file" size="large" />
               )}
@@ -162,11 +161,7 @@ export const AssetPanel: React.FC = () => {
       <div className="asset-panel">
         <div className="asset-panel-header">
           <h3 className="text-sm font-semibold">Assets</h3>
-          <Button
-            variant="primary"
-            size="small"
-            onClick={handleUpload}
-          >
+          <Button variant="primary" size="small" onClick={handleUpload}>
             <Icon name="plus" size="small" />
             Upload
           </Button>

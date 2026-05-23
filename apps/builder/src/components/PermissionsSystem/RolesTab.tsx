@@ -11,7 +11,12 @@ interface RolesTabProps {
   onCreateRole: () => void;
 }
 
-export const RolesTab: React.FC<RolesTabProps> = ({ roles, selectedRole, onRoleSelect, onCreateRole }) => (
+export const RolesTab: React.FC<RolesTabProps> = ({
+  roles,
+  selectedRole,
+  onRoleSelect,
+  onCreateRole,
+}) => (
   <div className="space-y-4">
     <div className="flex justify-between items-center">
       <h3 className="font-semibold">Roles</h3>
@@ -21,7 +26,7 @@ export const RolesTab: React.FC<RolesTabProps> = ({ roles, selectedRole, onRoleS
       </Button>
     </div>
     <div className="space-y-2">
-      {roles.map(role => (
+      {roles.map((role) => (
         <div
           key={role.id}
           className={`p-3 border rounded-lg cursor-pointer hover:shadow-md transition-shadow ${
@@ -35,8 +40,14 @@ export const RolesTab: React.FC<RolesTabProps> = ({ roles, selectedRole, onRoleS
               <div className="text-sm text-gray-600">{role.description}</div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" size="sm">{role.permissions.length} permissions</Badge>
-              {role.isDefault && <Badge variant="default" size="sm">Default</Badge>}
+              <Badge variant="secondary" size="sm">
+                {role.permissions.length} permissions
+              </Badge>
+              {role.isDefault && (
+                <Badge variant="default" size="sm">
+                  Default
+                </Badge>
+              )}
             </div>
           </div>
         </div>

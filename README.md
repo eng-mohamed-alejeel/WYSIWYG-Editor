@@ -102,6 +102,7 @@ type ComponentDefinition = {
 ## 🔌 Plugin System
 
 Plugins can extend the builder with:
+
 - Custom blocks
 - Custom renderers
 - Custom traits
