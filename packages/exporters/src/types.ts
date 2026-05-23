@@ -9,7 +9,7 @@ import { Project, Page, ComponentNode, ExportResult, ExportOptions } from '@wysi
 /**
  * Export format type
  */
-export type ExportFormat = 'html' | 'react' | 'wordpress' | 'odoo';
+export type ExportFormat = 'html' | 'react' | 'nextjs' | 'tailwind' | 'wordpress' | 'odoo';
 
 /**
  * Exporter interface

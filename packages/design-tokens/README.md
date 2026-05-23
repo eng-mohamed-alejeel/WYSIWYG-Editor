@@ -48,6 +48,7 @@ function MyComponent() {
 const { theme, isDark } = useTheme();
 
 return (
+
 <div style={{
       backgroundColor: theme.tokens.colors.background.default.value,
       color: theme.tokens.colors.text.primary.value,
