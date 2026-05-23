@@ -13,8 +13,8 @@ import { DragDropProvider } from '../components/DragDropProvider';
 
 export default function BuilderPage() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [selectedComponent] = useState<ComponentNode | null>(null);
-  const { addComponent, setProject, setCurrentPageId, project } = useBuilderStore();
+  const { addComponent, setProject, setCurrentPageId, project, selectedIds } = useBuilderStore();
+  const selectedComponentId = selectedIds.length > 0 ? selectedIds[0] : null;
 
   useEffect(() => {
     if (!project) {
@@ -92,7 +92,7 @@ export default function BuilderPage() {
 
         {/* الشريط الجانبي الأيمن */}
         <div className="w-80 border-l border-gray-300 flex-shrink-0">
-          <PropertiesPanel selectedComponent={selectedComponent} />
+          <PropertiesPanel selectedComponentId={selectedComponentId} />
         </div>
       </div>
     </DragDropProvider>

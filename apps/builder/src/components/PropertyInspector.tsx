@@ -1,15 +1,21 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ComponentNode, ComponentId } from '@wysiwyg/core';
 import { useBuilderStore } from '../store/store';
-import { Tabs, TabItem } from '@wysiwyg/ui';
 import { PropsTab } from './PropertyInspector/PropsTab';
 import { StylesTab } from './PropertyInspector/StylesTab';
 import { AdvancedTab } from './PropertyInspector/AdvancedTab';
 import { StyleValue } from './PropertyInspector/types';
 
+interface AccordionItem {
+  id: string;
+  label: string;
+  content: React.ReactNode;
+}
+
 export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = ({ componentId }) => {
   const { project, currentPageId, updateComponent } = useBuilderStore();
   const [component, setComponent] = useState<ComponentNode | null>(null);
+  const [openAccordion, setOpenAccordion] = useState<string | null>('props');
 
   useEffect(() => {
     if (!componentId || !project || !currentPageId) {
@@ -48,7 +54,11 @@ export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = 
     updateComponent(componentId, { styles: { ...component.styles, [key]: value } });
   }, [componentId, component?.styles, updateComponent]);
 
-  const tabs = useMemo<TabItem[]>(() => [
+  const toggleAccordion = (id: string) => {
+    setOpenAccordion(openAccordion === id ? null : id);
+  };
+
+  const accordionItems: AccordionItem[] = [
     {
       id: 'props',
       label: 'Properties',
@@ -64,7 +74,7 @@ export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = 
       label: 'Advanced',
       content: <AdvancedTab component={component} onPropChange={handlePropChange} onStyleChange={handleStyleChange} />
     }
-  ], [component, handlePropChange, handleStyleChange]);
+  ];
 
   if (!component) {
     return <div className="text-center text-gray-500 py-8">Select a component to view its properties</div>;
@@ -72,7 +82,29 @@ export const PropertyInspector: React.FC<{ componentId: ComponentId | null }> = 
 
   return (
     <div className="h-full flex flex-col">
-      <Tabs items={tabs} variant="pills" className="flex-1" />
+      <div className="p-4 border-b border-gray-300 bg-gray-50">
+        <h2 className="text-lg font-semibold">Properties</h2>
+      </div>
+      <div className="flex-1 overflow-auto">
+        {accordionItems.map(item => (
+          <div key={item.id} className="border-b border-gray-200">
+            <button
+              onClick={() => toggleAccordion(item.id)}
+              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            >
+              <span className="font-semibold text-gray-700">{item.label}</span>
+              <span className={`transform transition-transform ${openAccordion === item.id ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
+            </button>
+            {openAccordion === item.id && (
+              <div className="p-4 bg-white">
+                {item.content}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
