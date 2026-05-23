@@ -1,7 +1,7 @@
 {
   "name": "@wysiwyg/renderer",
-  "version": "0.1.0",
-  "description": "Component rendering system for WYSIWYG Editor",
+  "version": "0.2.0",
+  "description": "Production-grade component rendering system for WYSIWYG Editor",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -23,5 +23,21 @@
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "typescript": "^5.3.3"
-  }
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "keywords": [
+    "wysiwyg",
+    "renderer",
+    "react",
+    "component",
+    "virtualization",
+    "lazy-loading",
+    "performance",
+    "error-boundary"
+  ],
+  "author": "WYSIWYG Editor Team",
+  "license": "MIT"
 }
