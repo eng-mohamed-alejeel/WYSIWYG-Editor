@@ -9,8 +9,8 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@wysiwyg/core": "workspace:*",
-    "@wysiwyg/renderer": "workspace:*"
+    "@wysiwyg/core": "*",
+    "@wysiwyg/renderer": "*"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
