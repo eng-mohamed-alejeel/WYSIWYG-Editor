@@ -1,0 +1,329 @@
+/**
+ * WYSIWYG Editor Design Tokens
+ * Generated CSS Variables
+ */
+
+:root {
+  /* Primary Colors */
+  --dt-colors-primary: #3B82F6;
+  --dt-colors-primary-hover: #2563EB;
+  --dt-colors-primary-active: #1D4ED8;
+  --dt-colors-primary-light: #93C5FD;
+  --dt-colors-primary-dark: #1E40AF;
+
+  /* Secondary Colors */
+  --dt-colors-secondary: #8B5CF6;
+  --dt-colors-secondary-hover: #7C3AED;
+  --dt-colors-secondary-active: #6D28D9;
+  --dt-colors-secondary-light: #C4B5FD;
+  --dt-colors-secondary-dark: #5B21B6;
+
+  /* Semantic Colors */
+  --dt-colors-success: #10B981;
+  --dt-colors-success-hover: #059669;
+  --dt-colors-success-active: #047857;
+
+  --dt-colors-warning: #F59E0B;
+  --dt-colors-warning-hover: #D97706;
+  --dt-colors-warning-active: #B45309;
+
+  --dt-colors-error: #EF4444;
+  --dt-colors-error-hover: #DC2626;
+  --dt-colors-error-active: #B91C1C;
+
+  --dt-colors-info: #3B82F6;
+  --dt-colors-info-hover: #2563EB;
+  --dt-colors-info-active: #1D4ED8;
+
+  /* Neutral Colors */
+  --dt-colors-neutral-50: #FAFAFA;
+  --dt-colors-neutral-100: #F5F5F5;
+  --dt-colors-neutral-200: #E5E5E5;
+  --dt-colors-neutral-300: #D4D4D4;
+  --dt-colors-neutral-400: #A3A3A3;
+  --dt-colors-neutral-500: #737373;
+  --dt-colors-neutral-600: #525252;
+  --dt-colors-neutral-700: #404040;
+  --dt-colors-neutral-800: #262626;
+  --dt-colors-neutral-900: #171717;
+
+  /* Background Colors */
+  --dt-background-default: #FFFFFF;
+  --dt-background-paper: #FFFFFF;
+  --dt-background-elevated: #FFFFFF;
+  --dt-background-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text Colors */
+  --dt-text-primary: #171717;
+  --dt-text-secondary: #525252;
+  --dt-text-disabled: #A3A3A3;
+  --dt-text-inverse: #FFFFFF;
+
+  /* Border Colors */
+  --dt-border-default: #E5E5E5;
+  --dt-border-light: #F5F5F5;
+  --dt-border-dark: #D4D4D4;
+
+  /* Divider */
+  --dt-divider: #E5E5E5;
+
+  /* Typography - Font Families */
+  --dt-typography-font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --dt-typography-font-family-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+  --dt-typography-font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --dt-typography-font-family-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Typography - Font Sizes */
+  --dt-typography-font-size-xs: 0.75rem;
+  --dt-typography-font-size-sm: 0.875rem;
+  --dt-typography-font-size-base: 1rem;
+  --dt-typography-font-size-lg: 1.125rem;
+  --dt-typography-font-size-xl: 1.25rem;
+  --dt-typography-font-size-2xl: 1.5rem;
+  --dt-typography-font-size-3xl: 1.875rem;
+  --dt-typography-font-size-4xl: 2.25rem;
+  --dt-typography-font-size-5xl: 3rem;
+
+  /* Typography - Font Weights */
+  --dt-typography-font-weight-light: 300;
+  --dt-typography-font-weight-regular: 400;
+  --dt-typography-font-weight-medium: 500;
+  --dt-typography-font-weight-semibold: 600;
+  --dt-typography-font-weight-bold: 700;
+  --dt-typography-font-weight-extrabold: 800;
+
+  /* Typography - Line Heights */
+  --dt-typography-line-height-tight: 1.25;
+  --dt-typography-line-height-normal: 1.5;
+  --dt-typography-line-height-relaxed: 1.75;
+  --dt-typography-line-height-loose: 2;
+
+  /* Typography - Letter Spacing */
+  --dt-typography-letter-spacing-tight: -0.025em;
+  --dt-typography-letter-spacing-normal: 0;
+  --dt-typography-letter-spacing-wide: 0.025em;
+
+  /* Spacing */
+  --dt-spacing-0: 0;
+  --dt-spacing-1: 0.25rem;
+  --dt-spacing-2: 0.5rem;
+  --dt-spacing-3: 0.75rem;
+  --dt-spacing-4: 1rem;
+  --dt-spacing-5: 1.25rem;
+  --dt-spacing-6: 1.5rem;
+  --dt-spacing-8: 2rem;
+  --dt-spacing-10: 2.5rem;
+  --dt-spacing-12: 3rem;
+  --dt-spacing-16: 4rem;
+  --dt-spacing-20: 5rem;
+  --dt-spacing-24: 6rem;
+  --dt-spacing-32: 8rem;
+  --dt-spacing-40: 10rem;
+  --dt-spacing-48: 12rem;
+  --dt-spacing-64: 16rem;
+  --dt-spacing-80: 20rem;
+  --dt-spacing-96: 24rem;
+
+  /* Radius */
+  --dt-radius-none: 0;
+  --dt-radius-xs: 0.125rem;
+  --dt-radius-sm: 0.25rem;
+  --dt-radius-md: 0.375rem;
+  --dt-radius-lg: 0.5rem;
+  --dt-radius-xl: 0.75rem;
+  --dt-radius-2xl: 1rem;
+  --dt-radius-3xl: 1.5rem;
+  --dt-radius-full: 9999px;
+
+  /* Shadows */
+  --dt-shadows-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --dt-shadows-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --dt-shadows-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --dt-shadows-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --dt-shadows-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --dt-shadows-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --dt-shadows-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --dt-shadows-none: none;
+
+  /* Z-Index */
+  --dt-z-index-dropdown: 1000;
+  --dt-z-index-sticky: 1020;
+  --dt-z-index-fixed: 1030;
+  --dt-z-index-modal-backdrop: 1040;
+  --dt-z-index-modal: 1050;
+  --dt-z-index-popover: 1060;
+  --dt-z-index-tooltip: 1070;
+
+  /* Animation - Duration */
+  --dt-animation-duration-fast: 150ms;
+  --dt-animation-duration-normal: 300ms;
+  --dt-animation-duration-slow: 500ms;
+
+  /* Animation - Easing */
+  --dt-animation-easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --dt-animation-easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --dt-animation-easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dt-animation-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  /* Primary Colors */
+  --dt-colors-primary: #60A5FA;
+  --dt-colors-primary-hover: #3B82F6;
+  --dt-colors-primary-active: #2563EB;
+  --dt-colors-primary-light: #93C5FD;
+  --dt-colors-primary-dark: #1E40AF;
+
+  /* Secondary Colors */
+  --dt-colors-secondary: #A78BFA;
+  --dt-colors-secondary-hover: #8B5CF6;
+  --dt-colors-secondary-active: #7C3AED;
+  --dt-colors-secondary-light: #C4B5FD;
+  --dt-colors-secondary-dark: #5B21B6;
+
+  /* Semantic Colors */
+  --dt-colors-success: #34D399;
+  --dt-colors-success-hover: #10B981;
+  --dt-colors-success-active: #059669;
+
+  --dt-colors-warning: #FBBF24;
+  --dt-colors-warning-hover: #F59E0B;
+  --dt-colors-warning-active: #D97706;
+
+  --dt-colors-error: #F87171;
+  --dt-colors-error-hover: #EF4444;
+  --dt-colors-error-active: #DC2626;
+
+  --dt-colors-info: #60A5FA;
+  --dt-colors-info-hover: #3B82F6;
+  --dt-colors-info-active: #2563EB;
+
+  /* Background Colors */
+  --dt-background-default: #0A0A0A;
+  --dt-background-paper: #171717;
+  --dt-background-elevated: #262626;
+  --dt-background-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Text Colors */
+  --dt-text-primary: #FAFAFA;
+  --dt-text-secondary: #A3A3A3;
+  --dt-text-disabled: #525252;
+  --dt-text-inverse: #0A0A0A;
+
+  /* Border Colors */
+  --dt-border-default: #262626;
+  --dt-border-light: #404040;
+  --dt-border-dark: #171717;
+
+  /* Divider */
+  --dt-divider: #262626;
+
+  /* Shadows (adjusted for dark mode) */
+  --dt-shadows-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --dt-shadows-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --dt-shadows-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --dt-shadows-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --dt-shadows-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --dt-shadows-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --dt-shadows-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Auto Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Apply dark theme variables */
+    --dt-colors-primary: #60A5FA;
+    --dt-colors-primary-hover: #3B82F6;
+    --dt-colors-primary-active: #2563EB;
+    --dt-colors-primary-light: #93C5FD;
+    --dt-colors-primary-dark: #1E40AF;
+
+    --dt-colors-secondary: #A78BFA;
+    --dt-colors-secondary-hover: #8B5CF6;
+    --dt-colors-secondary-active: #7C3AED;
+    --dt-colors-secondary-light: #C4B5FD;
+    --dt-colors-secondary-dark: #5B21B6;
+
+    --dt-colors-success: #34D399;
+    --dt-colors-success-hover: #10B981;
+    --dt-colors-success-active: #059669;
+
+    --dt-colors-warning: #FBBF24;
+    --dt-colors-warning-hover: #F59E0B;
+    --dt-colors-warning-active: #D97706;
+
+    --dt-colors-error: #F87171;
+    --dt-colors-error-hover: #EF4444;
+    --dt-colors-error-active: #DC2626;
+
+    --dt-colors-info: #60A5FA;
+    --dt-colors-info-hover: #3B82F6;
+    --dt-colors-info-active: #2563EB;
+
+    --dt-background-default: #0A0A0A;
+    --dt-background-paper: #171717;
+    --dt-background-elevated: #262626;
+    --dt-background-overlay: rgba(0, 0, 0, 0.7);
+
+    --dt-text-primary: #FAFAFA;
+    --dt-text-secondary: #A3A3A3;
+    --dt-text-disabled: #525252;
+    --dt-text-inverse: #0A0A0A;
+
+    --dt-border-default: #262626;
+    --dt-border-light: #404040;
+    --dt-border-dark: #171717;
+
+    --dt-divider: #262626;
+
+    --dt-shadows-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --dt-shadows-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --dt-shadows-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --dt-shadows-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --dt-shadows-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    --dt-shadows-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    --dt-shadows-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Utility Classes */
+.text-primary {
+  color: var(--dt-text-primary);
+}
+
+.text-secondary {
+  color: var(--dt-text-secondary);
+}
+
+.text-disabled {
+  color: var(--dt-text-disabled);
+}
+
+.text-inverse {
+  color: var(--dt-text-inverse);
+}
+
+.bg-default {
+  background-color: var(--dt-background-default);
+}
+
+.bg-paper {
+  background-color: var(--dt-background-paper);
+}
+
+.bg-elevated {
+  background-color: var(--dt-background-elevated);
+}
+
+.border-default {
+  border-color: var(--dt-border-default);
+}
+
+.border-light {
+  border-color: var(--dt-border-light);
+}
+
+.border-dark {
+  border-color: var(--dt-border-dark);
+}
