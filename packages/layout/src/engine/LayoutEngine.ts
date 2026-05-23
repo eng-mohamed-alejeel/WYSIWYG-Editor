@@ -29,6 +29,8 @@ import {
   GridLayoutConfig,
   AbsoluteLayoutConfig,
   AutoLayoutConfig,
+  JustifyContent,
+  GridTrackSize,
 } from '../types';
 
 export class LayoutEngine {
@@ -436,44 +438,57 @@ export class LayoutEngine {
       const gridRow = (child.styles.gridRow as number) || rowIndex + 1;
 
       // Calculate position
-      const x = this.calculateGridPosition(gridColumn, columnWidths, columnGap);
-      const y = this.calculateGridPosition(gridRow, rowHeights, rowGap);
+      const xPos =
+        columnWidths.slice(0, gridColumn - 1).reduce((sum, w) => sum + w, 0) +
+        (gridColumn - 1) * columnGap;
+      const yPos =
+        rowHeights.slice(0, gridRow - 1).reduce((sum, h) => sum + h, 0) + (gridRow - 1) * rowGap;
+
+      // Get span
+      const columnSpan = (child.styles.gridColumnEnd as number) - gridColumn || 1;
+      const rowSpan = (child.styles.gridRowEnd as number) - gridRow || 1;
 
       // Calculate size
-      const width = this.calculateGridSpan(child, columnWidths, columnGap, 'column');
-      const height = this.calculateGridSpan(child, rowHeights, rowGap, 'row');
+      const width =
+        columnWidths
+          .slice(gridColumn - 1, gridColumn - 1 + columnSpan)
+          .reduce((sum, w) => sum + w, 0) +
+        (columnSpan - 1) * columnGap;
+      const height =
+        rowHeights.slice(gridRow - 1, gridRow - 1 + rowSpan).reduce((sum, h) => sum + h, 0) +
+        (rowSpan - 1) * rowGap;
 
       // Create measurement
-      const childMeasurement: LayoutMeasurement = {
+      const measurement: LayoutMeasurement = {
         width,
         height,
-        top: y,
-        left: x,
+        top: yPos,
+        left: xPos,
         right: 0,
         bottom: 0,
       };
 
-      measurements.set(child.id, childMeasurement);
+      measurements.set(child.id, measurement);
 
       // Create bounds
       const childBounds: LayoutBounds = {
-        x: parentBounds.x + x,
-        y: parentBounds.y + y,
+        x: parentBounds.x + xPos,
+        y: parentBounds.y + yPos,
         width,
         height,
       };
       bounds.set(child.id, childBounds);
 
-      // Update position for next item
-      columnIndex++;
-      if (columnIndex >= columnWidths.length) {
-        columnIndex = 0;
-        rowIndex++;
+      // Check for overflow
+      if (xPos + width > parentBounds.width || yPos + height > parentBounds.height) {
+        overflow.add(child.id);
       }
 
-      // Check for overflow
-      if (x + width > parentBounds.width || y + height > parentBounds.height) {
-        overflow.add(child.id);
+      // Update position
+      columnIndex += columnSpan;
+      if (columnIndex >= columnWidths.length) {
+        columnIndex = 0;
+        rowIndex += rowSpan;
       }
     }
   }
@@ -497,10 +512,10 @@ export class LayoutEngine {
     const measurement = this.calculateMeasurement(node, context, parentBounds);
     measurements.set(node.id, measurement);
 
-    // Calculate bounds
+    // Calculate bounds based on absolute positioning
     const nodeBounds: LayoutBounds = {
-      x: parentBounds.x + measurement.left,
-      y: parentBounds.y + measurement.top,
+      x: parentBounds.x + (config.left !== undefined ? config.left : 0),
+      y: parentBounds.y + (config.top !== undefined ? config.top : 0),
       width: measurement.width,
       height: measurement.height,
     };
@@ -526,7 +541,7 @@ export class LayoutEngine {
   }
 
   /**
-   * Calculate absolute positioned children
+   * Calculate absolute children layout
    */
   private calculateAbsoluteChildren(
     children: ComponentNode[],
@@ -539,56 +554,49 @@ export class LayoutEngine {
     warnings: LayoutWarning[]
   ): void {
     for (const child of children) {
-      const position = (child.styles.position as PositionType) || 'absolute';
+      const childConfig =
+        child.styles.position === 'absolute'
+          ? {
+              position: 'absolute' as const,
+              top: child.styles.top as number | undefined,
+              right: child.styles.right as number | undefined,
+              bottom: child.styles.bottom as number | undefined,
+              left: child.styles.left as number | undefined,
+              zIndex: child.styles.zIndex as number | undefined,
+            }
+          : config;
 
-      // Calculate position based on position properties
-      let x = 0;
-      let y = 0;
-      let width = this.calculateChildWidth(child, parentBounds);
-      let height = this.calculateChildHeight(child, parentBounds);
+      // Calculate position
+      const left = childConfig.left !== undefined ? childConfig.left : 0;
+      const top = childConfig.top !== undefined ? childConfig.top : 0;
 
-      if (position === 'absolute' || position === 'fixed') {
-        x = this.parsePositionValue(child.styles.left, parentBounds.width);
-        y = this.parsePositionValue(child.styles.top, parentBounds.height);
-
-        // Handle right and bottom
-        if (child.styles.right !== undefined) {
-          x =
-            parentBounds.width -
-            width -
-            this.parsePositionValue(child.styles.right, parentBounds.width);
-        }
-        if (child.styles.bottom !== undefined) {
-          y =
-            parentBounds.height -
-            height -
-            this.parsePositionValue(child.styles.bottom, parentBounds.height);
-        }
-      }
+      // Calculate size
+      const width = this.calculateChildWidth(child, parentBounds);
+      const height = this.calculateChildHeight(child, parentBounds);
 
       // Create measurement
-      const childMeasurement: LayoutMeasurement = {
+      const measurement: LayoutMeasurement = {
         width,
         height,
-        top: y,
-        left: x,
+        top,
+        left,
         right: 0,
         bottom: 0,
       };
 
-      measurements.set(child.id, childMeasurement);
+      measurements.set(child.id, measurement);
 
       // Create bounds
       const childBounds: LayoutBounds = {
-        x: parentBounds.x + x,
-        y: parentBounds.y + y,
+        x: parentBounds.x + left,
+        y: parentBounds.y + top,
         width,
         height,
       };
       bounds.set(child.id, childBounds);
 
       // Check for overflow
-      if (x < 0 || y < 0 || x + width > parentBounds.width || y + height > parentBounds.height) {
+      if (left + width > parentBounds.width || top + height > parentBounds.height) {
         overflow.add(child.id);
       }
     }
@@ -642,7 +650,7 @@ export class LayoutEngine {
   }
 
   /**
-   * Calculate auto layout children
+   * Calculate auto children layout
    */
   private calculateAutoChildren(
     children: ComponentNode[],
@@ -655,77 +663,102 @@ export class LayoutEngine {
     warnings: LayoutWarning[]
   ): void {
     const isRow = config.direction === 'row' || config.direction === 'row-reverse';
-    const { padding, gap, itemSpacing, alignment, sizing } = config;
+    const isReverse = config.direction === 'row-reverse' || config.direction === 'column-reverse';
 
-    let currentPos = isRow ? padding.left : padding.top;
-    const startPos = currentPos;
-    const contentSize = isRow
-      ? parentBounds.width - padding.left - padding.right
-      : parentBounds.height - padding.top - padding.bottom;
+    let currentPos = 0;
+    const gap = config.gap || 0;
+    const padding = config.padding;
 
-    for (const child of children) {
-      // Calculate child size
-      const childWidth = isRow
-        ? this.calculateChildSize(child, contentSize, sizing.width)
-        : parentBounds.width - padding.left - padding.right;
+    // Calculate content area
+    const contentWidth = parentBounds.width - padding.left - padding.right;
+    const contentHeight = parentBounds.height - padding.top - padding.bottom;
 
-      const childHeight = isRow
-        ? parentBounds.height - padding.top - padding.bottom
-        : this.calculateChildSize(child, contentSize, sizing.height);
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      const childIndex = isReverse ? children.length - 1 - i : i;
 
-      // Calculate child position
-      const childX = isRow ? currentPos : padding.left;
-      const childY = isRow ? padding.top : currentPos;
+      // Calculate child size based on sizing mode
+      let childWidth: number;
+      let childHeight: number;
 
-      // Apply alignment
-      let alignedX = childX;
-      let alignedY = childY;
-
-      if (!isRow) {
-        switch (alignment.horizontal) {
-          case 'center':
-            alignedX =
-              padding.left + (parentBounds.width - padding.left - padding.right - childWidth) / 2;
-            break;
-          case 'flex-end':
-            alignedX = parentBounds.width - padding.right - childWidth;
-            break;
-        }
+      if (config.sizing.width === 'fill') {
+        childWidth = isRow
+          ? (contentWidth - (children.length - 1) * gap) / children.length
+          : contentWidth;
+      } else if (config.sizing.width === 'fit') {
+        childWidth = this.calculateChildWidth(child, {
+          x: 0,
+          y: 0,
+          width: contentWidth,
+          height: contentHeight,
+        });
       } else {
-        switch (alignment.vertical) {
-          case 'center':
-            alignedY =
-              padding.top + (parentBounds.height - padding.top - padding.bottom - childHeight) / 2;
-            break;
-          case 'flex-end':
-            alignedY = parentBounds.height - padding.bottom - childHeight;
-            break;
-        }
+        childWidth = this.calculateChildWidth(child, {
+          x: 0,
+          y: 0,
+          width: contentWidth,
+          height: contentHeight,
+        });
       }
 
+      if (config.sizing.height === 'fill') {
+        childHeight = isRow
+          ? contentHeight
+          : (contentHeight - (children.length - 1) * gap) / children.length;
+      } else if (config.sizing.height === 'fit') {
+        childHeight = this.calculateChildHeight(child, {
+          x: 0,
+          y: 0,
+          width: contentWidth,
+          height: contentHeight,
+        });
+      } else {
+        childHeight = this.calculateChildHeight(child, {
+          x: 0,
+          y: 0,
+          width: contentWidth,
+          height: contentHeight,
+        });
+      }
+
+      // Calculate position
+      const xPos = isRow ? currentPos + padding.left : padding.left;
+      const yPos = isRow ? padding.top : currentPos + padding.top;
+
       // Create measurement
-      const childMeasurement: LayoutMeasurement = {
+      const measurement: LayoutMeasurement = {
         width: childWidth,
         height: childHeight,
-        top: alignedY,
-        left: alignedX,
+        top: yPos,
+        left: xPos,
         right: 0,
         bottom: 0,
       };
 
-      measurements.set(child.id, childMeasurement);
+      measurements.set(child.id, measurement);
 
       // Create bounds
       const childBounds: LayoutBounds = {
-        x: parentBounds.x + alignedX,
-        y: parentBounds.y + alignedY,
+        x: parentBounds.x + xPos,
+        y: parentBounds.y + yPos,
         width: childWidth,
         height: childHeight,
       };
       bounds.set(child.id, childBounds);
 
       // Update position
-      currentPos += (isRow ? childWidth : childHeight) + itemSpacing;
+      if (isRow) {
+        currentPos += childWidth + gap;
+      } else {
+        currentPos += childHeight + gap;
+      }
+
+      // Check for overflow
+      if (isRow && currentPos > contentWidth) {
+        overflow.add(child.id);
+      } else if (!isRow && currentPos > contentHeight) {
+        overflow.add(child.id);
+      }
     }
   }
 
@@ -775,7 +808,7 @@ export class LayoutEngine {
   }
 
   /**
-   * Calculate flow layout children
+   * Calculate flow children layout
    */
   private calculateFlowChildren(
     children: ComponentNode[],
@@ -787,186 +820,153 @@ export class LayoutEngine {
     warnings: LayoutWarning[]
   ): void {
     let currentY = 0;
+    let maxWidth = 0;
 
     for (const child of children) {
-      const childWidth = this.calculateChildWidth(child, parentBounds);
-      const childHeight = this.calculateChildHeight(child, parentBounds);
+      // Calculate child size
+      const width = this.calculateChildWidth(child, parentBounds);
+      const height = this.calculateChildHeight(child, parentBounds);
 
       // Create measurement
-      const childMeasurement: LayoutMeasurement = {
-        width: childWidth,
-        height: childHeight,
+      const measurement: LayoutMeasurement = {
+        width,
+        height,
         top: currentY,
         left: 0,
         right: 0,
         bottom: 0,
       };
 
-      measurements.set(child.id, childMeasurement);
+      measurements.set(child.id, measurement);
 
       // Create bounds
       const childBounds: LayoutBounds = {
         x: parentBounds.x,
         y: parentBounds.y + currentY,
-        width: childWidth,
-        height: childHeight,
+        width,
+        height,
       };
       bounds.set(child.id, childBounds);
 
       // Update position
-      currentY += childHeight;
+      currentY += height;
+      maxWidth = Math.max(maxWidth, width);
 
       // Check for overflow
       if (currentY > parentBounds.height) {
         overflow.add(child.id);
       }
     }
+
+    // Update parent bounds if needed
+    if (maxWidth > parentBounds.width) {
+      overflow.add(parentBounds.x.toString());
+    }
   }
 
   /**
    * Helper methods
    */
-  private createNodeContext(
-    node: ComponentNode,
-    context: LayoutContext,
-    parentBounds?: LayoutBounds
-  ): LayoutContext {
-    return {
-      ...context,
-      parentBounds,
-      depth: context.depth + 1,
-    };
-  }
 
   private calculateMeasurement(
     node: ComponentNode,
     context: LayoutContext,
     parentBounds: LayoutBounds
   ): LayoutMeasurement {
-    const width = this.parseSizeValue(node.styles.width, parentBounds.width);
-    const height = this.parseSizeValue(node.styles.height, parentBounds.height);
-
+    const styles = node.styles;
     return {
-      width,
-      height,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      marginTop: this.parseSpacingValue(node.styles.marginTop),
-      marginBottom: this.parseSpacingValue(node.styles.marginBottom),
-      marginLeft: this.parseSpacingValue(node.styles.marginLeft),
-      marginRight: this.parseSpacingValue(node.styles.marginRight),
-      paddingTop: this.parseSpacingValue(node.styles.paddingTop),
-      paddingBottom: this.parseSpacingValue(node.styles.paddingBottom),
-      paddingLeft: this.parseSpacingValue(node.styles.paddingLeft),
-      paddingRight: this.parseSpacingValue(node.styles.paddingRight),
+      width: this.parseSize(styles.width as string | number, parentBounds.width),
+      height: this.parseSize(styles.height as string | number, parentBounds.height),
+      top: this.parseSize(styles.top as string | number, parentBounds.height),
+      left: this.parseSize(styles.left as string | number, parentBounds.width),
+      right: this.parseSize(styles.right as string | number, parentBounds.width),
+      bottom: this.parseSize(styles.bottom as string | number, parentBounds.height),
+      marginTop: this.parseSize(styles.marginTop as string | number, 0),
+      marginBottom: this.parseSize(styles.marginBottom as string | number, 0),
+      marginLeft: this.parseSize(styles.marginLeft as string | number, 0),
+      marginRight: this.parseSize(styles.marginRight as string | number, 0),
+      paddingTop: this.parseSize(styles.paddingTop as string | number, 0),
+      paddingBottom: this.parseSize(styles.paddingBottom as string | number, 0),
+      paddingLeft: this.parseSize(styles.paddingLeft as string | number, 0),
+      paddingRight: this.parseSize(styles.paddingRight as string | number, 0),
     };
   }
 
   private calculateConstraints(node: ComponentNode, context: LayoutContext): LayoutConstraints {
+    const styles = node.styles;
     return {
-      minWidth: this.parseSizeValue(node.styles.minWidth),
-      maxWidth: this.parseSizeValue(node.styles.maxWidth),
-      minHeight: this.parseSizeValue(node.styles.minHeight),
-      maxHeight: this.parseSizeValue(node.styles.maxHeight),
-      aspectRatio: node.styles.aspectRatio as number,
-      maintainAspectRatio: node.styles.maintainAspectRatio as boolean,
+      minWidth: this.parseSize(styles.minWidth as string | number, 0),
+      maxWidth: this.parseSize(styles.maxWidth as string | number, Infinity),
+      minHeight: this.parseSize(styles.minHeight as string | number, 0),
+      maxHeight: this.parseSize(styles.maxHeight as string | number, Infinity),
+      aspectRatio: styles.aspectRatio as number,
+      maintainAspectRatio: styles.aspectRatio !== undefined,
     };
   }
 
   private calculateChildWidth(child: ComponentNode, parentBounds: LayoutBounds): number {
-    const width = child.styles.width;
-    if (typeof width === 'string' && width.includes('%')) {
-      return parentBounds.width * (parseFloat(width) / 100);
+    const width = child.styles.width as string | number | undefined;
+    if (width === undefined) {
+      return parentBounds.width;
     }
-    return this.parseSizeValue(width, parentBounds.width);
+    return this.parseSize(width, parentBounds.width);
   }
 
   private calculateChildHeight(child: ComponentNode, parentBounds: LayoutBounds): number {
-    const height = child.styles.height;
-    if (typeof height === 'string' && height.includes('%')) {
-      return parentBounds.height * (parseFloat(height) / 100);
+    const height = child.styles.height as string | number | undefined;
+    if (height === undefined) {
+      return parentBounds.height;
     }
-    return this.parseSizeValue(height, parentBounds.height);
+    return this.parseSize(height, parentBounds.height);
   }
 
-  private calculateChildSize(
-    child: ComponentNode,
-    parentSize: number,
-    sizingMode: 'fill' | 'fit' | 'fixed'
-  ): number {
-    const size =
-      sizingMode === 'fill'
-        ? parentSize
-        : sizingMode === 'fit'
-          ? Math.min(this.parseSizeValue(child.styles.width, parentSize), parentSize)
-          : this.parseSizeValue(child.styles.width, parentSize);
-    return Math.max(0, size);
+  private parseSize(value: string | number | undefined, reference: number): number {
+    if (value === undefined || value === 'auto') {
+      return reference;
+    }
+    if (typeof value === 'number') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      if (value.endsWith('%')) {
+        return (parseFloat(value) / 100) * reference;
+      }
+      if (value.endsWith('px')) {
+        return parseFloat(value);
+      }
+      return parseFloat(value);
+    }
+    return reference;
   }
 
   private calculateGridTracks(
     tracks: GridTrackSize[],
-    containerSize: number,
+    availableSpace: number,
     gap: number
   ): number[] {
-    const totalGap = gap * (tracks.length - 1);
-    const availableSize = containerSize - totalGap;
-    const flexibleTracks = tracks.filter((t) => t === 'auto' || t === 'fit-content');
-    const fixedTracks = tracks.filter(
-      (t) => typeof t === 'number' || (typeof t === 'string' && !isNaN(parseFloat(t)))
-    );
-
-    const fixedSize = fixedTracks.reduce(
-      (sum, t) => sum + (typeof t === 'number' ? t : parseFloat(t)),
-      0
-    );
-    const flexibleSize = availableSize - fixedSize;
-    const flexibleTrackSize = flexibleTracks.length > 0 ? flexibleSize / flexibleTracks.length : 0;
+    const totalGap = (tracks.length - 1) * gap;
+    const remainingSpace = availableSpace - totalGap;
 
     return tracks.map((track) => {
-      if (track === 'auto' || track === 'fit-content') {
-        return flexibleTrackSize;
-      }
       if (typeof track === 'number') {
         return track;
       }
-      if (typeof track === 'string') {
-        const parsed = parseFloat(track);
-        return isNaN(parsed) ? flexibleTrackSize : parsed;
+      if (track === 'auto' || track === 'min-content' || track === 'max-content') {
+        return remainingSpace / tracks.length;
       }
-      return flexibleTrackSize;
+      if (typeof track === 'string' && track.endsWith('%')) {
+        return (parseFloat(track) / 100) * remainingSpace;
+      }
+      if (typeof track === 'string' && track.startsWith('fit-content')) {
+        const match = track.match(/fit-content\((.+)\)/);
+        if (match) {
+          const max = parseFloat(match[1]);
+          return Math.min(remainingSpace / tracks.length, max);
+        }
+        return remainingSpace / tracks.length;
+      }
+      return remainingSpace / tracks.length;
     });
-  }
-
-  private calculateGridPosition(line: number, tracks: number[], gap: number): number {
-    let position = 0;
-    for (let i = 0; i < line - 1 && i < tracks.length; i++) {
-      position += tracks[i] + gap;
-    }
-    return position;
-  }
-
-  private calculateGridSpan(
-    child: ComponentNode,
-    tracks: number[],
-    gap: number,
-    direction: 'column' | 'row'
-  ): number {
-    const span =
-      (child.styles[`grid${direction === 'column' ? 'Column' : 'Row'}End`] as number) || 1;
-    const start =
-      (child.styles[`grid${direction === 'column' ? 'Column' : 'Row'}Start`] as number) || 1;
-    const end = Math.min(start + span - 1, tracks.length);
-
-    let size = 0;
-    for (let i = start - 1; i < end && i < tracks.length; i++) {
-      size += tracks[i];
-      if (i < end - 1) {
-        size += gap;
-      }
-    }
-    return size;
   }
 
   private applyJustifyContent(
@@ -976,59 +976,60 @@ export class LayoutEngine {
     measurements: Map<ComponentId, LayoutMeasurement>,
     bounds: Map<ComponentId, LayoutBounds>
   ): void {
-    const totalWidth = Array.from(bounds.values()).reduce((sum, b) => sum + b.width, 0);
-    const availableSpace = parentBounds.width - totalWidth;
+    const totalWidth = Array.from(measurements.values()).reduce((sum, m) => sum + m.width, 0);
 
-    let offset = 0;
-    switch (justifyContent) {
-      case 'center':
-        offset = availableSpace / 2;
-        break;
-      case 'flex-end':
-        offset = availableSpace;
-        break;
-      case 'space-between':
-        // Handled in calculateFlexChildren
-        return;
-      case 'space-around':
-        offset = availableSpace / (children.length * 2);
-        break;
-      case 'space-evenly':
-        offset = availableSpace / (children.length + 1);
-        break;
-    }
+    const remainingSpace = parentBounds.width - totalWidth;
 
-    for (const child of children) {
+    children.forEach((child, index) => {
       const measurement = measurements.get(child.id);
-      const bound = bounds.get(child.id);
-      if (measurement && bound) {
-        measurement.left += offset;
-        bound.x += offset;
+      if (!measurement) return;
+
+      let offset = 0;
+
+      switch (justifyContent) {
+        case 'center':
+          offset = remainingSpace / 2;
+          break;
+        case 'flex-end':
+          offset = remainingSpace;
+          break;
+        case 'space-between':
+          offset = index * (remainingSpace / (children.length - 1 || 1));
+          break;
+        case 'space-around':
+          offset =
+            (index * remainingSpace) / children.length + remainingSpace / children.length / 2;
+          break;
+        case 'space-evenly':
+          offset =
+            (index * remainingSpace) / (children.length + 1) +
+            remainingSpace / (children.length + 1);
+          break;
       }
-    }
+
+      measurement.left += offset;
+
+      const childBounds = bounds.get(child.id);
+      if (childBounds) {
+        childBounds.x += offset;
+      }
+    });
   }
 
-  private parseSizeValue(value: any, defaultValue: number = 0): number {
-    if (typeof value === 'number') return value;
-    if (typeof value === 'string') {
-      if (value.endsWith('px')) return parseFloat(value);
-      if (value.endsWith('%')) return defaultValue * (parseFloat(value) / 100);
-      return parseFloat(value) || defaultValue;
-    }
-    return defaultValue;
-  }
-
-  private parseSpacingValue(value: any): number {
-    return this.parseSizeValue(value, 0);
-  }
-
-  private parsePositionValue(value: any, containerSize: number): number {
-    if (value === 'auto') return 0;
-    return this.parseSizeValue(value, containerSize);
+  private createNodeContext(
+    node: ComponentNode,
+    context: LayoutContext,
+    parentBounds: LayoutBounds | undefined
+  ): LayoutContext {
+    return {
+      ...context,
+      parentBounds,
+      depth: context.depth + 1,
+    };
   }
 
   private getCacheKey(node: ComponentNode, context: LayoutContext): string {
-    return `${node.id}-${context.mode}-${JSON.stringify(context.config)}`;
+    return `${node.id}-${context.mode}-${context.depth}-${JSON.stringify(node.styles)}`;
   }
 
   private cacheResult(
@@ -1048,61 +1049,113 @@ export class LayoutEngine {
   }
 
   /**
-   * Event handling
+   * Public API methods
    */
-  on(event: string, listener: (event: LayoutChangeEvent) => void): void {
+
+  /**
+   * Subscribe to layout change events
+   */
+  on(event: 'layoutChange', callback: (event: LayoutChangeEvent) => void): void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(listener);
+    this.eventListeners.get(event)!.push(callback);
   }
 
-  off(event: string, listener: (event: LayoutChangeEvent) => void): void {
+  /**
+   * Unsubscribe from layout change events
+   */
+  off(event: 'layoutChange', callback: (event: LayoutChangeEvent) => void): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      const index = listeners.indexOf(listener);
+      const index = listeners.indexOf(callback);
       if (index > -1) {
         listeners.splice(index, 1);
       }
     }
   }
 
-  private emit(event: string, data: LayoutChangeEvent): void {
+  /**
+   * Emit a layout change event
+   */
+  private emit(event: 'layoutChange', data: LayoutChangeEvent): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach((listener) => listener(data));
+      listeners.forEach((callback) => callback(data));
     }
   }
 
   /**
-   * Get engine state
-   */
-  getState(): LayoutEngineState {
-    return { ...this.state };
-  }
-
-  /**
-   * Get performance metrics
+   * Get layout metrics
    */
   getMetrics(): LayoutMetrics {
     return {
       calculationTime: this.state.lastCalculationTime,
       componentCount: this.state.calculations.size,
-      cacheHitRate: this.state.cache.size > 0 ? 1 : 0,
-      optimizationCount: this.state.totalCalculations,
+      cacheHitRate:
+        this.state.cache.size > 0 ? this.state.totalCalculations / this.state.cache.size : 0,
+      optimizationCount: 0, // TODO: Implement optimization tracking
       warningCount: this.state.warnings.length,
     };
   }
 
   /**
-   * Clear cache
+   * Clear the layout cache
    */
   clearCache(): void {
     this.state.cache.clear();
   }
 
   /**
-   * Reset engine state
+   * Update engine options
+   */
+  updateOptions(options: Partial<LayoutEngineOptions>): void {
+    this.options = { ...this.options, ...options };
+
+    // Clear cache if caching is disabled
+    if (!this.options.enableCaching) {
+      this.clearCache();
+    }
+  }
+
+  /**
+   * Get engine options
+   */
+  getOptions(): Required<LayoutEngineOptions> {
+    return { ...this.options };
+  }
+
+  /**
+   * Get layout calculation result for a component
+   */
+  getLayoutResult(componentId: ComponentId): LayoutCalculationResult | undefined {
+    return this.state.calculations.get(componentId);
+  }
+
+  /**
+   * Get all layout warnings
+   */
+  getWarnings(): LayoutWarning[] {
+    return [...this.state.warnings];
+  }
+
+  /**
+   * Invalidate layout cache for a component
+   */
+  invalidateCache(componentId: ComponentId): void {
+    const keysToDelete: string[] = [];
+
+    for (const key of this.state.cache.keys()) {
+      if (key.startsWith(componentId)) {
+        keysToDelete.push(key);
+      }
+    }
+
+    keysToDelete.forEach((key) => this.state.cache.delete(key));
+  }
+
+  /**
+   * Reset the engine state
    */
   reset(): void {
     this.state.calculations.clear();
