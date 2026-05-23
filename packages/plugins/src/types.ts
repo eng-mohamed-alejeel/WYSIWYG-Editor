@@ -1,11 +1,19 @@
 /**
  * Plugin System Types
- * 
+ *
  * Comprehensive type definitions for the plugin architecture
  * Inspired by VSCode and Figma extension systems
  */
 
-import { ComponentId, ComponentNode, ComponentDefinition, InspectorField, Command, Project, SelectionState } from '@wysiwyg/core';
+import {
+  ComponentId,
+  ComponentNode,
+  ComponentDefinition,
+  InspectorField,
+  Command,
+  Project,
+  SelectionState,
+} from '@wysiwyg/core';
 import { ReactNode } from 'react';
 
 /**
@@ -21,14 +29,14 @@ export type PluginVersion = string;
 /**
  * Plugin lifecycle states
  */
-export type PluginState = 
-  | 'unloaded'     // Plugin not loaded
-  | 'loading'      // Plugin is being loaded
-  | 'loaded'       // Plugin loaded but not activated
-  | 'activating'   // Plugin is being activated
-  | 'active'       // Plugin is active and running
+export type PluginState =
+  | 'unloaded' // Plugin not loaded
+  | 'loading' // Plugin is being loaded
+  | 'loaded' // Plugin loaded but not activated
+  | 'activating' // Plugin is being activated
+  | 'active' // Plugin is active and running
   | 'deactivating' // Plugin is being deactivated
-  | 'error';       // Plugin encountered an error
+  | 'error'; // Plugin encountered an error
 
 /**
  * Plugin metadata

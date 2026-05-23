@@ -1,6 +1,6 @@
 /**
  * Plugin Manager
- * 
+ *
  * Central orchestrator for the plugin system
  * Manages plugin lifecycle, dependencies, and provides the main API
  */
@@ -28,10 +28,7 @@ export class PluginManager {
   private config: Required<PluginManagerConfig>;
   private editorState: PluginContext['editorState'];
 
-  constructor(
-    editorState: PluginContext['editorState'],
-    config: PluginManagerConfig = {}
-  ) {
+  constructor(editorState: PluginContext['editorState'], config: PluginManagerConfig = {}) {
     this.editorState = editorState;
     this.config = {
       pluginsDir: config.pluginsDir || '/plugins',
@@ -328,9 +325,7 @@ export class PluginManager {
    */
   async shutdown(): Promise<void> {
     const plugins = this.loader.getAllPlugins();
-    await Promise.all(
-      plugins.map((instance) => this.unloadPlugin(instance.manifest.id))
-    );
+    await Promise.all(plugins.map((instance) => this.unloadPlugin(instance.manifest.id)));
     this.eventBus.removeAllListeners();
   }
 }

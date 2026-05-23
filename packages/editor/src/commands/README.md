@@ -38,12 +38,14 @@ The command bus architecture consists of several core components that work toget
 ## Features
 
 ### ✅ Command Registry
+
 - Register commands with typed payloads
 - Register command handlers
 - Command lookup and validation
 - Support for both sync and async commands
 
 ### ✅ Command Dispatcher
+
 - Centralized command execution
 - Async command support
 - Transaction support for batch operations
@@ -51,31 +53,37 @@ The command bus architecture consists of several core components that work toget
 - Integration with middleware and history
 
 ### ✅ Keyboard Shortcuts
+
 - Map keyboard combinations to commands
 - Support for Ctrl, Shift, Alt, Meta modifiers
 - Category-based organization
 - Event-driven activation
 
 ### ✅ Undo/Redo Integration
+
 - Automatic history tracking
 - Per-command undo capability
 - Configurable history size
 - Subscription-based notifications
 
 ### ✅ Middleware Support
+
 - Priority-based middleware execution
 - Before/after hooks
 - Error handling middleware
 - Extensible architecture
 
 ### ✅ Command History Tracking
+
 - Full execution history
 - Timestamp tracking
 - Undo/redo state management
 - Change subscriptions
 
 ### ✅ Editor Actions
+
 Pre-implemented commands for common editor operations:
+
 - **Duplicate**: Duplicate components
 - **Delete**: Delete components
 - **Move**: Move components to new location
@@ -84,11 +92,13 @@ Pre-implemented commands for common editor operations:
 - **Paste**: Paste from clipboard
 
 ### ✅ Typed Command Payloads
+
 - Strongly typed command payloads
 - Type-safe command execution
 - Type-safe command results
 
 ### ✅ Decoupled Architecture
+
 - Commands are fully decoupled from UI components
 - Event-driven communication
 - No direct UI dependencies

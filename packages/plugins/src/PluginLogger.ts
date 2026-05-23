@@ -1,6 +1,6 @@
 /**
  * Plugin Logger
- * 
+ *
  * Provides logging capabilities for plugins with prefixing and level filtering
  */
 

@@ -5,12 +5,14 @@ A production-grade rendering engine for the WYSIWYG Editor with advanced feature
 ## Features
 
 ### Core Rendering
+
 - **Multiple Renderer Modes**: Support for editor, preview, runtime, and export modes
 - **Component Registry**: Flexible registration system for component renderers
 - **Style Generation**: Automatic style generation with responsive breakpoint support
 - **TypeScript Safety**: Full TypeScript support with strict type checking
 
 ### Performance Optimizations
+
 - **Virtualization**: Efficient rendering of large component trees using windowing
 - **Lazy Loading**: On-demand component loading based on viewport intersection
 - **Render Caching**: Multiple cache strategies (LRU, FIFO, LFU) for rendered components
@@ -18,16 +20,19 @@ A production-grade rendering engine for the WYSIWYG Editor with advanced feature
 - **Deep Tree Optimization**: Optimized rendering for deeply nested component structures
 
 ### Error Handling
+
 - **React Error Boundaries**: Graceful error handling at component level
 - **Error Recovery**: Automatic error recovery with custom fallbacks
 - **Error Reporting**: Detailed error reporting with stack traces
 
 ### Lifecycle Management
+
 - **Render Lifecycle Hooks**: Before/after render, mount, update, and unmount hooks
 - **Component Lifecycle**: Full lifecycle management for each component
 - **Custom Hooks**: Extensible hook system for custom behaviors
 
 ### Monitoring & Debugging
+
 - **Performance Metrics**: Real-time performance monitoring and metrics
 - **Cache Statistics**: Detailed cache hit/miss statistics
 - **Debug Mode**: Optional debug mode for development
@@ -108,7 +113,7 @@ import { PageRenderer } from '@wysiwyg/renderer';
 
 function MyPage({ nodes }: { nodes: ComponentNode[] }) {
   return (
-    <PageRenderer 
+    <PageRenderer
       nodes={nodes}
       options={{
         enableVirtualization: true,

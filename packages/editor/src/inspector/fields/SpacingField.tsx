@@ -53,7 +53,8 @@ export const SpacingField: React.FC<FieldRendererProps> = ({
     [spacingValue, isLinked, onChange]
   );
 
-  const handleUnitChange = useCallback((newUnit: string) => {
+  const handleUnitChange = useCallback(
+    (newUnit: string) => {
       onChange({
         ...spacingValue,
         unit: newUnit,

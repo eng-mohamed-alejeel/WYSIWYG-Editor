@@ -15,7 +15,7 @@ export const SelectField: React.FC<FieldRendererProps> = ({
   error,
   disabled,
 }) => {
-  const selectValue = value ?? field.defaultValue ?? (field.options?.[0]?.value ?? '');
+  const selectValue = value ?? field.defaultValue ?? field.options?.[0]?.value ?? '';
 
   const handleChange = (newValue: string) => {
     onChange(newValue);

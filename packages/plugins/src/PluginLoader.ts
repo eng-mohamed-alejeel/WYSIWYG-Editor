@@ -1,11 +1,18 @@
 /**
  * Plugin Loader
- * 
+ *
  * Handles plugin loading, initialization, and lifecycle management
  * Supports lazy loading and dependency resolution
  */
 
-import { Plugin, PluginId, PluginManifest, PluginLoadResult, PluginContext, PluginState } from './types';
+import {
+  Plugin,
+  PluginId,
+  PluginManifest,
+  PluginLoadResult,
+  PluginContext,
+  PluginState,
+} from './types';
 import { createEventBus } from './EventBus';
 import { createPluginLogger } from './PluginLogger';
 import { PluginAPI } from './PluginAPI';
@@ -32,10 +39,7 @@ export class PluginLoader {
   private config: Required<LoaderConfig>;
   private editorState: PluginContext['editorState'];
 
-  constructor(
-    editorState: PluginContext['editorState'],
-    config: LoaderConfig = {}
-  ) {
+  constructor(editorState: PluginContext['editorState'], config: LoaderConfig = {}) {
     this.editorState = editorState;
     this.plugins = new Map();
     this.config = {
@@ -366,9 +370,7 @@ export class PluginLoader {
   ): Promise<T> {
     return Promise.race([
       promise,
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error(errorMessage)), timeout)
-      ),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error(errorMessage)), timeout)),
     ]);
   }
 

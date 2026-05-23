@@ -49,11 +49,7 @@ export class LifecycleHookManager {
     }
   }
 
-  async executeError(
-    error: Error,
-    node: ComponentNode,
-    context: RendererContext
-  ): Promise<any> {
+  async executeError(error: Error, node: ComponentNode, context: RendererContext): Promise<any> {
     const lifecycle = this.get(node.id);
     if (lifecycle?.onError) {
       return await lifecycle.onError(error, node, context);
@@ -118,7 +114,7 @@ export function useRendererLifecycle(
 
     // Execute mount hook
     if (!isMounted.current) {
-      manager.executeMount(node, context).catch(error => {
+      manager.executeMount(node, context).catch((error) => {
         console.error('Error in onMount lifecycle hook:', error);
       });
       isMounted.current = true;
@@ -126,7 +122,7 @@ export function useRendererLifecycle(
 
     return () => {
       // Execute unmount hook
-      manager.executeUnmount(node, context).catch(error => {
+      manager.executeUnmount(node, context).catch((error) => {
         console.error('Error in onUnmount lifecycle hook:', error);
       });
 
@@ -140,7 +136,7 @@ export function useRendererLifecycle(
   // Execute update hook on context change
   useEffect(() => {
     if (isMounted.current) {
-      manager.executeUpdate(node, context).catch(error => {
+      manager.executeUpdate(node, context).catch((error) => {
         console.error('Error in onUpdate lifecycle hook:', error);
       });
     }

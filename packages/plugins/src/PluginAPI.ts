@@ -1,6 +1,6 @@
 /**
  * Plugin API
- * 
+ *
  * Provides the API surface for plugins to interact with the editor
  * Implements all registration and interaction methods
  */

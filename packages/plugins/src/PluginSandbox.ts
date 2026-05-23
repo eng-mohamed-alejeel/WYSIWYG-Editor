@@ -1,6 +1,6 @@
 /**
  * Plugin Sandbox
- * 
+ *
  * Provides isolation for plugins to prevent interference
  * Uses iframe-like isolation for security and stability
  */
@@ -142,7 +142,10 @@ export class PluginSandbox {
     try {
       // Create a timeout promise
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error(`Plugin execution timeout after ${this.timeout}ms`)), this.timeout);
+        setTimeout(
+          () => reject(new Error(`Plugin execution timeout after ${this.timeout}ms`)),
+          this.timeout
+        );
       });
 
       // Execute the function with timeout

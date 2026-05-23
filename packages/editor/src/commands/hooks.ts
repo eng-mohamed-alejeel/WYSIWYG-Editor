@@ -83,12 +83,9 @@ export function useKeyboardShortcuts() {
     return unsubscribe;
   }, []);
 
-  const handleKeyboardEvent = useCallback(
-    (event: KeyboardEvent): KeyboardShortcut | undefined => {
-      return keyboardShortcutsManager.handle(event);
-    },
-    []
-  );
+  const handleKeyboardEvent = useCallback((event: KeyboardEvent): KeyboardShortcut | undefined => {
+    return keyboardShortcutsManager.handle(event);
+  }, []);
 
   return { shortcuts, handleKeyboardEvent };
 }

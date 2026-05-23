@@ -1,6 +1,6 @@
 /**
  * Plugin System
- * 
+ *
  * Professional plugin architecture for WYSIWYG editor
  * Inspired by VSCode and Figma extension systems
  */

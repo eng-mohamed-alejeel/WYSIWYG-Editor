@@ -61,7 +61,7 @@ export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
       Math.ceil((scrollTop + containerHeight) / estimatedItemHeight) + overscan
     );
 
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       startIndex,
       endIndex,

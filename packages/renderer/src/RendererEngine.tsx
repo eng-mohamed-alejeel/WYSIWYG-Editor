@@ -28,7 +28,11 @@ import { getGlobalStyleGenerator } from './styles';
 import { RendererErrorBoundary } from './ErrorBoundary';
 import { VirtualizedRenderer, useVirtualization } from './VirtualizedRenderer';
 import { LazyComponentRenderer, useLazyLoading } from './LazyComponentRenderer';
-import { useRendererLifecycle, useRenderError, getGlobalLifecycleManager } from './RendererLifecycle';
+import {
+  useRendererLifecycle,
+  useRenderError,
+  getGlobalLifecycleManager,
+} from './RendererLifecycle';
 import { getGlobalPerformanceMonitor } from './PerformanceMonitor';
 import { createRenderCache } from './RenderCache';
 
@@ -153,31 +157,28 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
     }, [node, context, children, style, renderer, monitor]);
 
     // Apply error boundary if enabled
-    const content = errorBoundary !== false ? (
-      <RendererErrorBoundary
-        nodeId={node.id}
-        mode={mode}
-        onError={(error, errorInfo) => {
-          console.error(`Error rendering component ${node.id}:`, error, errorInfo);
-          if (lifecycle?.onError) {
-            lifecycle.onError(error, node, context);
-          }
-        }}
-      >
-        {renderComponent()}
-      </RendererErrorBoundary>
-    ) : (
-      renderComponent()
-    );
+    const content =
+      errorBoundary !== false ? (
+        <RendererErrorBoundary
+          nodeId={node.id}
+          mode={mode}
+          onError={(error, errorInfo) => {
+            console.error(`Error rendering component ${node.id}:`, error, errorInfo);
+            if (lifecycle?.onError) {
+              lifecycle.onError(error, node, context);
+            }
+          }}
+        >
+          {renderComponent()}
+        </RendererErrorBoundary>
+      ) : (
+        renderComponent()
+      );
 
     // Apply lazy loading if enabled
     if (lazy !== false && useLazyLoading(node, context, depth)) {
       return (
-        <LazyComponentRenderer
-          node={node}
-          context={context}
-          renderComponent={renderComponent}
-        />
+        <LazyComponentRenderer node={node} context={context} renderComponent={renderComponent} />
       );
     }
 

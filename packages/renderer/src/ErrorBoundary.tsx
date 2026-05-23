@@ -21,7 +21,7 @@ interface ErrorBoundaryProps {
 const DefaultErrorFallback: React.FC<{ error: Error; nodeId?: string; mode?: string }> = ({
   error,
   nodeId,
-  mode
+  mode,
 }) => {
   if (mode === 'export') {
     return null;

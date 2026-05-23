@@ -263,7 +263,11 @@ export function resetGlobalPerformanceMonitor(): void {
 /**
  * Performance measurement decorator
  */
-export function measurePerformance(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+export function measurePerformance(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
   const originalMethod = descriptor.value;
   const monitor = getGlobalPerformanceMonitor();
 
