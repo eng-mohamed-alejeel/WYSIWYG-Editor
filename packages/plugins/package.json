@@ -1,0 +1,28 @@
+{
+  "name": "@wysiwyg/plugins",
+  "version": "1.0.0",
+  "description": "Professional plugin system for WYSIWYG editor",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "plugin",
+    "extension",
+    "architecture"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@wysiwyg/core": "*",
+    "@wysiwyg/editor": "*",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "typescript": "^5.0.0"
+  }
+}
