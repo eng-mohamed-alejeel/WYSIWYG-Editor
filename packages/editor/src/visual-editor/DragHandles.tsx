@@ -6,9 +6,10 @@
  */
 
 import React, { useMemo } from 'react';
+import { Rect } from './types';
 
 interface DragHandlesProps {
-  bounds: DOMRect;
+  bounds: Rect;
   isSelected: boolean;
   onDragStart: (event: React.MouseEvent) => void;
   config: {
@@ -20,10 +21,6 @@ interface DragHandlesProps {
 
 export const DragHandles: React.FC<DragHandlesProps> = React.memo(
   ({ bounds, isSelected, onDragStart, config }) => {
-    if (!config.enabled || !isSelected) {
-      return null;
-    }
-
     const handleStyle = useMemo(
       () => ({
         position: 'absolute' as const,
@@ -58,11 +55,18 @@ export const DragHandles: React.FC<DragHandlesProps> = React.memo(
       [bounds, config.size]
     );
 
+    if (!config.enabled || !isSelected) {
+      return null;
+    }
+
     return (
       <>
         {/* Top drag handle */}
         <div
           className="drag-handle drag-handle-top"
+          role="button"
+          tabIndex={0}
+          aria-label="Drag handle top"
           style={{
             ...handleStyle,
             ...topHandlePosition,
@@ -70,6 +74,12 @@ export const DragHandles: React.FC<DragHandlesProps> = React.memo(
           onMouseDown={(e) => {
             e.stopPropagation();
             onDragStart(e);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onDragStart(e as unknown as React.MouseEvent);
+            }
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.2)';
@@ -95,6 +105,9 @@ export const DragHandles: React.FC<DragHandlesProps> = React.memo(
         {/* Left drag handle */}
         <div
           className="drag-handle drag-handle-left"
+          role="button"
+          tabIndex={0}
+          aria-label="Drag handle left"
           style={{
             ...handleStyle,
             ...leftHandlePosition,
@@ -102,6 +115,12 @@ export const DragHandles: React.FC<DragHandlesProps> = React.memo(
           onMouseDown={(e) => {
             e.stopPropagation();
             onDragStart(e);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onDragStart(e as unknown as React.MouseEvent);
+            }
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.2)';

@@ -6,9 +6,10 @@
  */
 
 import React, { useMemo } from 'react';
+import { Rect } from './types';
 
 interface HoverOverlayProps {
-  bounds: DOMRect | null;
+  bounds: Rect | null;
   config: {
     enabled: boolean;
     color: string;
@@ -18,17 +19,13 @@ interface HoverOverlayProps {
 }
 
 export const HoverOverlay: React.FC<HoverOverlayProps> = React.memo(({ bounds, config }) => {
-  if (!config.enabled || !bounds) {
-    return null;
-  }
-
   const overlayStyle = useMemo(
     () => ({
       position: 'absolute' as const,
-      left: `${bounds.left}px`,
-      top: `${bounds.top}px`,
-      width: `${bounds.width}px`,
-      height: `${bounds.height}px`,
+      left: `${bounds?.left ?? 0}px`,
+      top: `${bounds?.top ?? 0}px`,
+      width: `${bounds?.width ?? 0}px`,
+      height: `${bounds?.height ?? 0}px`,
       backgroundColor: config.color,
       opacity: config.opacity,
       pointerEvents: 'none' as const,
@@ -37,6 +34,10 @@ export const HoverOverlay: React.FC<HoverOverlayProps> = React.memo(({ bounds, c
     }),
     [bounds, config.color, config.opacity, config.transition]
   );
+
+  if (!config.enabled || !bounds) {
+    return null;
+  }
 
   return <div className="hover-overlay" style={overlayStyle} />;
 });

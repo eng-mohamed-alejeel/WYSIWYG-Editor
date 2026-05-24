@@ -6,10 +6,10 @@
  */
 
 import React, { useMemo } from 'react';
-import { HandlePosition } from './types';
+import { HandlePosition, Rect } from './types';
 
 interface ResizeHandlesProps {
-  bounds: DOMRect;
+  bounds: Rect;
   isSelected: boolean;
   onResizeStart: (handle: HandlePosition, event: React.MouseEvent) => void;
   config: {
@@ -35,10 +35,6 @@ const HANDLE_STYLES: Record<HandlePosition, { cursor: string; left: string; top:
 
 export const ResizeHandles: React.FC<ResizeHandlesProps> = React.memo(
   ({ bounds, isSelected, onResizeStart, config }) => {
-    if (!config.enabled || !isSelected) {
-      return null;
-    }
-
     const handleStyle = useMemo(
       () => ({
         position: 'absolute' as const,
@@ -54,12 +50,18 @@ export const ResizeHandles: React.FC<ResizeHandlesProps> = React.memo(
     );
 
     const handles = useMemo(() => {
+      if (!config.enabled || !isSelected) {
+        return null;
+      }
+
       return HANDLE_POSITIONS.map((position) => {
         const style = HANDLE_STYLES[position];
         return (
           <div
             key={position}
             className="resize-handle"
+            role="button"
+            tabIndex={0}
             style={{
               ...handleStyle,
               cursor: style.cursor,
@@ -89,7 +91,15 @@ export const ResizeHandles: React.FC<ResizeHandlesProps> = React.memo(
           />
         );
       });
-    }, [bounds, handleStyle, config.color, config.hoverColor, onResizeStart]);
+    }, [
+      bounds,
+      handleStyle,
+      config.color,
+      config.hoverColor,
+      onResizeStart,
+      config.enabled,
+      isSelected,
+    ]);
 
     return <>{handles}</>;
   }

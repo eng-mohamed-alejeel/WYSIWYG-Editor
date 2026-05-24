@@ -22,10 +22,6 @@ interface SelectionOutlinesProps {
 
 export const SelectionOutlines: React.FC<SelectionOutlinesProps> = React.memo(
   ({ outlines, config }) => {
-    if (!config.enabled || outlines.length === 0) {
-      return null;
-    }
-
     const containerStyle = useMemo(
       () => ({
         position: 'absolute' as const,
@@ -38,6 +34,10 @@ export const SelectionOutlines: React.FC<SelectionOutlinesProps> = React.memo(
       }),
       []
     );
+
+    if (!config.enabled || outlines.length === 0) {
+      return null;
+    }
 
     return (
       <div style={containerStyle}>

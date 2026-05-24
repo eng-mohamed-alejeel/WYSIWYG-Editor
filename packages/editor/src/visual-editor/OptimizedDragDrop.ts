@@ -10,7 +10,7 @@
  */
 
 import { ComponentId } from '@wysiwyg/core';
-import { DragState, ComponentBounds } from './types';
+import { DragState, Rect } from './types';
 
 interface DragOptions {
   throttleDelay?: number;
@@ -23,7 +23,7 @@ interface DragOptions {
 
 interface CollisionCache {
   [key: string]: {
-    bounds: DOMRect;
+    bounds: Rect;
     timestamp: number;
   };
 }
@@ -197,13 +197,13 @@ export class OptimizedDragDropManager {
   /**
    * Get component bounds with caching
    */
-  private getComponentBounds(id: ComponentId): DOMRect | null {
+  private getComponentBounds(id: ComponentId): Rect | null {
     if (!this.options.enableCollisionCache) {
       return this.measureComponentBounds(id);
     }
 
     const cached = this.collisionCache[id];
-    if (cached && Date.now() - cached.timestamp < 100) {
+    if (cached !== undefined && Date.now() - cached.timestamp < 100) {
       return cached.bounds;
     }
 
@@ -221,9 +221,35 @@ export class OptimizedDragDropManager {
   /**
    * Measure component bounds
    */
-  private measureComponentBounds(id: ComponentId): DOMRect | null {
+  private measureComponentBounds(id: ComponentId): Rect | null {
     const element = document.querySelector(`[data-component-id="${id}"]`);
-    return element?.getBoundingClientRect() || null;
+    const domRect = element?.getBoundingClientRect();
+    if (!domRect) return null;
+    const rect = {
+      left: domRect.left,
+      top: domRect.top,
+      right: domRect.right,
+      bottom: domRect.bottom,
+      width: domRect.width,
+      height: domRect.height,
+      x: domRect.x,
+      y: domRect.y,
+    };
+    return {
+      ...rect,
+      toJSON: function () {
+        return {
+          left: this.left,
+          top: this.top,
+          right: this.right,
+          bottom: this.bottom,
+          width: this.width,
+          height: this.height,
+          x: this.x,
+          y: this.y,
+        };
+      },
+    };
   }
 
   /**
@@ -242,7 +268,8 @@ export class OptimizedDragDropManager {
 
     for (const component of components) {
       const id = component.getAttribute('data-component-id');
-      if (!id || this.dragState!.draggedIds.includes(id)) continue;
+      if (id === null || id === undefined || id === '' || this.dragState.draggedIds.includes(id))
+        continue;
 
       const bounds = this.getComponentBounds(id);
       if (!bounds) continue;
@@ -258,7 +285,7 @@ export class OptimizedDragDropManager {
   /**
    * Get current bounds of dragged elements
    */
-  private getDraggedBounds(): DOMRect | null {
+  private getDraggedBounds(): Rect | null {
     if (!this.dragState || this.dragState.draggedIds.length === 0) return null;
 
     const id = this.dragState.draggedIds[0];
@@ -266,18 +293,38 @@ export class OptimizedDragDropManager {
 
     if (!bounds) return null;
 
-    return new DOMRect(
-      bounds.left + this.dragState.dragOffset.x,
-      bounds.top + this.dragState.dragOffset.y,
-      bounds.width,
-      bounds.height
-    );
+    const rect = {
+      left: bounds.left + this.dragState.dragOffset.x,
+      top: bounds.top + this.dragState.dragOffset.y,
+      right: bounds.right + this.dragState.dragOffset.x,
+      bottom: bounds.bottom + this.dragState.dragOffset.y,
+      width: bounds.width,
+      height: bounds.height,
+      x: bounds.x + this.dragState.dragOffset.x,
+      y: bounds.y + this.dragState.dragOffset.y,
+    };
+
+    return {
+      ...rect,
+      toJSON: function () {
+        return {
+          left: this.left,
+          top: this.top,
+          right: this.right,
+          bottom: this.bottom,
+          width: this.width,
+          height: this.height,
+          x: this.x,
+          y: this.y,
+        };
+      },
+    };
   }
 
   /**
    * Check if two rectangles are colliding
    */
-  private isColliding(rect1: DOMRect, rect2: DOMRect): boolean {
+  private isColliding(rect1: Rect, rect2: Rect): boolean {
     return !(
       rect1.right < rect2.left ||
       rect1.left > rect2.right ||

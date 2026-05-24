@@ -19,10 +19,7 @@ interface AlignmentGuidesProps {
 }
 
 export const AlignmentGuides: React.FC<AlignmentGuidesProps> = React.memo(({ guides, config }) => {
-  if (!config.enabled || guides.length === 0) {
-    return null;
-  }
-
+  // جميع الـ Hooks يجب أن تكون في البداية قبل أي عودة مبكرة
   const horizontalGuides = useMemo(() => guides.filter((g) => g.type === 'horizontal'), [guides]);
 
   const verticalGuides = useMemo(() => guides.filter((g) => g.type === 'vertical'), [guides]);
@@ -35,6 +32,11 @@ export const AlignmentGuides: React.FC<AlignmentGuidesProps> = React.memo(({ gui
     }),
     []
   );
+
+  // التحقق من الشروط بعد الـ Hooks
+  if (!config.enabled || guides.length === 0) {
+    return null;
+  }
 
   return (
     <>

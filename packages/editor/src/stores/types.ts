@@ -59,7 +59,18 @@ export type EditorEventType =
   | 'clipboard:paste'
   | 'collaborator:join'
   | 'collaborator:leave'
-  | 'collaborator:cursor:move';
+  | 'collaborator:cursor:move'
+  | 'visual:drag:start'
+  | 'visual:drag:update'
+  | 'visual:drag:end'
+  | 'visual:resize:start'
+  | 'visual:resize:update'
+  | 'visual:resize:end'
+  | 'visual:hover'
+  | 'visual:selection-box:start'
+  | 'visual:selection-box:update'
+  | 'visual:selection-box:end'
+  | 'visual:reset';
 
 /**
  * Editor event payload

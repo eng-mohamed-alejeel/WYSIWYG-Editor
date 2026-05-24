@@ -10,7 +10,7 @@
  */
 
 import { ComponentId } from '@wysiwyg/core';
-import { SelectionBox, ComponentBounds } from './types';
+import { SelectionBox } from './types';
 
 interface SelectionOptions {
   debounceDelay?: number;
@@ -44,7 +44,7 @@ export class OptimizedSelectionManager {
   private focusedId: ComponentId | null = null;
   private options: Required<SelectionOptions>;
   private spatialIndex: SpatialIndex = {};
-  private debounceTimer: NodeJS.Timeout | null = null;
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
   private selectionMetrics: SelectionMetrics = {
     selectionCount: 0,
     lastUpdateTime: 0,
@@ -79,7 +79,7 @@ export class OptimizedSelectionManager {
 
     components.forEach((component) => {
       const id = component.getAttribute('data-component-id');
-      if (!id) return;
+      if (id === null || id === undefined || id === '') return;
 
       const bounds = component.getBoundingClientRect();
       const indexKey = this.getSpatialIndexKey(bounds);

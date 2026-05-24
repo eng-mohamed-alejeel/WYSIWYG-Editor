@@ -30,10 +30,6 @@ export const SmartSpacingIndicators: React.FC<SmartSpacingIndicatorsProps> = Rea
       return false;
     }, [config.enabled, config.showOnDrag, config.showOnHover, isDragging, isHovering]);
 
-    if (!shouldShow || indicators.length === 0) {
-      return null;
-    }
-
     const containerStyle = useMemo(
       () => ({
         position: 'absolute' as const,
@@ -67,6 +63,10 @@ export const SmartSpacingIndicators: React.FC<SmartSpacingIndicatorsProps> = Rea
       }),
       [config.color]
     );
+
+    if (!shouldShow || indicators.length === 0) {
+      return null;
+    }
 
     return (
       <div style={containerStyle}>

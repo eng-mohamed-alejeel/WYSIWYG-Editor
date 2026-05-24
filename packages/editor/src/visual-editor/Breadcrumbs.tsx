@@ -19,10 +19,7 @@ interface BreadcrumbsProps {
 }
 
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = React.memo(({ items, config, onSelect }) => {
-  if (!config.enabled || items.length === 0) {
-    return null;
-  }
-
+  // جميع الـ Hooks يجب أن تكون في البداية قبل أي عودة مبكرة
   const displayItems = useMemo(() => {
     const limited = items.slice(-config.maxDepth);
     return limited.map((item, index) => ({
@@ -77,17 +74,30 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = React.memo(({ items, conf
     []
   );
 
+  // التحقق من الشروط بعد الـ Hooks
+  if (!config.enabled || items.length === 0) {
+    return null;
+  }
+
   return (
     <div className="breadcrumbs" style={containerStyle}>
-      {displayItems.map((item, index) => (
+      {displayItems.map((item) => (
         <React.Fragment key={item.id}>
           <div
             className="breadcrumb-item"
+            role="button"
+            tabIndex={item.isLast ? -1 : 0}
             style={{
               ...itemStyle,
               backgroundColor: item.isLast ? 'rgba(0, 102, 255, 0.1)' : 'transparent',
             }}
             onClick={() => !item.isLast && onSelect(item.id)}
+            onKeyDown={(e) => {
+              if (!item.isLast && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                onSelect(item.id);
+              }
+            }}
             onMouseEnter={(e) => {
               if (!item.isLast) {
                 e.currentTarget.style.backgroundColor = 'rgba(0, 102, 255, 0.1)';

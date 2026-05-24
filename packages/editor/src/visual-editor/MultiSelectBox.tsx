@@ -19,10 +19,6 @@ interface MultiSelectBoxProps {
 
 export const MultiSelectBox: React.FC<MultiSelectBoxProps> = React.memo(
   ({ selectionBox, config }) => {
-    if (!config.enabled || !selectionBox.isActive) {
-      return null;
-    }
-
     const boxBounds = useMemo(() => {
       const left = Math.min(selectionBox.start.x, selectionBox.end.x);
       const top = Math.min(selectionBox.start.y, selectionBox.end.y);
@@ -47,6 +43,10 @@ export const MultiSelectBox: React.FC<MultiSelectBoxProps> = React.memo(
       }),
       [boxBounds, config.selectionBoxColor, config.selectionBoxOpacity]
     );
+
+    if (!config.enabled || !selectionBox.isActive) {
+      return null;
+    }
 
     return <div className="multi-select-box" style={boxStyle} />;
   }

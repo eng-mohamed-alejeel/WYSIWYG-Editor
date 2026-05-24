@@ -5,7 +5,22 @@
  * Following Figma and Webflow UX patterns
  */
 
-import { ComponentId, ComponentNode } from '@wysiwyg/core';
+import { ComponentId } from '@wysiwyg/core';
+
+/**
+ * Rectangle interface for geometric calculations
+ */
+export interface Rect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  toJSON(): object;
+}
 
 /**
  * Handle positions for resize operations
@@ -111,6 +126,7 @@ export interface HoverState {
   hoveredId: ComponentId | null;
   hoverPosition: { x: number; y: number } | null;
   showOverlay: boolean;
+  isHovering: boolean;
 }
 
 /**
@@ -118,7 +134,7 @@ export interface HoverState {
  */
 export interface SelectionOutline {
   id: ComponentId;
-  bounds: DOMRect;
+  bounds: Rect;
   isSelected: boolean;
   isHovered: boolean;
   isFocused: boolean;
@@ -253,7 +269,7 @@ export interface VisualEditorState {
  */
 export interface ComponentBounds {
   id: ComponentId;
-  bounds: DOMRect;
+  bounds: Rect;
   parentId: ComponentId | null;
   depth: number;
   isVisible: boolean;
@@ -264,10 +280,52 @@ export interface ComponentBounds {
  */
 export interface VisualEditorContext {
   state: VisualEditorState;
-  getComponentBounds: (id: ComponentId) => DOMRect | null;
+  getComponentBounds: (id: ComponentId) => Rect | null;
   getAllBounds: () => ComponentBounds[];
-  updateComponentBounds: (id: ComponentId, bounds: DOMRect) => void;
-  findSnapTargets: (bounds: DOMRect) => AlignmentGuide[];
+  updateComponentBounds: (id: ComponentId, bounds: Rect) => void;
+  findSnapTargets: (bounds: Rect) => AlignmentGuide[];
   calculateSmartSpacing: (id: ComponentId) => SmartSpacingIndicator[];
   getBreadcrumbs: (id: ComponentId) => BreadcrumbItem[];
+}
+
+/**
+ * Visual editor event types
+ */
+export type VisualEditorEventType =
+  | 'visual:drag:start'
+  | 'visual:drag:update'
+  | 'visual:drag:end'
+  | 'visual:resize:start'
+  | 'visual:resize:update'
+  | 'visual:resize:end'
+  | 'visual:hover'
+  | 'visual:selection-box:start'
+  | 'visual:selection-box:update'
+  | 'visual:selection-box:end'
+  | 'visual:reset';
+
+/**
+ * Visual editor event payload types
+ */
+export interface VisualEditorEventPayloads {
+  'visual:drag:start': { ids: ComponentId[]; startX: number; startY: number };
+  'visual:drag:update': {
+    currentX: number;
+    currentY: number;
+    dragOffset: { x: number; y: number };
+  };
+  'visual:drag:end': null;
+  'visual:resize:start': {
+    id: ComponentId;
+    handlePosition: HandlePosition;
+    startX: number;
+    startY: number;
+  };
+  'visual:resize:update': { currentX: number; currentY: number };
+  'visual:resize:end': null;
+  'visual:hover': { id: ComponentId | null; position?: { x: number; y: number } };
+  'visual:selection-box:start': { startX: number; startY: number };
+  'visual:selection-box:update': { currentX: number; currentY: number };
+  'visual:selection-box:end': null;
+  'visual:reset': null;
 }

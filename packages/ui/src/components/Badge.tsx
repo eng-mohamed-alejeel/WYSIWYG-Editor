@@ -83,11 +83,11 @@ export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
         )}
         {...props}
       >
-        {leftIcon && <span className="flex items-center justify-center">{leftIcon}</span>}
+        {!!leftIcon && <span className="flex items-center justify-center">{leftIcon}</span>}
 
         <span>{children}</span>
 
-        {rightIcon && <span className="flex items-center justify-center">{rightIcon}</span>}
+        {!!rightIcon && <span className="flex items-center justify-center">{rightIcon}</span>}
 
         {removable && (
           <button
