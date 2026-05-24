@@ -116,7 +116,7 @@ export function moveComponent(
 
   const newTree = removeComponent([...tree]);
 
-  if (!component) {
+  if (component === null) {
     return tree;
   }
 
@@ -223,14 +223,17 @@ export function isValidChild(
     return true; // No restrictions
   }
 
-  const allowed = allowedChildren[parentType] || [];
+  const allowed = allowedChildren[parentType];
+  if (allowed === undefined || allowed === null || !Array.isArray(allowed)) {
+    return false;
+  }
   return allowed.includes(childType);
 }
 
 /**
  * Deep merge objects
  */
-export function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
   const result = { ...target };
 
   for (const key in source) {
@@ -238,16 +241,16 @@ export function deepMerge<T extends Record<string, any>>(target: T, source: Part
     const targetValue = result[key];
 
     if (
-      sourceValue &&
+      sourceValue !== null &&
       typeof sourceValue === 'object' &&
       !Array.isArray(sourceValue) &&
-      targetValue &&
+      targetValue !== null &&
       typeof targetValue === 'object' &&
       !Array.isArray(targetValue)
     ) {
       result[key] = deepMerge(
-        targetValue as Record<string, any>,
-        sourceValue as Partial<Record<string, any>>
+        targetValue as Record<string, unknown>,
+        sourceValue as Partial<Record<string, unknown>>
       ) as T[Extract<keyof T, string>];
     } else {
       result[key] = sourceValue as T[Extract<keyof T, string>];
@@ -260,11 +263,11 @@ export function deepMerge<T extends Record<string, any>>(target: T, source: Part
 /**
  * Debounce function
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return function executedFunction(...args: Parameters<T>) {
     const later = () => {
@@ -272,7 +275,7 @@ export function debounce<T extends (...args: any[]) => any>(
       func(...args);
     };
 
-    if (timeout) {
+    if (timeout !== null) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(later, wait);
@@ -282,7 +285,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * Throttle function
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -292,7 +295,9 @@ export function throttle<T extends (...args: any[]) => any>(
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
     }
   };
 }

@@ -4,7 +4,7 @@
  * This module provides utility functions used across multiple packages.
  */
 
-import { Breakpoint, StyleObject, StyleProperty } from '@wysiwyg/core';
+import { Breakpoint, StyleObject, StyleProperty, StyleValue } from '@wysiwyg/core';
 import { DEFAULT_BREAKPOINTS } from '../constants';
 
 /**
@@ -21,10 +21,10 @@ export function getCurrentBreakpoint(width: number): Breakpoint {
  * Convert style object to CSS string
  */
 export function styleObjectToCss(styles: StyleObject): string {
-  return Object.entries(styles)
+  return Object.entries(styles as Record<string, unknown>)
     .map(([property, value]) => {
       const cssProperty = camelCaseToKebabCase(property);
-      return `${cssProperty}: ${value};`;
+      return `${cssProperty}: ${String(value)};`;
     })
     .join(' ');
 }
@@ -40,7 +40,7 @@ export function camelCaseToKebabCase(str: string): string {
  * Convert kebab case to camel case
  */
 export function kebabCaseToCamelCase(str: string): string {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+  return str.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 }
 
 /**
@@ -51,23 +51,38 @@ export function getResponsiveStyles(
   responsiveStyles: Record<Breakpoint, StyleObject> | undefined,
   breakpoint: Breakpoint
 ): StyleObject {
-  const merged: StyleObject = { ...styles };
+  const merged: Partial<Record<StyleProperty, StyleValue>> = { ...styles };
 
   if (responsiveStyles) {
     // Merge styles from smaller breakpoints
     if (breakpoint === 'tablet') {
-      Object.assign(merged, responsiveStyles.mobile || {});
+      if (responsiveStyles.mobile !== undefined) {
+        Object.assign(merged, responsiveStyles.mobile);
+      }
     } else if (breakpoint === 'desktop') {
-      Object.assign(merged, responsiveStyles.mobile || {});
-      Object.assign(merged, responsiveStyles.tablet || {});
+      if (responsiveStyles.mobile !== undefined) {
+        Object.assign(merged, responsiveStyles.mobile);
+      }
+      if (responsiveStyles.tablet !== undefined) {
+        Object.assign(merged, responsiveStyles.tablet);
+      }
     } else if (breakpoint === 'wide') {
-      Object.assign(merged, responsiveStyles.mobile || {});
-      Object.assign(merged, responsiveStyles.tablet || {});
-      Object.assign(merged, responsiveStyles.desktop || {});
+      if (responsiveStyles.mobile !== undefined) {
+        Object.assign(merged, responsiveStyles.mobile);
+      }
+      if (responsiveStyles.tablet !== undefined) {
+        Object.assign(merged, responsiveStyles.tablet);
+      }
+      if (responsiveStyles.desktop !== undefined) {
+        Object.assign(merged, responsiveStyles.desktop);
+      }
     }
 
     // Apply current breakpoint styles
-    Object.assign(merged, responsiveStyles[breakpoint] || {});
+    const currentBreakpointStyles = responsiveStyles[breakpoint];
+    if (currentBreakpointStyles !== undefined) {
+      Object.assign(merged, currentBreakpointStyles);
+    }
   }
 
   return merged;
@@ -77,26 +92,28 @@ export function getResponsiveStyles(
  * Generate media query for a breakpoint
  */
 export function generateMediaQuery(breakpoint: Breakpoint): string {
-  const breakpointValue = DEFAULT_BREAKPOINTS[breakpoint];
-  return `@media (min-width: ${breakpointValue})`;
+  const breakpointValue = DEFAULT_BREAKPOINTS[breakpoint as keyof typeof DEFAULT_BREAKPOINTS];
+  return `@media (min-width: ${String(breakpointValue)})`;
 }
 
 /**
  * Parse CSS string to style object
  */
 export function cssToStyleObject(css: string): StyleObject {
-  const styles: StyleObject = {};
+  const styles: Record<string, string> = {};
   const declarations = css.split(';').filter(Boolean);
 
   for (const declaration of declarations) {
-    const [property, value] = declaration.split(':').map((s) => s.trim());
+    const parts = declaration.split(':').map((s) => s.trim());
+    const property = parts[0];
+    const value = parts[1];
     if (property && value) {
       const camelProperty = kebabCaseToCamelCase(property);
-      styles[camelProperty as StyleProperty] = value;
+      styles[camelProperty] = value;
     }
   }
 
-  return styles;
+  return styles as StyleObject;
 }
 
 /**
@@ -238,11 +255,11 @@ export function toTitleCase(str: string): string {
 /**
  * Check if value is empty
  */
-export function isEmpty(value: any): boolean {
+export function isEmpty(value: unknown): boolean {
   if (value == null) return true;
   if (typeof value === 'string') return value.trim().length === 0;
   if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === 'object') return Object.keys(value).length === 0;
+  if (typeof value === 'object') return Object.keys(value as Record<string, unknown>).length === 0;
   return false;
 }
 
@@ -251,16 +268,19 @@ export function isEmpty(value: any): boolean {
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj;
-  if (obj instanceof Date) return new Date(obj.getTime()) as any;
-  if (obj instanceof Array) return obj.map((item) => deepClone(item)) as any;
+  if (obj instanceof Date) return new Date(obj.getTime()) as T;
+  if (obj instanceof Array) {
+    const clonedArray = obj.map((item: T) => deepClone(item));
+    return clonedArray as T;
+  }
   if (obj instanceof Object) {
-    const clonedObj = {} as any;
+    const clonedObj: Record<string, unknown> = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        clonedObj[key] = deepClone(obj[key]);
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        clonedObj[key] = deepClone((obj as Record<string, unknown>)[key]);
       }
     }
-    return clonedObj;
+    return clonedObj as T;
   }
   return obj;
 }
@@ -268,20 +288,27 @@ export function deepClone<T>(obj: T): T {
 /**
  * Get object path value
  */
-export function getPathValue(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
+export function getPathValue(obj: Record<string, unknown>, path: string): unknown {
+  return path
+    .split('.')
+    .reduce((current: unknown, key: string) => (current as Record<string, unknown>)?.[key], obj);
 }
 
 /**
  * Set object path value
  */
-export function setPathValue(obj: any, path: string, value: any): void {
+export function setPathValue(obj: Record<string, unknown>, path: string, value: unknown): void {
   const keys = path.split('.');
-  const lastKey = keys.pop()!;
-  const target = keys.reduce((current, key) => {
-    if (!current[key]) current[key] = {};
-    return current[key];
+  const lastKey = keys.pop();
+  if (lastKey === undefined || lastKey === null) return;
+
+  const target = keys.reduce((current: Record<string, unknown>, key: string) => {
+    if (current[key] === undefined) {
+      current[key] = {};
+    }
+    return current[key] as Record<string, unknown>;
   }, obj);
+
   target[lastKey] = value;
 }
 
@@ -422,10 +449,12 @@ export function parseQueryString(queryString: string): Record<string, string> {
 /**
  * Build query string
  */
-export function buildQueryString(params: Record<string, any>): string {
+export function buildQueryString(
+  params: Record<string, string | number | boolean | null | undefined>
+): string {
   const pairs = Object.entries(params)
     .filter(([_, value]) => value != null)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
 
   return pairs.length > 0 ? `?${pairs.join('&')}` : '';
 }
