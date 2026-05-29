@@ -6,14 +6,11 @@
 
 import React, { memo, useMemo, useCallback, useRef, useEffect } from 'react';
 import { ComponentNode, Breakpoint, StyleObject } from '@wysiwyg/core';
-import { RendererContext } from '../types';
 import { getGlobalStyleGenerator } from '../styles';
+import { ResponsiveRendererProps, ResponsiveRendererBatchProps } from './types';
 
-interface ResponsiveRendererProps {
-  node: ComponentNode;
-  context: RendererContext;
-  children?: React.ReactNode;
-}
+type SafeStyleRecord = Record<string, string | number | undefined>;
+type ResponsiveStyleMap = Partial<Record<string, Partial<Record<string, string | number>>>>;
 
 // Style cache for performance optimization
 const styleCache = new Map<string, Map<Breakpoint, StyleObject>>();
@@ -43,7 +40,8 @@ function maintainCacheSize(): void {
  */
 function getCachedStyles(nodeId: string, breakpoint: Breakpoint): StyleObject | undefined {
   const key = getCacheKey(nodeId, breakpoint);
-  return styleCache.get(key)?.get(breakpoint);
+  const cachedMap = styleCache.get(key);
+  return cachedMap?.get(breakpoint);
 }
 
 /**
@@ -56,7 +54,7 @@ function cacheStyles(nodeId: string, breakpoint: Breakpoint, styles: StyleObject
     styleCache.set(key, new Map());
   }
 
-  styleCache.get(key)!.set(breakpoint, styles);
+  styleCache.get(key)?.set(breakpoint, styles);
   maintainCacheSize();
 }
 
@@ -78,13 +76,54 @@ export function clearAllStyleCache(): void {
 }
 
 /**
+ * Merge responsive style objects safely
+ */
+function mergeResponsiveStyleObjects(
+  baseStyles: SafeStyleRecord,
+  breakpoint: Breakpoint,
+  responsiveStyles?: ResponsiveStyleMap
+): StyleObject {
+  const merged: SafeStyleRecord = { ...baseStyles };
+
+  if (responsiveStyles == null) {
+    return merged as StyleObject;
+  }
+
+  if (breakpoint === 'tablet') {
+    const mobileStyles = responsiveStyles['mobile'];
+    if (mobileStyles != null) Object.assign(merged, mobileStyles);
+  } else if (breakpoint === 'desktop') {
+    const mobileStyles = responsiveStyles['mobile'];
+    const tabletStyles = responsiveStyles['tablet'];
+    if (mobileStyles != null) Object.assign(merged, mobileStyles);
+    if (tabletStyles != null) Object.assign(merged, tabletStyles);
+  } else if (breakpoint === 'wide') {
+    const mobileStyles = responsiveStyles['mobile'];
+    const tabletStyles = responsiveStyles['tablet'];
+    const desktopStyles = responsiveStyles['desktop'];
+    if (mobileStyles != null) Object.assign(merged, mobileStyles);
+    if (tabletStyles != null) Object.assign(merged, tabletStyles);
+    if (desktopStyles != null) Object.assign(merged, desktopStyles);
+  }
+
+  const breakpointStyles = responsiveStyles[breakpoint];
+  if (breakpointStyles != null) {
+    Object.assign(merged, breakpointStyles);
+  }
+  return merged as StyleObject;
+}
+
+/**
  * Responsive Renderer Component
  * Optimized for performance with caching and memoization
  */
 export const ResponsiveRenderer: React.FC<ResponsiveRendererProps> = memo(
   ({ node, context, children }) => {
     const { breakpoint, mode } = context;
-    const styleGenerator = getGlobalStyleGenerator();
+    const nodeId: string = node.id;
+    const nodeType: string = node.type;
+    const nodeBaseStyles = node.styles as SafeStyleRecord;
+    const nodeResponsiveStyles = node.responsiveStyles as ResponsiveStyleMap | undefined;
     const renderCountRef = useRef(0);
     const lastBreakpointRef = useRef<Breakpoint>(breakpoint);
 
@@ -93,7 +132,7 @@ export const ResponsiveRenderer: React.FC<ResponsiveRendererProps> = memo(
       renderCountRef.current++;
       if (process.env.NODE_ENV === 'development' && renderCountRef.current > 10) {
         console.warn(
-          `Component ${node.id} has rendered ${renderCountRef.current} times. ` +
+          `Component ${nodeId} has rendered ${renderCountRef.current} times. ` +
             `Consider optimization. Current breakpoint: ${breakpoint}`
         );
       }
@@ -102,23 +141,19 @@ export const ResponsiveRenderer: React.FC<ResponsiveRendererProps> = memo(
     // Generate responsive styles with caching
     const responsiveStyles = useMemo(() => {
       // Check cache first
-      const cached = getCachedStyles(node.id, breakpoint);
-      if (cached) {
+      const cached = getCachedStyles(nodeId, breakpoint);
+      if (cached !== undefined) {
         return cached;
       }
 
       // Generate new styles
-      const styles = styleGenerator.generate(
-        node.styles,
-        node.responsiveStyles as Record<Breakpoint, StyleObject> | undefined,
-        breakpoint
-      );
+      const styles = mergeResponsiveStyleObjects(nodeBaseStyles, breakpoint, nodeResponsiveStyles);
 
       // Cache the result
-      cacheStyles(node.id, breakpoint, styles);
+      cacheStyles(nodeId, breakpoint, styles);
 
       return styles;
-    }, [node.styles, node.responsiveStyles, breakpoint, styleGenerator, node.id]);
+    }, [nodeBaseStyles, nodeResponsiveStyles, breakpoint, nodeId]);
 
     // Handle breakpoint changes
     useEffect(() => {
@@ -130,64 +165,72 @@ export const ResponsiveRenderer: React.FC<ResponsiveRendererProps> = memo(
 
         if (currentIndex > 0) {
           const prevBreakpoint = adjacentBreakpoints[currentIndex - 1];
-          const prevStyles = getCachedStyles(node.id, prevBreakpoint);
-          if (!prevStyles) {
-            const styles = styleGenerator.generate(
-              node.styles,
-              node.responsiveStyles as Record<Breakpoint, StyleObject> | undefined,
-              prevBreakpoint
+          if (
+            prevBreakpoint !== undefined &&
+            getCachedStyles(nodeId, prevBreakpoint) === undefined
+          ) {
+            const styles = mergeResponsiveStyleObjects(
+              nodeBaseStyles,
+              prevBreakpoint,
+              nodeResponsiveStyles
             );
-            cacheStyles(node.id, prevBreakpoint, styles);
+            cacheStyles(nodeId, prevBreakpoint, styles);
           }
         }
 
         if (currentIndex < adjacentBreakpoints.length - 1) {
           const nextBreakpoint = adjacentBreakpoints[currentIndex + 1];
-          const nextStyles = getCachedStyles(node.id, nextBreakpoint);
-          if (!nextStyles) {
-            const styles = styleGenerator.generate(
-              node.styles,
-              node.responsiveStyles as Record<Breakpoint, StyleObject> | undefined,
-              nextBreakpoint
+          if (
+            nextBreakpoint !== undefined &&
+            getCachedStyles(nodeId, nextBreakpoint) === undefined
+          ) {
+            const styles = mergeResponsiveStyleObjects(
+              nodeBaseStyles,
+              nextBreakpoint,
+              nodeResponsiveStyles
             );
-            cacheStyles(node.id, nextBreakpoint, styles);
+            cacheStyles(nodeId, nextBreakpoint, styles);
           }
         }
       }
-    }, [breakpoint, node.styles, node.responsiveStyles, styleGenerator, node.id]);
+    }, [breakpoint, nodeBaseStyles, nodeResponsiveStyles, nodeId]);
 
     // Merge responsive styles with inline styles
-    const mergedStyles = useMemo(() => {
-      return {
-        ...responsiveStyles,
-        // Add any additional inline styles from context
-        ...(context.style ? parseInlineStyles(context.style) : {}),
-      };
-    }, [responsiveStyles, context.style]);
+    const mergedStyles = useMemo(
+      () =>
+        ({
+          ...responsiveStyles,
+          // Add any additional inline styles from context
+          ...(context.style != null && context.style.trim().length > 0
+            ? parseInlineStyles(context.style)
+            : {}),
+        }) as React.CSSProperties,
+      [responsiveStyles, context.style]
+    );
 
     // Render children with optimized context
     const renderChildren = useCallback(() => {
-      if (!children) return null;
+      if (children === null || children === undefined) return null;
 
       return React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child, {
             ...child.props,
-            'data-component-id': node.id,
+            'data-component-id': nodeId,
             'data-breakpoint': breakpoint,
-          } as any);
+          } as unknown as Record<string, unknown>);
         }
         return child;
       });
-    }, [children, node.id, breakpoint]);
+    }, [children, nodeId, breakpoint]);
 
     return (
       <div
         className={`responsive-component ${mode === 'editor' ? 'editor-mode' : ''}`}
         style={mergedStyles}
-        data-component-id={node.id}
+        data-component-id={nodeId}
         data-breakpoint={breakpoint}
-        data-component-type={node.type}
+        data-component-type={nodeType}
       >
         {renderChildren()}
       </div>
@@ -202,18 +245,21 @@ ResponsiveRenderer.displayName = 'ResponsiveRenderer';
  */
 function parseInlineStyles(styleString: string): React.CSSProperties {
   try {
-    const styles: React.CSSProperties = {};
+    const stylesRecord: Record<string, string> = {};
     const declarations = styleString.split(';').filter(Boolean);
 
     declarations.forEach((declaration) => {
-      const [property, value] = declaration.split(':').map((s) => s.trim());
-      if (property && value) {
-        const camelProperty = property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-        (styles as any)[camelProperty] = value;
+      const parts = declaration.split(':').map((s) => s.trim());
+      const [property, value] = parts;
+      if (property != null && property.length > 0 && value != null && value.length > 0) {
+        const camelProperty = property.replace(/-([a-z])/g, (_, letter: string) =>
+          letter.toUpperCase()
+        );
+        stylesRecord[camelProperty] = value;
       }
     });
 
-    return styles;
+    return stylesRecord as React.CSSProperties;
   } catch (error) {
     console.warn('Failed to parse inline styles:', error);
     return {};
@@ -224,11 +270,6 @@ function parseInlineStyles(styleString: string): React.CSSProperties {
  * Responsive Renderer Batch
  * Renders multiple components with batch optimization
  */
-interface ResponsiveRendererBatchProps {
-  nodes: ComponentNode[];
-  context: RendererContext;
-  renderNode: (node: ComponentNode, context: RendererContext) => React.ReactNode;
-}
 
 export const ResponsiveRendererBatch: React.FC<ResponsiveRendererBatchProps> = memo(
   ({ nodes, context, renderNode }) => {
@@ -240,8 +281,9 @@ export const ResponsiveRendererBatch: React.FC<ResponsiveRendererBatchProps> = m
     }, [breakpoint]);
 
     useEffect(() => {
-      if (batchStartTimeRef.current) {
-        const duration = performance.now() - batchStartTimeRef.current;
+      const startTime = batchStartTimeRef.current;
+      if (startTime !== undefined) {
+        const duration = performance.now() - startTime;
         if (process.env.NODE_ENV === 'development' && duration > 100) {
           console.warn(
             `Batch render took ${duration.toFixed(2)}ms for ${nodes.length} components. ` +
@@ -275,29 +317,37 @@ interface ResponsiveStylePreviewProps {
 export const ResponsiveStylePreview: React.FC<ResponsiveStylePreviewProps> = memo(
   ({ node, currentBreakpoint, onBreakpointChange }) => {
     const styleGenerator = getGlobalStyleGenerator();
-    const breakpoints: Breakpoint[] = ['mobile', 'tablet', 'desktop', 'wide'];
+    const breakpoints: Breakpoint[] = useMemo(() => ['mobile', 'tablet', 'desktop', 'wide'], []);
 
     const previewStyles = useMemo(() => {
-      const styles: Record<Breakpoint, string> = {} as any;
+      const styles: Partial<Record<Breakpoint, string>> = {};
 
-      breakpoints.forEach((bp) => {
-        styles[bp] = styleGenerator.generate(
-          node.styles,
-          node.responsiveStyles as Record<Breakpoint, StyleObject> | undefined,
-          bp
-        );
+      breakpoints.forEach((bp: Breakpoint) => {
+        const nodeStyles = node.styles as StyleObject;
+        const nodeResponsiveStyles = node.responsiveStyles as
+          | Record<Breakpoint, StyleObject>
+          | undefined;
+        styles[bp] = styleGenerator.generate(nodeStyles, nodeResponsiveStyles, bp);
       });
 
-      return styles;
-    }, [node.styles, node.responsiveStyles, styleGenerator]);
+      return styles as Record<Breakpoint, string>;
+    }, [node.styles, node.responsiveStyles, styleGenerator, breakpoints]);
 
     return (
       <div className="responsive-style-preview">
-        {breakpoints.map((bp) => (
+        {breakpoints.map((bp: Breakpoint) => (
           <div
             key={bp}
+            role="button"
+            tabIndex={0}
             className={`preview-item ${bp === currentBreakpoint ? 'active' : ''}`}
             onClick={() => onBreakpointChange?.(bp)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onBreakpointChange?.(bp);
+              }
+            }}
           >
             <div className="preview-breakpoint">{bp}</div>
             <div className="preview-styles">{previewStyles[bp]}</div>

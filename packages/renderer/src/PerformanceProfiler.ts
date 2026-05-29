@@ -12,7 +12,7 @@ interface ProfilingData {
   startTime: number;
   endTime?: number;
   duration?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   children: ProfilingData[];
 }
 
@@ -56,7 +56,7 @@ export class PerformanceProfiler {
   /**
    * Start profiling a specific operation
    */
-  startProfiling(name: string, metadata?: Record<string, any>): void {
+  startProfiling(name: string, metadata?: Record<string, unknown>): void {
     const profilingData: ProfilingData = {
       name,
       startTime: performance.now(),
@@ -88,10 +88,10 @@ export class PerformanceProfiler {
 
     // Track render counts and times
     const renderKey = current.name;
-    this.renderCounts.set(renderKey, (this.renderCounts.get(renderKey) || 0) + 1);
+    this.renderCounts.set(renderKey, (this.renderCounts.get(renderKey) ?? 0) + 1);
 
-    const times = this.renderTimes.get(renderKey) || [];
-    times.push(current.duration!);
+    const times = this.renderTimes.get(renderKey) ?? [];
+    times.push(current.duration);
     this.renderTimes.set(renderKey, times);
 
     // If we've completed the root profiling, create a snapshot
@@ -126,7 +126,7 @@ export class PerformanceProfiler {
    * Calculate current performance metrics
    */
   private calculateMetrics(): PerformanceMetrics {
-    const totalRenderTime = this.profilingRoot?.duration || 0;
+    const totalRenderTime = this.profilingRoot?.duration ?? 0;
     const componentCount = this.renderCounts.size;
     const memoryUsage = this.getMemoryUsage() - this.memoryBaseline;
 
@@ -144,8 +144,9 @@ export class PerformanceProfiler {
    * Get current memory usage
    */
   private getMemoryUsage(): number {
-    if ('memory' in performance && (performance as any).memory) {
-      return (performance as any).memory.usedJSHeapSize;
+    const perf = performance as unknown as { memory?: { usedJSHeapSize?: number } };
+    if (perf.memory && typeof perf.memory.usedJSHeapSize === 'number') {
+      return perf.memory.usedJSHeapSize;
     }
     return 0;
   }
@@ -226,7 +227,7 @@ export class PerformanceProfiler {
     }
 
     // Check for high memory usage
-    if (metrics.memoryUsage > 50 * 1024 * 1024) {
+    if (typeof metrics.memoryUsage === 'number' && metrics.memoryUsage > 50 * 1024 * 1024) {
       recommendations.push(
         `High memory usage detected (${(metrics.memoryUsage / 1024 / 1024).toFixed(2)}MB). Consider implementing cache limits or cleanup strategies.`
       );
@@ -316,18 +317,18 @@ export function resetGlobalPerformanceProfiler(): void {
 /**
  * Higher-order function for profiling operations
  */
-export function withProfiling<T extends (...args: any[]) => any>(
+export function withProfiling<T extends (...args: unknown[]) => unknown>(
   name: string,
   fn: T,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): T {
-  return ((...args: any[]) => {
+  return ((...args: Parameters<T>): ReturnType<T> => {
     const profiler = getGlobalPerformanceProfiler();
     profiler.startProfiling(name, metadata);
     try {
       const result = fn(...args);
       profiler.endProfiling();
-      return result;
+      return result as ReturnType<T>;
     } catch (error) {
       profiler.endProfiling();
       throw error;

@@ -7,7 +7,13 @@
 
 import React from 'react';
 import { ComponentNode, Breakpoint, StyleObject } from '@wysiwyg/core';
-import { RendererContext, RenderOptions, ComponentRenderer, RendererConfig } from './types';
+import {
+  RendererContext,
+  RenderOptions,
+  ComponentRenderer,
+  RendererConfig,
+  RendererLifecycle,
+} from './types';
 import { DefaultComponentRegistry, getGlobalRegistry } from './registry';
 import { getGlobalStyleGenerator } from './styles';
 import { RendererEngine } from './RendererEngine';
@@ -46,22 +52,7 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = React.memo(
   ({ node, context, depth = 0 }) => {
     const { componentRegistry, breakpoint } = context;
 
-    // Check max depth
-    if (depth > DEFAULT_CONFIG.maxComponentDepth) {
-      console.warn(
-        `Maximum component depth (${DEFAULT_CONFIG.maxComponentDepth}) exceeded for node ${node.id}`
-      );
-      return null;
-    }
-
-    // Get the component renderer
-    const renderer = componentRegistry.get(node.type);
-    if (!renderer) {
-      console.warn(`No renderer found for component type: ${node.type}`);
-      return null;
-    }
-
-    // Generate styles
+    // Generate styles — hooks must come before any conditional returns
     const style = React.useMemo(() => {
       const styleGenerator = getGlobalStyleGenerator();
       return styleGenerator.generate(
@@ -82,7 +73,7 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = React.memo(
 
     // Render children
     const children = React.useMemo(() => {
-      return node.children.map((childNode) => (
+      return node.children.map((childNode: ComponentNode) => (
         <ComponentRendererComponent
           key={childNode.id}
           node={childNode}
@@ -91,6 +82,21 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = React.memo(
         />
       ));
     }, [node.children, childContext, depth]);
+
+    // Check max depth — after hooks
+    if (depth > DEFAULT_CONFIG.maxComponentDepth) {
+      console.warn(
+        `Maximum component depth (${DEFAULT_CONFIG.maxComponentDepth}) exceeded for node ${node.id}`
+      );
+      return null;
+    }
+
+    // Get the component renderer — after hooks
+    const renderer = componentRegistry.get(node.type);
+    if (!renderer) {
+      console.warn(`No renderer found for component type: ${node.type}`);
+      return null;
+    }
 
     // Render the component
     const renderedComponent = renderer(node, {
@@ -123,7 +129,7 @@ export const PageRenderer: React.FC<PageRendererProps> = React.memo(({ nodes, op
       breakpoint: options.breakpoint ?? 'desktop',
       isPreview: options.isPreview ?? false,
       isEditable: options.isEditable ?? false,
-      mode: options.mode ?? (options.isPreview ? 'preview' : 'editor'),
+      mode: options.mode ?? (options.isPreview === true ? 'preview' : 'editor'),
       componentRegistry: getGlobalRegistry().getAll(),
       theme: options.theme,
       depth: 0,
@@ -133,7 +139,7 @@ export const PageRenderer: React.FC<PageRendererProps> = React.memo(({ nodes, op
 
   // Render all nodes
   const renderedNodes = React.useMemo(() => {
-    return nodes.map((node) => (
+    return nodes.map((node: ComponentNode) => (
       <ComponentRendererComponent key={node.id} node={node} context={context} />
     ));
   }, [nodes, context]);
@@ -243,7 +249,7 @@ export class Renderer {
   /**
    * Register lifecycle hooks for a component
    */
-  registerLifecycle(nodeId: string, lifecycle: any): void {
+  registerLifecycle(nodeId: string, lifecycle: RendererLifecycle): void {
     this.engine.registerLifecycle(nodeId, lifecycle);
   }
 

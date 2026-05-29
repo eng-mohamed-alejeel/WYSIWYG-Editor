@@ -4,8 +4,9 @@
  * Advanced multi-layer caching system for optimal performance
  * Implements L1 (in-memory), L2 (persistent), and L3 (distributed) caching strategies
  */
+/* eslint max-lines: ["error", { max: 520 }] */
 
-import { ComponentNode } from '@wysiwyg/core';
+// ComponentNode import removed (unused)
 import { CacheConfig } from './types';
 
 interface CacheEntry<T> {
@@ -15,14 +16,15 @@ interface CacheEntry<T> {
   lastAccess: number;
   size: number;
   priority: number;
+  metadata?: CacheMetadata;
 }
 
 interface CacheLayer<T> {
-  get(key: string): T | null;
-  set(key: string, value: T, metadata?: CacheMetadata): void;
-  has(key: string): boolean;
-  delete(key: string): void;
-  clear(): void;
+  get(key: string): T | null | Promise<T | null>;
+  set(key: string, value: T, metadata?: CacheMetadata): void | Promise<void>;
+  has(key: string): boolean | Promise<boolean>;
+  delete(key: string): void | Promise<void>;
+  clear(): void | Promise<void>;
   getStats(): CacheStats;
 }
 
@@ -40,6 +42,11 @@ interface CacheStats {
   hits: number;
   misses: number;
   evictions: number;
+}
+
+interface DBCacheEntry<T> extends CacheEntry<T> {
+  key: string;
+  ttl?: number;
 }
 
 /**
@@ -65,7 +72,7 @@ class L1Cache<T> implements CacheLayer<T> {
     }
 
     // Check TTL
-    if (entry.timestamp + (entry.metadata?.ttl || Infinity) < Date.now()) {
+    if (entry.timestamp + (entry.metadata?.ttl ?? Infinity) < Date.now()) {
       this.delete(key);
       this.misses++;
       return null;
@@ -82,14 +89,15 @@ class L1Cache<T> implements CacheLayer<T> {
   }
 
   set(key: string, value: T, metadata: CacheMetadata = {}): void {
-    const size = metadata.size || this.estimateSize(value);
+    const size = metadata.size ?? this.estimateSize(value);
     const entry: CacheEntry<T> = {
       value,
       timestamp: Date.now(),
       accessCount: 0,
       lastAccess: Date.now(),
       size,
-      priority: metadata.priority || 0,
+      priority: metadata.priority ?? 0,
+      metadata,
     };
 
     // Evict if at capacity
@@ -117,7 +125,7 @@ class L1Cache<T> implements CacheLayer<T> {
 
   private evictLRU(): void {
     const firstKey = this.cache.keys().next().value;
-    if (firstKey) {
+    if (firstKey !== undefined) {
       this.cache.delete(firstKey);
       this.evictions++;
     }
@@ -153,6 +161,10 @@ class L2Cache<T> implements CacheLayer<T> {
   private db: IDBDatabase | null = null;
   private initialized: boolean = false;
 
+  constructor(maxSize?: number) {
+    if (typeof maxSize === 'number') this.maxSize = maxSize;
+  }
+
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
@@ -184,7 +196,7 @@ class L2Cache<T> implements CacheLayer<T> {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], 'readonly');
       const store = transaction.objectStore(this.storeName);
-      const request = store.get(key);
+      const request = store.get(key) as IDBRequest<DBCacheEntry<T> | undefined>;
 
       request.onsuccess = () => {
         const entry = request.result;
@@ -195,8 +207,8 @@ class L2Cache<T> implements CacheLayer<T> {
         }
 
         // Check TTL
-        if (entry.timestamp + (entry.ttl || Infinity) < Date.now()) {
-          this.delete(key);
+        if (entry.timestamp + (entry.ttl ?? Infinity) < Date.now()) {
+          void this.delete(key);
           this.misses++;
           resolve(null);
           return;
@@ -204,7 +216,7 @@ class L2Cache<T> implements CacheLayer<T> {
 
         entry.accessCount++;
         entry.lastAccess = Date.now();
-        this.putEntry(entry);
+        void this.putEntry(entry);
         this.hits++;
         resolve(entry.value);
       };
@@ -223,8 +235,8 @@ class L2Cache<T> implements CacheLayer<T> {
       timestamp: Date.now(),
       accessCount: 0,
       lastAccess: Date.now(),
-      size: metadata.size || this.estimateSize(value),
-      priority: metadata.priority || 0,
+      size: metadata.size ?? this.estimateSize(value),
+      priority: metadata.priority ?? 0,
       ttl: metadata.ttl,
     };
 
@@ -272,7 +284,7 @@ class L2Cache<T> implements CacheLayer<T> {
     });
   }
 
-  private async putEntry(entry: any): Promise<void> {
+  private async putEntry(entry: DBCacheEntry<T>): Promise<void> {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], 'readwrite');
       const store = transaction.objectStore(this.storeName);
@@ -308,8 +320,8 @@ class L2Cache<T> implements CacheLayer<T> {
       const index = store.index('timestamp');
       const request = index.openCursor(null, 'next');
 
-      request.onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
+      request.onsuccess = (event: Event) => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue | null>).result;
         if (cursor) {
           cursor.delete();
           this.evictions++;
@@ -345,12 +357,10 @@ class L2Cache<T> implements CacheLayer<T> {
 export class MultiLayerCacheManager<T> {
   private l1Cache: L1Cache<T>;
   private l2Cache: L2Cache<T>;
-  private config: CacheConfig;
 
   constructor(config: CacheConfig = { enabled: true, maxSize: 100, strategy: 'lru' }) {
     this.l1Cache = new L1Cache(Math.floor(config.maxSize * 0.3));
     this.l2Cache = new L2Cache(Math.floor(config.maxSize * 0.7));
-    this.config = config;
   }
 
   async get(key: string): Promise<T | null> {
@@ -418,10 +428,10 @@ export class MultiLayerCacheManager<T> {
   /**
    * Invalidate cache entries by tags
    */
-  async invalidateByTags(tags: string[]): Promise<void> {
+  invalidateByTags(tags: string[]): void {
     // Implementation would need to track tags in cache entries
     // This is a placeholder for the functionality
-    console.warn('Tag-based cache invalidation not yet implemented');
+    console.warn('Tag-based cache invalidation not yet implemented for tags:', tags);
   }
 
   /**

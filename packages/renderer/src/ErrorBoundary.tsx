@@ -39,7 +39,7 @@ const DefaultErrorFallback: React.FC<{ error: Error; nodeId?: string; mode?: str
       }}
     >
       <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-        Component Error {nodeId && `(ID: ${nodeId})`}
+        Component Error {nodeId !== undefined && nodeId !== '' ? `(ID: ${nodeId})` : null}
       </div>
       <div style={{ fontSize: '14px', marginBottom: '8px' }}>{error.message}</div>
       {mode === 'editor' && (
@@ -106,7 +106,7 @@ export class RendererErrorBoundary extends Component<
 
       return (
         <DefaultErrorFallback
-          error={this.state.error || new Error('Unknown error')}
+          error={this.state.error ?? new Error('Unknown error')}
           nodeId={this.state.nodeId}
           mode={this.props.mode}
         />
@@ -130,7 +130,7 @@ export function withErrorBoundary<P extends object>(
     </RendererErrorBoundary>
   );
 
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName ?? Component.name ?? 'Component'})`;
 
   return WrappedComponent;
 }

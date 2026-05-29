@@ -8,6 +8,8 @@ import { StyleObject, Breakpoint } from '@wysiwyg/core';
 import { DEFAULT_BREAKPOINTS } from '@wysiwyg/shared';
 import { StyleGenerator } from './types';
 
+type SafeStyleRecord = Record<string, string | number | undefined>;
+
 /**
  * Default style generator implementation
  */
@@ -22,7 +24,7 @@ export class DefaultStyleGenerator implements StyleGenerator {
   ): string {
     const baseStyles = this.styleObjectToCss(styles);
 
-    if (!responsiveStyles || !breakpoint) {
+    if (responsiveStyles == null || breakpoint == null) {
       return baseStyles;
     }
 
@@ -35,7 +37,8 @@ export class DefaultStyleGenerator implements StyleGenerator {
    * Convert style object to CSS string
    */
   private styleObjectToCss(styles: StyleObject): string {
-    return Object.entries(styles)
+    const record = styles as SafeStyleRecord;
+    return Object.entries(record)
       .map(([property, value]) => {
         const cssProperty = this.camelCaseToKebabCase(property);
         return `${cssProperty}: ${this.formatValue(value)};`;
@@ -51,24 +54,31 @@ export class DefaultStyleGenerator implements StyleGenerator {
     responsiveStyles: Record<Breakpoint, StyleObject>,
     breakpoint: Breakpoint
   ): StyleObject {
-    const merged: StyleObject = { ...baseStyles };
+    const merged: SafeStyleRecord = { ...(baseStyles as SafeStyleRecord) };
 
     // Apply styles from smaller breakpoints
     if (breakpoint === 'tablet') {
-      Object.assign(merged, responsiveStyles.mobile || {});
+      const mobileStyles = responsiveStyles.mobile as SafeStyleRecord | undefined;
+      if (mobileStyles != null) Object.assign(merged, mobileStyles);
     } else if (breakpoint === 'desktop') {
-      Object.assign(merged, responsiveStyles.mobile || {});
-      Object.assign(merged, responsiveStyles.tablet || {});
+      const mobileStyles = responsiveStyles.mobile as SafeStyleRecord | undefined;
+      const tabletStyles = responsiveStyles.tablet as SafeStyleRecord | undefined;
+      if (mobileStyles != null) Object.assign(merged, mobileStyles);
+      if (tabletStyles != null) Object.assign(merged, tabletStyles);
     } else if (breakpoint === 'wide') {
-      Object.assign(merged, responsiveStyles.mobile || {});
-      Object.assign(merged, responsiveStyles.tablet || {});
-      Object.assign(merged, responsiveStyles.desktop || {});
+      const mobileStyles = responsiveStyles.mobile as SafeStyleRecord | undefined;
+      const tabletStyles = responsiveStyles.tablet as SafeStyleRecord | undefined;
+      const desktopStyles = responsiveStyles.desktop as SafeStyleRecord | undefined;
+      if (mobileStyles != null) Object.assign(merged, mobileStyles);
+      if (tabletStyles != null) Object.assign(merged, tabletStyles);
+      if (desktopStyles != null) Object.assign(merged, desktopStyles);
     }
 
     // Apply current breakpoint styles
-    Object.assign(merged, responsiveStyles[breakpoint] || {});
+    const bpStyles = responsiveStyles[breakpoint] as SafeStyleRecord | undefined;
+    if (bpStyles != null) Object.assign(merged, bpStyles);
 
-    return merged;
+    return merged as StyleObject;
   }
 
   /**
@@ -81,11 +91,11 @@ export class DefaultStyleGenerator implements StyleGenerator {
   /**
    * Format CSS value
    */
-  private formatValue(value: any): string {
+  private formatValue(value: string | number | undefined): string {
     if (typeof value === 'number') {
       return `${value}px`;
     }
-    return String(value);
+    return String(value ?? '');
   }
 
   /**
@@ -101,8 +111,9 @@ export class DefaultStyleGenerator implements StyleGenerator {
     cssRules.push(this.styleObjectToCss(styles));
 
     // Responsive styles
-    if (responsiveStyles) {
-      Object.entries(responsiveStyles).forEach(([breakpoint, breakpointStyles]) => {
+    if (responsiveStyles != null) {
+      const record = responsiveStyles as Record<string, StyleObject>;
+      Object.entries(record).forEach(([breakpoint, breakpointStyles]) => {
         const mediaQuery = this.generateMediaQuery(breakpoint as Breakpoint);
         const css = this.styleObjectToCss(breakpointStyles);
         cssRules.push(`${mediaQuery} { ${css} }`);
@@ -131,12 +142,12 @@ export class DefaultStyleGenerator implements StyleGenerator {
     const baseStyles = this.styleObjectToCss(styles);
     let css = `.${className} { ${baseStyles} }`;
 
-    if (responsiveStyles) {
-      Object.entries(responsiveStyles).forEach(([breakpoint, breakpointStyles]) => {
+    if (responsiveStyles != null) {
+      const record = responsiveStyles as Record<string, StyleObject>;
+      Object.entries(record).forEach(([breakpoint, breakpointStyles]) => {
         const mediaQuery = this.generateMediaQuery(breakpoint as Breakpoint);
         const breakpointCss = this.styleObjectToCss(breakpointStyles);
-        css += `
-${mediaQuery} { .${className} { ${breakpointCss} } }`;
+        css += `\n${mediaQuery} { .${className} { ${breakpointCss} } }`;
       });
     }
 
@@ -146,78 +157,79 @@ ${mediaQuery} { .${className} { ${breakpointCss} } }`;
   /**
    * Generate CSS variables from theme
    */
-  generateThemeVariables(theme: any): string {
+  generateThemeVariables(theme: Record<string, unknown>): string {
     const variables: string[] = [];
 
+    const t = theme;
+
     // Colors
-    if (theme.colors) {
-      Object.entries(theme.colors).forEach(([name, value]) => {
-        variables.push(`--color-${name}: ${value};`);
+    if (t.colors != null && typeof t.colors === 'object') {
+      Object.entries(t.colors as Record<string, unknown>).forEach(([name, value]) => {
+        variables.push(`--color-${name}: ${String(value)};`);
       });
     }
 
     // Typography
-    if (theme.typography) {
-      if (theme.typography.fontFamily) {
-        Object.entries(theme.typography.fontFamily).forEach(([name, value]) => {
-          variables.push(`--font-${name}: ${value};`);
+    if (t.typography != null && typeof t.typography === 'object') {
+      const ty = t.typography as Record<string, unknown>;
+      if (ty.fontFamily != null && typeof ty.fontFamily === 'object') {
+        Object.entries(ty.fontFamily as Record<string, unknown>).forEach(([name, value]) => {
+          variables.push(`--font-${name}: ${String(value)};`);
         });
       }
-      if (theme.typography.fontSize) {
-        Object.entries(theme.typography.fontSize).forEach(([name, value]) => {
-          variables.push(`--font-size-${name}: ${value};`);
+      if (ty.fontSize != null && typeof ty.fontSize === 'object') {
+        Object.entries(ty.fontSize as Record<string, unknown>).forEach(([name, value]) => {
+          variables.push(`--font-size-${name}: ${String(value)};`);
         });
       }
-      if (theme.typography.fontWeight) {
-        Object.entries(theme.typography.fontWeight).forEach(([name, value]) => {
-          variables.push(`--font-weight-${name}: ${value};`);
+      if (ty.fontWeight != null && typeof ty.fontWeight === 'object') {
+        Object.entries(ty.fontWeight as Record<string, unknown>).forEach(([name, value]) => {
+          variables.push(`--font-weight-${name}: ${String(value)};`);
         });
       }
-      if (theme.typography.lineHeight) {
-        Object.entries(theme.typography.lineHeight).forEach(([name, value]) => {
-          variables.push(`--line-height-${name}: ${value};`);
+      if (ty.lineHeight != null && typeof ty.lineHeight === 'object') {
+        Object.entries(ty.lineHeight as Record<string, unknown>).forEach(([name, value]) => {
+          variables.push(`--line-height-${name}: ${String(value)};`);
         });
       }
     }
 
     // Spacing
-    if (theme.spacing) {
-      Object.entries(theme.spacing).forEach(([name, value]) => {
-        variables.push(`--spacing-${name}: ${value};`);
+    if (t.spacing != null && typeof t.spacing === 'object') {
+      Object.entries(t.spacing as Record<string, unknown>).forEach(([name, value]) => {
+        variables.push(`--spacing-${name}: ${String(value)};`);
       });
     }
 
     // Border radius
-    if (theme.borderRadius) {
-      Object.entries(theme.borderRadius).forEach(([name, value]) => {
-        variables.push(`--radius-${name}: ${value};`);
+    if (t.borderRadius != null && typeof t.borderRadius === 'object') {
+      Object.entries(t.borderRadius as Record<string, unknown>).forEach(([name, value]) => {
+        variables.push(`--radius-${name}: ${String(value)};`);
       });
     }
 
     // Shadows
-    if (theme.shadows) {
-      Object.entries(theme.shadows).forEach(([name, value]) => {
-        variables.push(`--shadow-${name}: ${value};`);
+    if (t.shadows != null && typeof t.shadows === 'object') {
+      Object.entries(t.shadows as Record<string, unknown>).forEach(([name, value]) => {
+        variables.push(`--shadow-${name}: ${String(value)};`);
       });
     }
 
     // Breakpoints
-    if (theme.breakpoints) {
-      Object.entries(theme.breakpoints).forEach(([name, value]) => {
-        variables.push(`--breakpoint-${name}: ${value};`);
+    if (t.breakpoints != null && typeof t.breakpoints === 'object') {
+      Object.entries(t.breakpoints as Record<string, unknown>).forEach(([name, value]) => {
+        variables.push(`--breakpoint-${name}: ${String(value)};`);
       });
     }
 
     // Custom tokens
-    if (theme.customTokens) {
-      Object.entries(theme.customTokens).forEach(([name, value]) => {
-        variables.push(`--${name}: ${value};`);
+    if (t.customTokens != null && typeof t.customTokens === 'object') {
+      Object.entries(t.customTokens as Record<string, unknown>).forEach(([name, value]) => {
+        variables.push(`--${name}: ${String(value)};`);
       });
     }
 
-    return `:root {
-${variables.join('\n')}
-}`;
+    return `:root {\n${variables.join('\n')}\n}`;
   }
 }
 
@@ -230,7 +242,7 @@ let globalStyleGenerator: DefaultStyleGenerator | null = null;
  * Get or create the global style generator
  */
 export function getGlobalStyleGenerator(): DefaultStyleGenerator {
-  if (!globalStyleGenerator) {
+  if (globalStyleGenerator === null) {
     globalStyleGenerator = new DefaultStyleGenerator();
   }
   return globalStyleGenerator;

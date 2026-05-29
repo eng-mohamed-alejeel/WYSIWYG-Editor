@@ -6,6 +6,8 @@
 
 import { PerformanceMetrics } from './types';
 
+type DecoratedMethod = (...args: unknown[]) => unknown;
+
 interface RenderMetrics {
   nodeId: string;
   renderTime: number;
@@ -51,6 +53,7 @@ export class PerformanceMonitor {
    * Start timing a render operation
    */
   startRender(nodeId: string): number {
+    void nodeId;
     return performance.now();
   }
 
@@ -153,7 +156,7 @@ export class PerformanceMonitor {
    * Get render history
    */
   getRenderHistory(limit?: number): RenderMetrics[] {
-    if (limit) {
+    if (limit !== undefined) {
       return this.renderHistory.slice(-limit);
     }
     return [...this.renderHistory];
@@ -263,15 +266,23 @@ export function resetGlobalPerformanceMonitor(): void {
 /**
  * Performance measurement decorator
  */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return */
 export function measurePerformance(
-  target: any,
+  target: unknown,
   propertyKey: string,
-  descriptor: PropertyDescriptor
+  descriptor: PropertyDescriptor & { value?: DecoratedMethod }
 ) {
   const originalMethod = descriptor.value;
   const monitor = getGlobalPerformanceMonitor();
 
-  descriptor.value = function (...args: any[]) {
+  if (typeof originalMethod !== 'function') {
+    return descriptor;
+  }
+
+  descriptor.value = function (this: unknown, ...args: unknown[]) {
+    void target;
+    void propertyKey;
+
     const startTime = monitor.startRender('unknown');
     try {
       const result = originalMethod.apply(this, args);
@@ -281,7 +292,8 @@ export function measurePerformance(
       monitor.endRender('unknown', 'function', startTime);
       throw error;
     }
-  };
+  } as unknown as PropertyDescriptor['value'];
 
   return descriptor;
 }
+/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return */

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /**
  * Production-Grade Renderer Engine
  *
@@ -11,7 +12,7 @@
  * - Performance monitoring
  */
 
-import React, { memo, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { memo, useMemo, useCallback, useRef, useEffect, useState } from 'react';
 import { ComponentNode, Breakpoint, StyleObject } from '@wysiwyg/core';
 import {
   RendererContext,
@@ -22,6 +23,7 @@ import {
   RendererLifecycle,
   VirtualizationConfig,
   CacheConfig,
+  RenderPhase,
 } from './types';
 import { DefaultComponentRegistry, getGlobalRegistry } from './registry';
 import { getGlobalStyleGenerator } from './styles';
@@ -35,6 +37,9 @@ import {
 } from './RendererLifecycle';
 import { getGlobalPerformanceMonitor } from './PerformanceMonitor';
 import { createRenderCache } from './RenderCache';
+import { RenderLifecycleManager } from './RenderLifecycle';
+import { getGlobalMiddlewareManager } from './RendererMiddleware';
+import { getGlobalDiagnosticsCollector } from './RenderDiagnostics';
 
 /**
  * Default renderer configuration
@@ -68,10 +73,13 @@ interface ComponentRendererProps {
  */
 const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
   ({ node, context, depth = 0, lifecycle }) => {
-    const { componentRegistry, breakpoint, mode, errorBoundary, lazy, virtualized } = context;
+    const { componentRegistry, breakpoint, mode, errorBoundary, lazy } = context;
     const monitor = getGlobalPerformanceMonitor();
     const lifecycleManager = getGlobalLifecycleManager();
     const renderStartTimeRef = useRef<number>();
+    const [renderResult, setRenderResult] = useState<React.ReactNode | null>(null);
+    const [renderError, setRenderError] = useState<Error | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Track component count
     useEffect(() => {
@@ -84,22 +92,10 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
     // Error handler
     const handleError = useRenderError(node, context, lifecycle?.onError);
 
-    // Check max depth
-    if (depth > DEFAULT_CONFIG.maxComponentDepth) {
-      console.warn(
-        `Maximum component depth (${DEFAULT_CONFIG.maxComponentDepth}) exceeded for node ${node.id}`
-      );
-      return null;
-    }
+    // Check if lazy rendering is needed
+    const isLazy = useLazyLoading(node, context, depth);
 
-    // Get the component renderer
-    const renderer = componentRegistry.get(node.type);
-    if (!renderer) {
-      console.warn(`No renderer found for component type: ${node.type}`);
-      return null;
-    }
-
-    // Generate styles with memoization
+    // Generate styles with memoization — must be before early returns
     const style = useMemo(() => {
       const styleGenerator = DEFAULT_CONFIG.styleGenerator;
       return styleGenerator.generate(
@@ -119,9 +115,9 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
       [context, node.id, depth]
     );
 
-    // Render children with optimization
+    // Render children with optimization — must be before early returns
     const children = useMemo(() => {
-      return node.children.map((childNode) => (
+      return node.children.map((childNode: ComponentNode) => (
         <ComponentRendererComponent
           key={childNode.id}
           node={childNode}
@@ -132,31 +128,100 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
       ));
     }, [node.children, childContext, depth, lifecycle]);
 
-    // Render the component
-    const renderComponent = useCallback(() => {
-      renderStartTimeRef.current = monitor.startRender(node.id);
+    // Get the component renderer — must be before early returns
+    const renderer = componentRegistry.get(node.type);
 
-      try {
-        const result = renderer(node, {
-          ...context,
-          children,
-          style,
-        });
+    // Async render effect
+    useEffect(() => {
+      let isActive = true;
 
-        if (renderStartTimeRef.current) {
-          monitor.endRender(node.id, node.type, renderStartTimeRef.current);
+      const executeRender = async (): Promise<void> => {
+        setRenderError(null);
+        setIsLoading(true);
+
+        renderStartTimeRef.current = monitor.startRender(node.id);
+
+        try {
+          await lifecycleManager.executeBeforeRender(node, context);
+
+          const middlewareManager = getGlobalMiddlewareManager();
+
+          const result = await middlewareManager.execute(
+            RenderPhase.BEFORE_RENDER,
+            node,
+            context,
+            async () => {
+              if (!renderer) {
+                return null;
+              }
+              const renderResult = renderer(node, {
+                ...context,
+                children,
+                style,
+              });
+
+              await lifecycleManager.executeAfterRender(node, context, renderResult);
+              return renderResult;
+            }
+          );
+
+          if (!isActive) {
+            return;
+          }
+
+          const currentStartTime = renderStartTimeRef.current;
+          if (currentStartTime !== undefined) {
+            monitor.endRender(node.id, node.type, currentStartTime);
+          }
+
+          setRenderResult(result as React.ReactNode);
+        } catch (error) {
+          if (!isActive) {
+            return;
+          }
+
+          setRenderError(error as Error);
+          const currentStartTime = renderStartTimeRef.current;
+          if (currentStartTime !== undefined) {
+            monitor.endRender(node.id, node.type, currentStartTime);
+          }
+        } finally {
+          if (isActive) {
+            setIsLoading(false);
+          }
         }
+      };
 
-        return result;
-      } catch (error) {
-        if (renderStartTimeRef.current) {
-          monitor.endRender(node.id, node.type, renderStartTimeRef.current);
-        }
-        throw error;
+      void executeRender();
+
+      return () => {
+        isActive = false;
+      };
+    }, [node, context, children, style, renderer, monitor, lifecycleManager]);
+
+    const renderComponent = useCallback((): React.ReactNode => {
+      if (renderError !== null) {
+        return handleError(renderError);
       }
-    }, [node, context, children, style, renderer, monitor]);
+      if (isLoading) {
+        return null;
+      }
+      return renderResult;
+    }, [renderError, handleError, isLoading, renderResult]);
 
-    // Apply error boundary if enabled
+    // Check max depth — after hooks
+    if (depth > DEFAULT_CONFIG.maxComponentDepth) {
+      console.warn(
+        `Maximum component depth (${DEFAULT_CONFIG.maxComponentDepth}) exceeded for node ${node.id}`
+      );
+      return null;
+    }
+
+    if (!renderer) {
+      console.warn(`No renderer found for component type: ${node.type}`);
+      return null;
+    }
+
     const content =
       errorBoundary !== false ? (
         <RendererErrorBoundary
@@ -164,8 +229,8 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
           mode={mode}
           onError={(error, errorInfo) => {
             console.error(`Error rendering component ${node.id}:`, error, errorInfo);
-            if (lifecycle?.onError) {
-              lifecycle.onError(error, node, context);
+            if (lifecycle?.onError !== undefined) {
+              void lifecycle.onError(error, node, context);
             }
           }}
         >
@@ -175,8 +240,7 @@ const ComponentRendererComponent: React.FC<ComponentRendererProps> = memo(
         renderComponent()
       );
 
-    // Apply lazy loading if enabled
-    if (lazy !== false && useLazyLoading(node, context, depth)) {
+    if (lazy !== false && isLazy) {
       return (
         <LazyComponentRenderer node={node} context={context} renderComponent={renderComponent} />
       );
@@ -204,12 +268,12 @@ export const PageRenderer: React.FC<PageRendererProps> = memo(({ nodes, options 
   const renderStartTimeRef = useRef<number>();
 
   // Determine renderer mode
-  const mode: RendererMode = options.mode || (options.isPreview ? 'preview' : 'editor');
+  const mode: RendererMode = options.mode ?? (options.isPreview === true ? 'preview' : 'editor');
 
   // Create renderer context
   const context = useMemo<RendererContext>(
     () => ({
-      breakpoint: options.breakpoint || 'desktop',
+      breakpoint: options.breakpoint ?? 'desktop',
       isPreview: options.isPreview ?? false,
       isEditable: options.isEditable ?? false,
       mode,
@@ -239,7 +303,7 @@ export const PageRenderer: React.FC<PageRendererProps> = memo(({ nodes, options 
 
   // Render individual node
   const renderNode = useCallback(
-    (node: ComponentNode, index: number) => (
+    (node: ComponentNode) => (
       <ComponentRendererComponent key={node.id} node={node} context={context} />
     ),
     [context]
@@ -249,8 +313,9 @@ export const PageRenderer: React.FC<PageRendererProps> = memo(({ nodes, options 
   useEffect(() => {
     renderStartTimeRef.current = monitor.startRender('page');
     return () => {
-      if (renderStartTimeRef.current) {
-        monitor.endRender('page', 'PageRenderer', renderStartTimeRef.current);
+      const currentStartTime = renderStartTimeRef.current;
+      if (currentStartTime !== undefined) {
+        monitor.endRender('page', 'PageRenderer', currentStartTime);
       }
     };
   }, [monitor]);
@@ -285,12 +350,24 @@ export class RendererEngine {
   private registry: DefaultComponentRegistry;
   private config: Required<RendererConfig>;
   private cache?: ReturnType<typeof createRenderCache>;
-  private lifecycleManager = getGlobalLifecycleManager();
   private performanceMonitor = getGlobalPerformanceMonitor();
+  private renderLifecycleManager: RenderLifecycleManager;
+  private middlewareManager = getGlobalMiddlewareManager();
+  private diagnosticsCollector = getGlobalDiagnosticsCollector();
 
   constructor(registry?: DefaultComponentRegistry, config?: RendererConfig) {
-    this.registry = registry || getGlobalRegistry();
+    this.registry = registry ?? getGlobalRegistry();
     this.config = { ...DEFAULT_CONFIG, ...config };
+
+    // Initialize advanced lifecycle system
+    this.renderLifecycleManager = new RenderLifecycleManager({
+      enableDiagnostics: true,
+      enableProfiling: true,
+      maxDiagnosticsEntries: 1000,
+      profilingSampleRate: 1,
+      asyncTimeout: 5000,
+      maxConcurrentHooks: 10,
+    });
 
     // Initialize cache if enabled
     if (this.config.enableCaching) {
@@ -307,9 +384,9 @@ export class RendererEngine {
    * Render a component node
    */
   renderNode(node: ComponentNode, options: RenderOptions = {}): React.ReactNode {
-    const mode: RendererMode = options.mode || (options.isPreview ? 'preview' : 'editor');
+    const mode: RendererMode = options.mode ?? (options.isPreview === true ? 'preview' : 'editor');
     const context: RendererContext = {
-      breakpoint: options.breakpoint || 'desktop',
+      breakpoint: options.breakpoint ?? 'desktop',
       isPreview: options.isPreview ?? false,
       isEditable: options.isEditable ?? false,
       mode,
@@ -405,7 +482,7 @@ export class RendererEngine {
    * Clear render cache
    */
   clearCache(): void {
-    if (this.cache) {
+    if (this.cache !== undefined) {
       this.cache.clear();
     }
   }
@@ -415,6 +492,100 @@ export class RendererEngine {
    */
   getCacheStats() {
     return this.cache?.getStats();
+  }
+
+  /**
+   * Get the render lifecycle manager
+   */
+  getRenderLifecycleManager(): RenderLifecycleManager {
+    return this.renderLifecycleManager;
+  }
+
+  /**
+   * Get the middleware manager
+   */
+  getMiddlewareManager() {
+    return this.middlewareManager;
+  }
+
+  /**
+   * Get the diagnostics collector
+   */
+  getDiagnosticsCollector() {
+    return this.diagnosticsCollector;
+  }
+
+  /**
+   * Get diagnostics report
+   */
+  getDiagnosticsReport(): string {
+    return this.diagnosticsCollector.generateReport();
+  }
+
+  /**
+   * Get lifecycle diagnostics
+   */
+  getLifecycleDiagnostics(nodeId?: string, phase?: RenderPhase) {
+    return this.renderLifecycleManager.getDiagnostics(nodeId, phase);
+  }
+
+  /**
+   * Get lifecycle profiles
+   */
+  getLifecycleProfiles(hookId?: string, phase?: RenderPhase) {
+    return this.renderLifecycleManager.getProfiles(hookId, phase);
+  }
+
+  /**
+   * Register lifecycle hooks for a component
+   */
+  registerLifecycle(nodeId: string, lifecycle: RendererLifecycle): void {
+    getGlobalLifecycleManager().register(nodeId, lifecycle);
+  }
+
+  /**
+   * Unregister lifecycle hooks for a component
+   */
+  unregisterLifecycle(nodeId: string): void {
+    getGlobalLifecycleManager().unregister(nodeId);
+  }
+
+  /**
+   * Generate comprehensive diagnostics report
+   */
+  generateComprehensiveReport(): string {
+    const reports: string[] = [];
+
+    // Performance report
+    reports.push('=== Performance Report ===');
+    reports.push(this.getPerformanceReport());
+    reports.push('');
+
+    // Lifecycle diagnostics
+    reports.push('=== Lifecycle Diagnostics ===');
+    reports.push(this.renderLifecycleManager.generateDiagnosticsReport());
+    reports.push('');
+
+    // Render diagnostics
+    reports.push('=== Render Diagnostics ===');
+    reports.push(this.getDiagnosticsReport());
+    reports.push('');
+
+    // Cache statistics
+    reports.push('=== Cache Statistics ===');
+    reports.push(JSON.stringify(this.getCacheStats(), null, 2));
+    reports.push('');
+
+    return reports.join('\n');
+  }
+
+  /**
+   * Clear all diagnostics data
+   */
+  clearDiagnostics(): void {
+    this.diagnosticsCollector.clear();
+    this.renderLifecycleManager.clearDiagnostics();
+    this.renderLifecycleManager.clearProfiles();
   }
 }
 

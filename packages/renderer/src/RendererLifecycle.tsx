@@ -41,20 +41,52 @@ export class LifecycleHookManager {
   async executeAfterRender(
     node: ComponentNode,
     context: RendererContext,
-    result: any
+    result: unknown
   ): Promise<void> {
     const lifecycle = this.get(node.id);
     if (lifecycle?.onAfterRender) {
-      await lifecycle.onAfterRender(node, context, result);
+      await lifecycle.onAfterRender(node, context, result as React.ReactNode);
     }
   }
 
-  async executeError(error: Error, node: ComponentNode, context: RendererContext): Promise<any> {
+  async executeError(
+    error: Error,
+    node: ComponentNode,
+    context: RendererContext
+  ): Promise<React.ReactNode | null> {
     const lifecycle = this.get(node.id);
     if (lifecycle?.onError) {
-      return await lifecycle.onError(error, node, context);
+      return (await lifecycle.onError(error, node, context)) as React.ReactNode;
     }
     return null;
+  }
+
+  async executeBeforeMount(node: ComponentNode, context: RendererContext): Promise<void> {
+    const lifecycle = this.get(node.id);
+    if (lifecycle?.onBeforeMount) {
+      await lifecycle.onBeforeMount(node, context);
+    }
+  }
+
+  async executeAfterMount(node: ComponentNode, context: RendererContext): Promise<void> {
+    const lifecycle = this.get(node.id);
+    if (lifecycle?.onAfterMount) {
+      await lifecycle.onAfterMount(node, context);
+    }
+  }
+
+  async executeBeforeUnmount(node: ComponentNode, context: RendererContext): Promise<void> {
+    const lifecycle = this.get(node.id);
+    if (lifecycle?.onBeforeUnmount) {
+      await lifecycle.onBeforeUnmount(node, context);
+    }
+  }
+
+  async executeAfterUnmount(node: ComponentNode, context: RendererContext): Promise<void> {
+    const lifecycle = this.get(node.id);
+    if (lifecycle?.onAfterUnmount) {
+      await lifecycle.onAfterUnmount(node, context);
+    }
   }
 
   async executeMount(node: ComponentNode, context: RendererContext): Promise<void> {
@@ -112,18 +144,39 @@ export function useRendererLifecycle(
       manager.register(node.id, lifecycle);
     }
 
-    // Execute mount hook
+    // Execute beforeMount hook
     if (!isMounted.current) {
+      manager.executeBeforeMount(node, context).catch((error) => {
+        console.error('Error in onBeforeMount lifecycle hook:', error);
+      });
+
+      // Execute mount hook
       manager.executeMount(node, context).catch((error) => {
         console.error('Error in onMount lifecycle hook:', error);
       });
+
+      // Execute afterMount hook
+      manager.executeAfterMount(node, context).catch((error) => {
+        console.error('Error in onAfterMount lifecycle hook:', error);
+      });
+
       isMounted.current = true;
     }
 
     return () => {
+      // Execute beforeUnmount hook
+      manager.executeBeforeUnmount(node, context).catch((error) => {
+        console.error('Error in onBeforeUnmount lifecycle hook:', error);
+      });
+
       // Execute unmount hook
       manager.executeUnmount(node, context).catch((error) => {
         console.error('Error in onUnmount lifecycle hook:', error);
+      });
+
+      // Execute afterUnmount hook
+      manager.executeAfterUnmount(node, context).catch((error) => {
+        console.error('Error in onAfterUnmount lifecycle hook:', error);
       });
 
       // Unregister lifecycle hooks
@@ -162,7 +215,7 @@ export function useBeforeRender(
           console.error('Error in beforeRender callback:', error);
         }
       };
-      executeCallback();
+      void executeCallback();
       hasExecuted.current = true;
     }
   }, [node, context, callback]);
@@ -174,8 +227,12 @@ export function useBeforeRender(
 export function useAfterRender(
   node: ComponentNode,
   context: RendererContext,
-  result: any,
-  callback?: (node: ComponentNode, context: RendererContext, result: any) => void | Promise<void>
+  result: unknown,
+  callback?: (
+    node: ComponentNode,
+    context: RendererContext,
+    result: unknown
+  ) => void | Promise<void>
 ) {
   const hasExecuted = useRef(false);
 
@@ -188,7 +245,7 @@ export function useAfterRender(
           console.error('Error in afterRender callback:', error);
         }
       };
-      executeCallback();
+      void executeCallback();
       hasExecuted.current = true;
     }
   }, [node, context, result, callback]);
@@ -200,19 +257,31 @@ export function useAfterRender(
 export function useRenderError(
   node: ComponentNode,
   context: RendererContext,
-  callback?: (error: Error, node: ComponentNode, context: RendererContext) => any
+  callback?: (
+    error: Error,
+    node: ComponentNode,
+    context: RendererContext
+  ) => React.ReactNode | Promise<React.ReactNode> | void
 ) {
   const handleError = useCallback(
     (error: Error) => {
-      if (callback) {
-        try {
-          return callback(error, node, context);
-        } catch (handlerError) {
-          console.error('Error in error handler:', handlerError);
+      if (!callback) {
+        return null;
+      }
+
+      try {
+        const result = callback(error, node, context);
+        if (result != null && typeof (result as Promise<React.ReactNode>).then === 'function') {
+          (result as Promise<React.ReactNode>)
+            .then(() => {})
+            .catch((handlerError) => console.error('Error in async error handler:', handlerError));
           return null;
         }
+        return result as React.ReactNode | null;
+      } catch (handlerError) {
+        console.error('Error in error handler:', handlerError);
+        return null;
       }
-      return null;
     },
     [node, context, callback]
   );
@@ -232,7 +301,7 @@ export function withLifecycle<P extends { node: ComponentNode; context: Renderer
     return <Component {...props} />;
   };
 
-  WrappedComponent.displayName = `withLifecycle(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withLifecycle(${Component.displayName ?? Component.name ?? 'Component'})`;
 
   return WrappedComponent;
 }

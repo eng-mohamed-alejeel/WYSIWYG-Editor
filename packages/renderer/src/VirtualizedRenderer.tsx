@@ -29,20 +29,19 @@ interface VirtualizedState {
  */
 export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
   nodes,
-  context,
   config,
   renderItem,
   className,
   style,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { threshold = 50, bufferSize = 20, overscan = 5 } = config;
+
   const [state, setState] = useState<VirtualizedState>({
     startIndex: 0,
-    endIndex: Math.min(config.bufferSize || 20, nodes.length),
+    endIndex: Math.min(config.bufferSize ?? 20, nodes.length),
     totalHeight: 0,
   });
-
-  const { threshold = 50, bufferSize = 20, overscan = 5 } = config;
 
   // Calculate visible range based on scroll position
   const calculateVisibleRange = useCallback(() => {
@@ -58,7 +57,7 @@ export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
     const startIndex = Math.max(0, Math.floor(scrollTop / estimatedItemHeight) - overscan);
     const endIndex = Math.min(
       nodes.length,
-      Math.ceil((scrollTop + containerHeight) / estimatedItemHeight) + overscan
+      Math.ceil((scrollTop + containerHeight) / estimatedItemHeight) + overscan + bufferSize
     );
 
     setState((prev) => ({
@@ -67,7 +66,7 @@ export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
       endIndex,
       totalHeight: nodes.length * estimatedItemHeight,
     }));
-  }, [nodes.length, overscan]);
+  }, [nodes.length, overscan, bufferSize]);
 
   // Attach scroll listener
   useEffect(() => {
@@ -94,6 +93,11 @@ export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
     };
   }, [calculateVisibleRange]);
 
+  // Render only visible items
+  const visibleNodes = useMemo(() => {
+    return nodes.slice(state.startIndex, state.endIndex);
+  }, [nodes, state.startIndex, state.endIndex]);
+
   // Don't virtualize if below threshold
   if (nodes.length < threshold) {
     return (
@@ -102,11 +106,6 @@ export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
       </div>
     );
   }
-
-  // Render only visible items
-  const visibleNodes = useMemo(() => {
-    return nodes.slice(state.startIndex, state.endIndex);
-  }, [nodes, state.startIndex, state.endIndex]);
 
   return (
     <div
@@ -143,7 +142,7 @@ export const VirtualizedRenderer: React.FC<VirtualizedRendererProps> = ({
  */
 export function useVirtualization(nodes: ComponentNode[], config: VirtualizationConfig): boolean {
   return useMemo(() => {
-    return config.enabled && nodes.length >= config.threshold;
+    return (config.enabled ?? false) && nodes.length >= (config.threshold ?? 50);
   }, [nodes.length, config.enabled, config.threshold]);
 }
 
@@ -169,9 +168,9 @@ export function useVirtualizationParams(
 
     const estimatedItemHeight = 100;
     const totalHeight = nodes.length * estimatedItemHeight;
-    const visibleCount = Math.ceil((containerHeight || 600) / estimatedItemHeight);
+    const visibleCount = Math.ceil((containerHeight ?? 600) / estimatedItemHeight);
     const startIndex = Math.max(0, Math.floor(0 / estimatedItemHeight) - overscan);
-    const endIndex = Math.min(nodes.length, visibleCount + overscan);
+    const endIndex = Math.min(nodes.length, visibleCount + overscan + bufferSize);
 
     return {
       shouldVirtualize: true,

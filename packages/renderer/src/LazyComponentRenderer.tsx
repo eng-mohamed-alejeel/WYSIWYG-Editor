@@ -4,7 +4,7 @@
  * This module provides lazy loading functionality for components.
  */
 
-import React, { Suspense, lazy, memo, useEffect, useState, useRef } from 'react';
+import React, { Suspense, memo, useEffect, useState, useRef } from 'react';
 import { ComponentNode } from '@wysiwyg/core';
 import { RendererContext } from './types';
 
@@ -17,10 +17,7 @@ interface LazyRendererProps {
   rootMargin?: string;
 }
 
-interface IntersectionObserverState {
-  isIntersecting: boolean;
-  hasIntersected: boolean;
-}
+// IntersectionObserverState removed (unused)
 
 /**
  * Default loading fallback
@@ -120,14 +117,14 @@ export const LazyComponentRenderer: React.FC<LazyRendererProps> = memo(
     if (!shouldRender) {
       return (
         <div ref={elementRef} style={{ minHeight: '50px' }}>
-          {fallback || <DefaultLoadingFallback />}
+          {fallback ?? <DefaultLoadingFallback />}
         </div>
       );
     }
 
     // Render actual component when visible
     return (
-      <Suspense fallback={fallback || <DefaultLoadingFallback />}>
+      <Suspense fallback={fallback ?? <DefaultLoadingFallback />}>
         {renderComponent(node, context)}
       </Suspense>
     );
@@ -147,15 +144,13 @@ export function withLazyLoading<P extends object>(
     rootMargin?: string;
   }
 ): React.ComponentType<P> {
-  const LazyWrappedComponent = lazy(() => Promise.resolve({ default: Component }));
-
-  const WrappedComponent = (props: P) => (
-    <Suspense fallback={options?.fallback || <DefaultLoadingFallback />}>
-      <LazyWrappedComponent {...props} />
+  const WrappedComponent: React.FC<P> = (props) => (
+    <Suspense fallback={options?.fallback ?? <DefaultLoadingFallback />}>
+      <Component {...props} />
     </Suspense>
   );
 
-  WrappedComponent.displayName = `withLazyLoading(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withLazyLoading(${Component.displayName ?? Component.name ?? 'Component'})`;
 
   return WrappedComponent;
 }
@@ -185,12 +180,12 @@ export function useLazyLoading(
     }
 
     // Don't lazy load small components
-    if (node.children.length === 0 && !node.props.lazy) {
+    if (node.children.length === 0 && node.props.lazy !== true) {
       return false;
     }
 
     // Lazy load if explicitly requested
-    if (node.props.lazy) {
+    if (node.props.lazy === true) {
       return true;
     }
 

@@ -20,7 +20,7 @@ export interface RendererContext {
   isEditable: boolean;
   mode: RendererMode;
   componentRegistry: Map<string, ComponentRenderer>;
-  theme?: any;
+  theme?: Record<string, unknown>;
   children?: React.ReactNode;
   style?: string;
   parentId?: string;
@@ -30,6 +30,7 @@ export interface RendererContext {
   virtualized?: boolean;
   cacheKey?: string;
   lifecycle?: RendererLifecycle;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -45,7 +46,7 @@ export interface RenderOptions {
   isPreview?: boolean;
   isEditable?: boolean;
   mode?: RendererMode;
-  theme?: any;
+  theme?: Record<string, unknown>;
   enableVirtualization?: boolean;
   enableLazyRendering?: boolean;
   enableErrorBoundary?: boolean;
@@ -91,7 +92,7 @@ export interface StyleGenerator {
     styles: StyleObject,
     responsiveStyles?: Record<Breakpoint, StyleObject>
   ): string;
-  generateThemeVariables(theme: any): string;
+  generateThemeVariables(theme: Record<string, unknown>): string;
   generateResponsiveCss(
     styles: StyleObject,
     responsiveStyles?: Record<Breakpoint, StyleObject>
@@ -134,12 +135,142 @@ export interface RendererConfig {
  * Renderer lifecycle hooks
  */
 export interface RendererLifecycle {
-  onBeforeRender?: (node: ComponentNode, context: RendererContext) => void;
-  onAfterRender?: (node: ComponentNode, context: RendererContext, result: React.ReactNode) => void;
-  onError?: (error: Error, node: ComponentNode, context: RendererContext) => React.ReactNode;
-  onMount?: (node: ComponentNode, context: RendererContext) => void;
-  onUpdate?: (node: ComponentNode, context: RendererContext) => void;
-  onUnmount?: (node: ComponentNode, context: RendererContext) => void;
+  onBeforeRender?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onAfterRender?: (
+    node: ComponentNode,
+    context: RendererContext,
+    result: React.ReactNode
+  ) => void | Promise<void>;
+  onError?: (
+    error: Error,
+    node: ComponentNode,
+    context: RendererContext
+  ) => React.ReactNode | Promise<React.ReactNode>;
+  onBeforeMount?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onAfterMount?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onBeforeUnmount?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onAfterUnmount?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onMount?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onUpdate?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+  onUnmount?: (node: ComponentNode, context: RendererContext) => void | Promise<void>;
+}
+
+/**
+ * Render phase enum
+ */
+export enum RenderPhase {
+  BEFORE_RENDER = 'beforeRender',
+  RENDERING = 'rendering',
+  AFTER_RENDER = 'afterRender',
+  BEFORE_MOUNT = 'beforeMount',
+  MOUNTING = 'mounting',
+  AFTER_MOUNT = 'afterMount',
+  BEFORE_UNMOUNT = 'beforeUnmount',
+  UNMOUNTING = 'unmounting',
+  AFTER_UNMOUNT = 'afterUnmount',
+}
+
+/**
+ * Lifecycle hook context
+ */
+export interface LifecycleHookContext {
+  phase: RenderPhase;
+  node: ComponentNode;
+  context: RendererContext;
+  timestamp: number;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Lifecycle hook function type
+ */
+export type LifecycleHookFunction<T = void> = (ctx: LifecycleHookContext) => T | Promise<T>;
+
+/**
+ * Lifecycle hook definition
+ */
+export interface LifecycleHook {
+  id: string;
+  phase: RenderPhase;
+  handler: LifecycleHookFunction;
+  priority?: number;
+  once?: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Middleware context
+ */
+export interface MiddlewareContext {
+  node: ComponentNode;
+  context: RendererContext;
+  phase: RenderPhase;
+  next: () => Promise<unknown>;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Middleware function type
+ */
+export type MiddlewareFunction = (ctx: MiddlewareContext) => Promise<unknown>;
+
+/**
+ * Middleware definition
+ */
+export interface RendererMiddleware {
+  id: string;
+  name: string;
+  handler: MiddlewareFunction;
+  priority?: number;
+  enabled?: boolean;
+  phases?: RenderPhase[];
+}
+
+/**
+ * Render diagnostics data
+ */
+export interface RenderDiagnostics {
+  nodeId: string;
+  phase: RenderPhase;
+  startTime: number;
+  endTime?: number;
+  duration?: number;
+  success: boolean;
+  error?: Error;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Profiling data for lifecycle hooks
+ */
+export interface LifecycleProfileData {
+  hookId: string;
+  phase: RenderPhase;
+  executionTime: number;
+  success: boolean;
+  error?: Error;
+}
+
+/**
+ * Plugin lifecycle integration
+ */
+export interface PluginLifecycleIntegration {
+  pluginId: string;
+  hooks: LifecycleHook[];
+  middleware?: RendererMiddleware[];
+  enabled?: boolean;
+}
+
+/**
+ * Render lifecycle options
+ */
+export interface RenderLifecycleOptions {
+  enableDiagnostics?: boolean;
+  enableProfiling?: boolean;
+  maxDiagnosticsEntries?: number;
+  profilingSampleRate?: number;
+  asyncTimeout?: number;
+  maxConcurrentHooks?: number;
 }
 
 /**

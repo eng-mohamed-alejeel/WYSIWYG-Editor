@@ -50,12 +50,12 @@ interface PositionCache {
  * Renders only visible components with advanced performance optimizations
  */
 export const OptimizedVirtualizedRenderer: React.FC<OptimizedVirtualizedRendererProps> = memo(
-  ({ nodes, context, config, renderItem, className, style, placeholder, onScroll }) => {
+  ({ nodes, config, renderItem, className, style, placeholder, onScroll }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [state, setState] = useState<VirtualizedState>({
       startIndex: 0,
-      endIndex: Math.min(config.bufferSize || 20, nodes.length),
+      endIndex: Math.min(config.bufferSize ?? 20, nodes.length),
       totalHeight: 0,
       scrollTop: 0,
       isScrolling: false,
@@ -86,7 +86,7 @@ export const OptimizedVirtualizedRenderer: React.FC<OptimizedVirtualizedRenderer
       let currentOffset = 0;
       for (let i = 0; i < nodes.length; i++) {
         const itemSize = itemSizeCacheRef.current.get(i);
-        const height = itemSize?.measured ? itemSize.height : 100; // Default estimate
+        const height = itemSize?.measured === true ? itemSize.height : 100; // Default estimate
 
         positionCacheRef.current[i] = {
           offset: currentOffset,
@@ -111,11 +111,11 @@ export const OptimizedVirtualizedRenderer: React.FC<OptimizedVirtualizedRenderer
       setState((prev) => ({
         ...prev,
         startIndex: Math.max(0, startIndex - overscan),
-        endIndex: Math.min(nodes.length, endIndex + overscan),
+        endIndex: Math.min(nodes.length, endIndex + overscan + bufferSize),
         totalHeight,
         scrollTop,
       }));
-    }, [nodes.length, overscan]);
+    }, [nodes.length, overscan, bufferSize]);
 
     // Handle scroll events with throttling
     const handleScroll = useCallback(
@@ -186,6 +186,11 @@ export const OptimizedVirtualizedRenderer: React.FC<OptimizedVirtualizedRenderer
       };
     }, [calculateVisibleRange, nodes.length]);
 
+    const visibleNodes = useMemo(() => {
+      monitor.incrementVirtualizedCount();
+      return nodes.slice(state.startIndex, state.endIndex);
+    }, [nodes, state.startIndex, state.endIndex, monitor]);
+
     // Don't virtualize if below threshold
     if (nodes.length < threshold) {
       return (
@@ -194,12 +199,6 @@ export const OptimizedVirtualizedRenderer: React.FC<OptimizedVirtualizedRenderer
         </div>
       );
     }
-
-    // Render only visible items
-    const visibleNodes = useMemo(() => {
-      monitor.incrementVirtualizedCount();
-      return nodes.slice(state.startIndex, state.endIndex);
-    }, [nodes, state.startIndex, state.endIndex, monitor]);
 
     return (
       <div
@@ -230,7 +229,9 @@ export const OptimizedVirtualizedRenderer: React.FC<OptimizedVirtualizedRenderer
                   minHeight: position?.size || 100,
                 }}
               >
-                {state.isScrolling && placeholder ? placeholder : renderItem(node, actualIndex)}
+                {state.isScrolling && placeholder !== undefined && placeholder !== null
+                  ? placeholder
+                  : renderItem(node, actualIndex)}
               </div>
             );
           })}
@@ -277,9 +278,9 @@ export function useOptimizedVirtualizationParams(
     // Estimate total height based on default item size
     const estimatedItemHeight = 100;
     const totalHeight = nodes.length * estimatedItemHeight;
-    const visibleCount = Math.ceil((containerHeight || 600) / estimatedItemHeight);
+    const visibleCount = Math.ceil((containerHeight ?? 600) / estimatedItemHeight);
     const startIndex = Math.max(0, Math.floor(0 / estimatedItemHeight) - overscan);
-    const endIndex = Math.min(nodes.length, visibleCount + overscan);
+    const endIndex = Math.min(nodes.length, visibleCount + overscan + bufferSize);
 
     return {
       shouldVirtualize: true,

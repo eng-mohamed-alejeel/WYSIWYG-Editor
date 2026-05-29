@@ -4,8 +4,9 @@
  * This module provides caching functionality for rendered components.
  */
 
+import React from 'react';
 import { ComponentNode } from '@wysiwyg/core';
-import { CacheConfig } from './types';
+import { CacheConfig, RendererContext } from './types';
 
 interface CacheEntry {
   value: React.ReactNode;
@@ -28,20 +29,20 @@ export class LRUCache {
     this.ttl = ttl;
   }
 
-  private generateKey(node: ComponentNode, context: any): string {
-    return `${node.id}-${node.type}-${JSON.stringify(node.props)}-${JSON.stringify(node.styles)}`;
+  private generateKey(node: ComponentNode, context: RendererContext): string {
+    return `${node.id}-${node.type}-${String(context.breakpoint)}-${context.mode}-${JSON.stringify(node.props)}-${JSON.stringify(node.styles)}`;
   }
 
-  get(node: ComponentNode, context: any): React.ReactNode | null {
+  get(node: ComponentNode, context: RendererContext): React.ReactNode | null {
     const key = this.generateKey(node, context);
     const entry = this.cache.get(key);
 
-    if (!entry) {
+    if (entry === undefined) {
       return null;
     }
 
     // Check TTL
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    if (this.ttl !== undefined && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       return null;
     }
@@ -57,13 +58,13 @@ export class LRUCache {
     return entry.value;
   }
 
-  set(node: ComponentNode, context: any, value: React.ReactNode): void {
+  set(node: ComponentNode, context: RendererContext, value: React.ReactNode): void {
     const key = this.generateKey(node, context);
 
     // Evict oldest if at capacity
     if (this.cache.size >= this.maxSize) {
       const firstKey = this.cache.keys().next().value;
-      if (firstKey) {
+      if (firstKey !== undefined) {
         this.cache.delete(firstKey);
       }
     }
@@ -76,16 +77,16 @@ export class LRUCache {
     });
   }
 
-  has(node: ComponentNode, context: any): boolean {
+  has(node: ComponentNode, context: RendererContext): boolean {
     const key = this.generateKey(node, context);
     const entry = this.cache.get(key);
 
-    if (!entry) {
+    if (entry === undefined) {
       return false;
     }
 
     // Check TTL
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    if (this.ttl !== undefined && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       return false;
     }
@@ -131,20 +132,20 @@ export class FIFOCache {
     this.insertionOrder = [];
   }
 
-  private generateKey(node: ComponentNode, context: any): string {
-    return `${node.id}-${node.type}-${JSON.stringify(node.props)}-${JSON.stringify(node.styles)}`;
+  private generateKey(node: ComponentNode, context: RendererContext): string {
+    return `${node.id}-${node.type}-${String(context.breakpoint)}-${context.mode}-${JSON.stringify(node.props)}-${JSON.stringify(node.styles)}`;
   }
 
-  get(node: ComponentNode, context: any): React.ReactNode | null {
+  get(node: ComponentNode, context: RendererContext): React.ReactNode | null {
     const key = this.generateKey(node, context);
     const entry = this.cache.get(key);
 
-    if (!entry) {
+    if (entry === undefined) {
       return null;
     }
 
     // Check TTL
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    if (this.ttl !== undefined && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       const index = this.insertionOrder.indexOf(key);
       if (index > -1) {
@@ -159,13 +160,13 @@ export class FIFOCache {
     return entry.value;
   }
 
-  set(node: ComponentNode, context: any, value: React.ReactNode): void {
+  set(node: ComponentNode, context: RendererContext, value: React.ReactNode): void {
     const key = this.generateKey(node, context);
 
     // Evict oldest if at capacity
     if (this.cache.size >= this.maxSize) {
       const firstKey = this.insertionOrder.shift();
-      if (firstKey) {
+      if (firstKey !== undefined) {
         this.cache.delete(firstKey);
       }
     }
@@ -180,16 +181,16 @@ export class FIFOCache {
     this.insertionOrder.push(key);
   }
 
-  has(node: ComponentNode, context: any): boolean {
+  has(node: ComponentNode, context: RendererContext): boolean {
     const key = this.generateKey(node, context);
     const entry = this.cache.get(key);
 
-    if (!entry) {
+    if (entry === undefined) {
       return false;
     }
 
     // Check TTL
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    if (this.ttl !== undefined && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       const index = this.insertionOrder.indexOf(key);
       if (index > -1) {
@@ -238,20 +239,20 @@ export class LFUCache {
     this.ttl = ttl;
   }
 
-  private generateKey(node: ComponentNode, context: any): string {
-    return `${node.id}-${node.type}-${JSON.stringify(node.props)}-${JSON.stringify(node.styles)}`;
+  private generateKey(node: ComponentNode, context: RendererContext): string {
+    return `${node.id}-${node.type}-${String(context.breakpoint)}-${context.mode}-${JSON.stringify(node.props)}-${JSON.stringify(node.styles)}`;
   }
 
-  get(node: ComponentNode, context: any): React.ReactNode | null {
+  get(node: ComponentNode, context: RendererContext): React.ReactNode | null {
     const key = this.generateKey(node, context);
     const entry = this.cache.get(key);
 
-    if (!entry) {
+    if (entry === undefined) {
       return null;
     }
 
     // Check TTL
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    if (this.ttl !== undefined && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       return null;
     }
@@ -262,23 +263,23 @@ export class LFUCache {
     return entry.value;
   }
 
-  set(node: ComponentNode, context: any, value: React.ReactNode): void {
+  set(node: ComponentNode, context: RendererContext, value: React.ReactNode): void {
     const key = this.generateKey(node, context);
 
     // Evict least frequently used if at capacity
     if (this.cache.size >= this.maxSize) {
       let minAccessCount = Infinity;
-      let lruKey: string | null = null;
+      let lfuKey: string | null = null;
 
       for (const [k, entry] of this.cache.entries()) {
         if (entry.accessCount < minAccessCount) {
           minAccessCount = entry.accessCount;
-          lruKey = k;
+          lfuKey = k;
         }
       }
 
-      if (lruKey) {
-        this.cache.delete(lruKey);
+      if (lfuKey !== null) {
+        this.cache.delete(lfuKey);
       }
     }
 
@@ -290,16 +291,16 @@ export class LFUCache {
     });
   }
 
-  has(node: ComponentNode, context: any): boolean {
+  has(node: ComponentNode, context: RendererContext): boolean {
     const key = this.generateKey(node, context);
     const entry = this.cache.get(key);
 
-    if (!entry) {
+    if (entry === undefined) {
       return false;
     }
 
     // Check TTL
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    if (this.ttl !== undefined && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       return false;
     }
@@ -348,6 +349,6 @@ export function createRenderCache(config: CacheConfig): LRUCache | FIFOCache | L
     case 'lfu':
       return new LFUCache(maxSize, ttl);
     default:
-      throw new Error(`Unknown cache strategy: ${strategy}`);
+      throw new Error(`Unknown cache strategy: ${String(strategy)}`);
   }
 }
