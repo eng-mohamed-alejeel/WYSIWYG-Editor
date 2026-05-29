@@ -1,8 +1,8 @@
-import { ComponentNode, ComponentId } from '@wysiwyg/core';
+import { ComponentNode, ComponentId, Project, Command } from '@wysiwyg/core';
 
 export interface BuilderState {
   // Project state
-  project: any;
+  project: Project | null;
   currentPageId: ComponentId | null;
 
   // Selection state
@@ -18,13 +18,13 @@ export interface BuilderState {
   isPreviewMode: boolean;
 
   // Undo/Redo state
-  history: any[];
+  history: Command[];
   historyIndex: number;
   canUndo: boolean;
   canRedo: boolean;
 
   // Actions
-  setProject: (project: any) => void;
+  setProject: (project: Project | null) => void;
   setCurrentPageId: (pageId: ComponentId | null) => void;
   setSelectedIds: (ids: ComponentId[]) => void;
   setHoveredId: (id: ComponentId | null) => void;

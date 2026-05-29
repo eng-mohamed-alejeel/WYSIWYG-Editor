@@ -3,19 +3,10 @@
  */
 
 import React from 'react';
-import { Breakpoint, StyleObject } from '@wysiwyg/core';
+import { Breakpoint, StyleObject, ComponentNode } from '@wysiwyg/core';
 import { RendererContext } from '../types';
 
-/**
- * Component node interface
- */
-export interface ComponentNode {
-  id: string;
-  type: string;
-  styles: StyleObject;
-  responsiveStyles?: Record<Breakpoint, StyleObject>;
-  [key: string]: unknown;
-}
+// ComponentNode is imported from @wysiwyg/core to ensure type consistency
 
 /**
  * Type guard to check if value is defined

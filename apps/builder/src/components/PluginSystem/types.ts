@@ -9,7 +9,7 @@ export interface Plugin {
   isInstalled: boolean;
   isEnabled: boolean;
   isPremium?: boolean;
-  settings?: any;
+  settings?: Record<string, unknown>;
 }
 
 interface PluginSystemProps {

@@ -1,4 +1,4 @@
-import { ComponentId } from '@wysiwyg/core';
+import { ComponentId, ComponentNode } from '@wysiwyg/core';
 
 export interface ValidationIssue {
   id: string;
@@ -13,6 +13,6 @@ export interface ValidationIssue {
 export interface ValidationSystemProps {
   isOpen: boolean;
   onClose: () => void;
-  components: any[];
+  components: ComponentNode[];
   onFixIssue?: (issueId: string) => void;
 }
